@@ -143,7 +143,7 @@ function LoginUser() {
           </div>
 
         </div>
-        <div hidden className='hidden w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block '  >
+        <div hidden className='hid w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block '  >
           {/* <h2 className='text-2xl font-bold mb-2 text-white'>Hello , freinds</h2>
           <div className='border-2 w-10  border-white inline-block mb-2'></div>
           <p className='mb-10  text-white'>Fill Up Personal Information </p>
