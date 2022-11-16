@@ -28,6 +28,22 @@ const UserSchema = new Schema({
     status : {
         type  :  String ,
         default : "Active"
+    },
+
+    requestTo : {
+        type : Array,
+        default : []
+       
+    },
+    requestFrom : {
+        type : Array,
+        default : []
+       
+    }
+    ,
+    following : {
+       type : Array,
+       default : []
     }
 })
 

@@ -3,6 +3,7 @@ const { findByIdAndUpdate } = require('../../schema/user/signUp')
 const userSchemaa = require('../../schema/user/signUp')
 const Email = "brittovincent@gmail.com"
 const Passsword = "123456"
+const jwt = require('jsonwebtoken')
 
 const Controller = {
 
@@ -20,10 +21,10 @@ const Controller = {
 
         // const checkPassword = await bcrypt.compare(password,user.password)
 
-        console.log("calllsssssssss")
+        console.log("calllsssssssss")   
         if (Passsword == password) {
           const id = "123456"
-          const token = jwt.sign({ id }, JWT_KEY, {
+          const token = jwt.sign({ id }, process.env.JWT_KEY, {
             expiresIn: "365d",
 
 
@@ -54,6 +55,20 @@ const Controller = {
   },
 
 
+  dashboard : (req,res)=>{
+    try{
+      console.log('dashboard')
+
+    }catch{
+
+
+      console.log(hiiii)
+    }
+
+    
+  },
+
+
   // view users 
 
 
@@ -70,6 +85,8 @@ const Controller = {
 
     } catch {
 
+      res.status(401).json({message : "something went wrong "})
+
     }
 
 
@@ -78,7 +95,7 @@ const Controller = {
 
   BlockUser: async(req, res) => {
 
-    try {
+    try {  
       const userid = req.params.id
       await userSchemaa.findByIdAndUpdate(userid, { status: 'Blocked' },
         function (err, docs) {

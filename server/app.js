@@ -5,18 +5,23 @@ var logger = require('morgan');
 var cors = require('cors')
 const connection = require('./connection')
 
+
 var userRouter = require('./routes/user/user');
 var adminRouter = require('./routes/admin/admin');
+
 connection();
 
 
-const app = express()
+require("dotenv").config();  
+
+const app = express()  
 app.use(cors())
 
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/images',express.static(path.join(__dirname,'public/images')))
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);

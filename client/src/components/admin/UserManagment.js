@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useReducer } from 'react'
 import Axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import moment from 'moment'
 
@@ -13,7 +15,7 @@ function UserManagment() {
 
     useEffect(() => {
 
-        Axios.get('http://localhost:4000/admin/usermanagment').then((response) => {
+        Axios.get('http://localhost:4000/admin/usermanagment', { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
 
             console.log(response)
             SetUserDetails(response.data)
@@ -25,24 +27,78 @@ function UserManagment() {
     // useEffect (()=>{
 
     // })
+
+    
+   
     const BlockUser = (id) => {
 
-        Axios.put("http://localhost:4000/admin/block/" + id).then((result => {
-            console.log(result.status);
-            // forceUpdate()
-            SetStatus(!status)
-            // setShowModal(false)
-        })).catch(error => console.log(error))
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
+                  <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
+                  {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
+                  <div className='flex space-x-2 p-2 '>
+                  <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
+                  <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
+                    onClick={() => {
+                        // this.handleClickDelete();
+                      onClose();
+                      Axios.put("http://localhost:4000/admin/block/" + id).then((result => {
+                        console.log(result.status);
+                        // forceUpdate()
+                        SetStatus(!status)
+                        // setShowModal(false)
+                    })).catch(error => console.log(error))
+                      
+                    }}
+                  >
+                    Yes, Block
+                  </button>
+
+                  </div>
+                
+                </div>
+              );
+            }
+          });
+       
+
     }
 
     const UnBlockUser = (id) => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
+                  <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
+                  {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
+                  <div className='flex space-x-2 p-2 '>
+                  <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
+                  <button className='bg-green-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
+                    onClick={() => {
+                        // this.handleClickDelete();
+                      onClose();
+                      Axios.put("http://localhost:4000/admin/unblock/" + id).then((result => {
+                        console.log(result.status);
+                        // forceUpdate()
+                        SetStatus(!status)
+                        // setShowModal(false)
+                    })).catch(error => console.log(error))
+                      
+                    }}
+                  >
+                    Yes, Unblock
+                  </button>
 
-        Axios.put("http://localhost:4000/admin/unblock/" + id).then((result => {
-            console.log(result.status);
-            // forceUpdate()
-            SetStatus(!status)
-            // setShowModal(false)
-        })).catch(error => console.log(error))
+                  </div>
+                
+                </div>
+              );
+            }
+          });
+
+        
     }
 
 
@@ -51,7 +107,7 @@ function UserManagment() {
 
     return (
 
-        <div className='bg-gray-200 h-screen' > 
+        <div className='bg-gray-200 h-screen' >
             <div class="container mx-auto px-4 sm:px-8">
                 <div class="py-8">
                     <div>

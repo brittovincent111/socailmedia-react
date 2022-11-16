@@ -6,6 +6,8 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { FaUserAlt } from 'react-icons/fa'
 import { useState } from 'react'
 // import { UserContext } from '../../../stores/UserContext'
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 
 export default function AdminSideBar() {
@@ -23,19 +25,49 @@ export default function AdminSideBar() {
 
 
   const handleLogout = () => {
-    alert("logout successfully")
-    localStorage.removeItem('admin')
-    // setAdminDetails(null);
-    // removeCookie("jwt");
-    navigate('/admin/login');
+
+
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
+            <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
+            {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
+            <div className='flex space-x-2 p-2 '>
+            <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
+            <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
+              onClick={() => {
+                  // this.handleClickDelete();
+                onClose();
+                localStorage.removeItem('Admintoken')
+                navigate('/admin/login')
+                
+              }}
+            >
+              Yes, Block
+            </button>
+
+            </div>
+          
+          </div>
+        );
+      }
+    });
+
+    
+   
+   
+    
   }
 
 
 
 
   const Menus = [
+    { name: "Dashboard", link: '/admin/dashboard', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
     { name: "Users", link: '/admin/usermanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6 '  /> },
-    { name: "Posts", link: '/admin/postmanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> }
+    { name: "Posts", link: '/admin/postmanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
+    
 
 
   ];

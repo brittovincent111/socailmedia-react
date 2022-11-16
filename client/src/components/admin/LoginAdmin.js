@@ -55,8 +55,9 @@ function LoginAdmin() {
           }).then((response) => {
   
             console.log("hjhhgg");
-            console.log(response.error);
-            Navigate('/')
+            console.log(response.data.token , "tokennnnnnnn");
+            localStorage.setItem('Admintoken' , response.data.token)
+            Navigate('/admin/dashboard')
           }).catch((data) => {
             console.log(data.response.data.error, "sdffsd");
             setErrorMessage(data.response.data.error);
@@ -73,7 +74,7 @@ function LoginAdmin() {
   
     })
     return (
-        <div className='LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-20 w-full bg-red-100 ' >
+        <div className='LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-20 w-full  ' >
           <div className='main bg-slate-50 rounded-2xl shadow-2xl flex lg:w-2/3 flex justify-center max-w-4xl '>
             <div className='w-3/5 p-5'>
               <div className='py-10'>
@@ -141,7 +142,7 @@ function LoginAdmin() {
               </div>
     
             </div>
-            <div hidden className='hidden w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block '  >
+            <div hid className='hidden w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block '  >
               {/* <h2 className='text-2xl font-bold mb-2 text-white'>Hello , freinds</h2>
               <div className='border-2 w-10  border-white inline-block mb-2'></div>
               <p className='mb-10  text-white'>Fill Up Personal Information </p>

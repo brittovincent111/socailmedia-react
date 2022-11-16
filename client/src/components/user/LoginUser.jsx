@@ -3,13 +3,17 @@ import { FaRegEnvelope, FaLock } from 'react-icons/fa'
 import google from '../../assets/images/google.png'
 // import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import image from '../../assets/images/img1.jpg'
+import {update} from '../../redux/userRedux'
 import { useState } from 'react'
 import './LoginPage.css'
 import axios from 'axios'
 import { Link ,useNavigate } from 'react-router-dom'
+import { useSelector , useDispatch } from 'react-redux'
+
 
 function LoginUser() {
 
+  const dispatch = useDispatch()
   const Navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState("")
   const [Login, SetLogin] = useState({
@@ -54,8 +58,11 @@ function LoginUser() {
 
         }).then((response) => {
 
-          console.log("hjhhgg");
-          console.log(response.error);
+          localStorage.setItem('userToken', response.data.userToken)
+            localStorage.setItem('user' ,JSON.stringify( response.data.user))
+            dispatch(update(response.data.user))
+       
+          console.log(response.data.user , "jjjjjjjjjjjj");
           Navigate('/')
         }).catch((data) => {
           console.log(data.response.data.error, "sdffsd");
@@ -75,8 +82,8 @@ function LoginUser() {
 
 
   return (
-    <div className='LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-20 w-full bg-blue-200 ' >
-      <div className='main bg-slate-50 rounded-2xl shadow-2xl flex lg:w-2/3 flex justify-center max-w-4xl '>
+    <div className=' LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-20 w-full  bg-blue-100 ' >
+      <div className='main bg-slate-50 rounded-2xl shadow-2xl flex lg:w-2/3  justify-center max-w-4xl '>
         <div className='w-3/5 p-5'>
           <div className='py-10'>
 
@@ -143,7 +150,11 @@ function LoginUser() {
           </div>
 
         </div>
-        <div hidden className='hid w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block '  >
+        <div hidden className='hero w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block    '  >
+          <div className='w-20 h-20   ml-24 mt-48 rounded-full bg-blue-600 hover:bg-gray-200  flex justify-center items-center'>
+            <Link to='/signup' className='text-xl text-white hover:text-blue-900 font-semibold '>SIGNUP</Link>
+
+          </div>
           {/* <h2 className='text-2xl font-bold mb-2 text-white'>Hello , freinds</h2>
           <div className='border-2 w-10  border-white inline-block mb-2'></div>
           <p className='mb-10  text-white'>Fill Up Personal Information </p>

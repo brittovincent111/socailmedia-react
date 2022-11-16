@@ -11,6 +11,9 @@ import AdminLoginPage from './pages/adminPages/AdminLoginPage';
 import Structure from './pages/adminPages/Structure';
 import UserManagment from './components/admin/UserManagment';
 import PostManagment from './components/admin/PostManagment';
+import AdminDashboard from './components/admin/AdminDashboard';
+import { Provider } from 'react-redux';
+import store from './redux/store'
 
 
 function App() {
@@ -19,15 +22,23 @@ function App() {
 
     <div className="App">
      <Router>
+      <Provider store={store}>
+
+    
+   
       <Routes>
         <Route path='/login' element={<LoginUser/>}></Route>
         <Route path='/signup' element={<SignUpPage/>}></Route>
         <Route path='/' element={<FeedPage/>}></Route>
+       
+
 
       </Routes>
+      </Provider>
       <Routes>
         <Route path='/admin/login' element={<AdminLoginPage/>}></Route>
         <Route path='/admin' element={<Structure/>}>
+        <Route path='/admin/dashboard' element={<AdminDashboard/>}></Route>
         <Route path='/admin/usermanagment' element={<UserManagment/>}></Route>
         <Route path='/admin/postmanagment' element={<PostManagment/>}></Route>
         </Route>
