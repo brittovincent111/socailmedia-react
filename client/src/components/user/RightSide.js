@@ -27,7 +27,7 @@ function RightSide() {
 
   useEffect(() => {
 
-      Axios.get('http://localhost:4000/users' ).then((response) => {
+      Axios.get(`http://localhost:4000/users/${userId}`).then((response) => {
 
       SetUsers(response.data)
 

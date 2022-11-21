@@ -23,11 +23,13 @@ function Feed() {
   const [post , setPosts] = useState([])
   const userDetails = useSelector(state => state.user)
 
+  console.log(userDetails , "hhhhhhhhhhhhhhhhhhhhhhhhh")
+
 
   const navigate = useNavigate()
 
   const userId = userDetails._id
-
+console.log(post , "postssssssssssssssssssssssssssssssss")
   
 
 
@@ -48,10 +50,13 @@ function Feed() {
 
   },[])
 
+  
+
   useEffect (()=>{
     const fetchPost=async()=>{
       const res=await Axios.get(`http://localhost:4000/post/timeline/${userId}`)
       console.log(res.data , "ggggggggggggg");
+      
       setPosts(
         res.data.sort((p1,p2)=>{
         return new Date(p2.createdAt)-new Date(p1.createdAt)
@@ -72,18 +77,28 @@ function Feed() {
 
 
 {
-      post.map((post)=>{
+   post.length !=0 ? post.map((post)=>{
 
         return(
           
           <Post key={post.userId} post={post}/>
         )
-      })
-    }
+      })   : 
+        <div className='pl-5'>
 
+          <div className=' h-[300px] w-[600px] rounded-2xl bg-sky-800 mt-20 flex text-2xl justify-center items-center text-white '>No Post To Show
+        </div>
+
+     
+        
+        </div>
+
+               
+    }
     
     </>
-  )
+    ) 
+    
 }
 
 export default Feed

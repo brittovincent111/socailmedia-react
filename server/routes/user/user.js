@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost} = require("../../Controller/user/userController")
+const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest} = require("../../Controller/user/userController")
 const verifyJwtUser = require('../../MiddleWare/VerifyUser')
 const multer = require('multer');
 
@@ -30,11 +30,23 @@ router.post('/signup' , userSignUp)
 router.post('/login' , userLogin)
 router.get('/' ,  userFeed )
 router.post('/post' ,AdduserPost) 
-router.get('/users' , userDetails) 
+router.get('/users/:id' , userDetails) 
 router.put('/follow/:id' , followUsers)
 router.get('/post/timeline/:id' , timeLinePosts)
 router.get('/postdetails/:id' , postDetails )
 router.put('/like/post/:id' , likePost )
+router.put('/comment/post/:id' , commentPost )
+router.get('/viewcomment/post/:id' , viewComments )
+router.get('/userprofile/:id' , viewProfile )
+router.get('/friendRequest/:id' ,friendRequest  )
+router.post('/acceptRequest/:id' , acceptRequest  )
+
+
+
+
+
+
+
 
 
 module.exports = router;

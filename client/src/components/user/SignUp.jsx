@@ -12,6 +12,7 @@ function SignUp() {
 
     const [errorMessage, setErrorMessage] = useState("")
     const [signUp, SetSignUp] = useState({
+        userfullname:"",
         username: "",
         email: "",
         password: "",
@@ -31,11 +32,16 @@ function SignUp() {
     const OnSignup = (async (e) => {
         e.preventDefault()
         try {
-            if (!signUp.username) {
+            if (!signUp.userfullname) {
+                setErrorMessage("fullname is required");
+            } else if (signUp.userfullname.length < 3) {
+                setErrorMessage("Name must be atleast 3 characters");
+            } 
+            else if (!signUp.username) {
                 setErrorMessage("Userame is required");
             } else if (signUp.username.length < 3) {
                 setErrorMessage("Name must be atleast 3 characters");
-            } else if (!signUp.username.match(/^[A-Za-z][A-Za-z ]*$/)) {
+            }else if (!signUp.username.match(/^[A-Za-z][A-Za-z ]*$/)) {
                 setErrorMessage("Enter a valid name");
             } else if (!signUp.email) {
                 setErrorMessage("Email is required");
@@ -58,6 +64,8 @@ function SignUp() {
                 console.log("hhhhhhhhhhhhhhhhhhh")
 
                 await axios.post('http://localhost:4000/signup', {
+
+                userfullname : signUp.userfullname,
                     username: signUp.username,
 
                     email: signUp.email,
@@ -85,10 +93,10 @@ function SignUp() {
 
     })
     return (
-        <div className=' LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-20 w-full bg-blue-100 ' >
-                                    {errorMessage && <div className="p-4 mb-4 text-sm text-red-900 bg-red-100 rounded-lg dark:bg-red-400 dark:text-red-800" role="alert">{errorMessage}</div>}
+        <div className=' LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-10 w-full bg-blue-100 ' >
+                                    {errorMessage && <div className="p-4 my-4 text-sm text-red-900 bg-red-100 rounded-lg dark:bg-red-400 dark:text-red-800" role="alert">{errorMessage}</div>}
 
-            <div className='main bg-slate-50 rounded-2xl shadow-2xl  lg:w-2/3 flex justify-center max-w-4xl '>
+            <div className='main bg-slate-50 rounded-2xl shadow-2xl  lg:w-2/3 flex justify-center max-w-4xl  '>
                 {/* <div hidden className='w-2/5 p-5 py-36 px-12 bg-blue-700 rounded-tl-2xl rounded-bl-2xl lg:block ' >
                     <h2 className='text-2xl font-bold mb-2 text-white'>Hello , freinds</h2>
                     <div className='border-2 w-10  border-white inline-block mb-2'></div>
@@ -98,7 +106,7 @@ function SignUp() {
                 </div> */}
 
                 <div hidden className='hero w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tl-2xl rounded-bl-2xl lg:block   '  >
-                    <div className='w-20 h-20   ml-24 mt-56 rounded-full bg-blue-600 hover:bg-gray-200 flex justify-center items-center'>
+                    <div className='w-20 h-20   ml-20 mt-56 rounded-full bg-blue-600 hover:bg-gray-200 flex justify-center items-center'>
                         <Link to='/login' className='text-xl text-white hover:text-blue-900 font-semibold '>LOGIN</Link>
 
                     </div>
@@ -112,7 +120,7 @@ function SignUp() {
 
                 </div>
 
-                <div className='w-3/5 p-5'>
+                <div className='w-3/5 p-1'>
 
                     <div className='py-10'>
                         <h2 className='text-blue-700 text-3xl mb-2 align-top'>SIGNUP </h2>
@@ -122,6 +130,10 @@ function SignUp() {
 
 
                             <div className='flex flex-col items-center '>
+                            <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10'>
+                                    <FaUserAlt className='mr-2 mx-2' />
+                                    <input className=' bg-gray-100 outline-none  flex-1' type="name" placeholder='FullName' name='userfullname' onChange={(e) => { onHandleChange(e) }} />
+                                </div>
                                 <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10'>
                                     <FaUserAlt className='mr-2 mx-2' />
                                     <input className=' bg-gray-100 outline-none  flex-1' type="name" placeholder='Username' name='username' onChange={(e) => { onHandleChange(e) }} />

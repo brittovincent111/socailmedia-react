@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
@@ -41,11 +41,26 @@ function Sidebar() {
   const [file, SetFile] = useState("")
 
   const [postMod, setPostMod] = useState(false);
+  const [reqMod, setReqMod] = useState(false);
+  const [request, setRequest] = useState([]);
+  const [requestUpdate, setRequestUpdate] = useState(false);
+
+
+  console.log(request, "rrrrrrrrrrrrr")
+
+
 
 
   // const PF =process.env.REACT_APP_PUBLIC_FOLDER;
 
+  const [postImage, setPostImage] = useState()
+  const [showImage, setShowImage] = useState()
 
+  const handleImage =(e)=>{
+  console.log('yyyyyy');
+  setShowImage(URL.createObjectURL(e.target.files[0]))
+  SetFile(e.target.files[0])
+}
 
 
 
@@ -58,7 +73,24 @@ function Sidebar() {
   }
   const close = () => {
     setPostMod(false)
+    setShowImage()
+    SetFile()
 
+
+
+
+  }
+
+  useEffect(()=>{
+
+
+  },[file,showImage])
+
+
+  const imageClose =()=>{
+
+    setShowImage()
+    SetFile()
 
   }
 
@@ -145,6 +177,48 @@ function Sidebar() {
     }
   }
 
+  const onHandleRequest = async () => {
+
+    console.log("jjjjjjjjjjjj")
+
+    const userId = userDetails._id
+
+    await Axios.get(`http://localhost:4000/friendRequest/${userId}`).then((response) => {
+
+      console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
+      setRequest(response.data)
+
+      setReqMod(!reqMod)
+    })
+
+
+  }
+
+
+  // accept request 
+
+  const onHandleAcc = async (id, e) => {
+
+    e.preventDefault()
+
+    console.log(id, 'iddddddddddddddddd')
+
+
+
+    await Axios.post(`http://localhost:4000/acceptRequest/${id}`, { userID: userDetails._id }).then((response) => {
+
+      console.log(response.data)
+
+      setRequestUpdate(!requestUpdate)
+    })
+
+
+  }
+
+  useEffect(() => {
+
+
+  }, [requestUpdate])
 
 
 
@@ -186,7 +260,7 @@ function Sidebar() {
             </div>
             <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
 
-              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' onClick={onHandleRequest}>
 
                 <HiUserAdd className='text-2xl text-white' />
               </div>
@@ -308,15 +382,23 @@ function Sidebar() {
                 <div className='w-full h-max bg-white py-2  border-t-2 border-black'>
                   <div className='w-full h-1/2  px-1 flex items-center flex-col justify-center py-3'>
                     {/* <div className='text-sm font-medium'>Add Images</div> */}
-                    <label name='image' />
-                    <img src={ImageUpload} className="h-52 w-52" />
-                    <input type='file' name='file' onChange={(e) => { SetFile(e.target.files[0]) }} />
+                    {showImage ? <span >
+                      <div onClick={imageClose}>     <AiOutlineClose className='text-black text-2xl' /></div>
+                      <img src={showImage} alt="" className='h-[200px] w-[200px] ' />
+                    </span> :
+                      <div className='h-[290] w-[290] '>
+                        <label name='image' htmlFor='fileupload' >
+                          <img src={ImageUpload} className="h-52 w-52" />
+                        </label>
+                      </div>
+                    }
+                    <input hidden id='fileupload' type='file' name='file'  onChange={   handleImage } />
                   </div>
                 </div>
                 <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 items-center border'>
 
                   <div className='h-full w-1/12 bg-gray text-2xl flex items-center'> <BsEmojiSmile /></div>
-                  <textarea placeholder='Add Comment' name='description' className='h-full w-9/12 bg-white text-area flex items-center p-1' onChange={(e) => { SetDesc(e.target.value) }}></textarea>
+                  <textarea placeholder='Write a caption' name='description' className='h-full w-9/12 bg-white text-area flex items-center p-1' onChange={(e) => { SetDesc(e.target.value) }}></textarea>
 
 
                   <button type='submit' className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal '>POST</button>
@@ -329,6 +411,71 @@ function Sidebar() {
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
       ) : null}
+
+
+
+      {reqMod ? (
+        <>
+          <div
+            className="justify-center  items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
+          >
+            <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={(e) => { setReqMod(!reqMod) }}>
+              <AiOutlineClose className='text-white text-2xl' />
+            </div>
+            <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300 h-[400px]  shadow-xl border '>
+
+              <div className='flex justify-center h-max'>
+                <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Follow Requests </div>
+
+              </div>
+
+              <div className='w-full h-[300px] bg-white py-2  border-t-2 border-black'>
+                <div className='m-6 h-full  '>
+
+
+                  {request.map((obj) => {
+                    return (
+                      <div className='flex  justify-evenly items-center w-full  space-x-2 ' >
+                        <div className="flex   items-center w-full space-x-2">
+                          <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' onClick={onHandleRequest}>
+
+                            <HiUserAdd className='text-2xl text-white' />
+                          </div>
+                          <div className='flex justify-center item-center'>{obj.list.username}</div>
+                        </div>
+                        <div className='flex items-center space-x-2'>
+                          <div className='flex items-center rounded-xl bg-blue-700 p-1'>
+                            <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+
+                              <HiUserAdd className='text-xl text-white' />
+                            </div>
+
+                            <p className='text-sm text-white'>Decline</p>
+                          </div>
+                          <div className='flex items-center rounded-xl bg-blue-700 p-1 cursor-pointer' onClick={(e) => { onHandleAcc(obj.list._id, e) }}>
+                            <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+
+                              <HiUserAdd className='text-xl text-white' />
+                            </div>
+
+                            <p className='text-sm text-white'>Accept</p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })
+
+                  }
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+
     </div>
 
 

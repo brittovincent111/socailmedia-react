@@ -3,6 +3,11 @@ const {Schema} = mongoose;
 
 
 const UserSchema = new Schema({
+    userfullname :{
+        type : String,
+        required : true 
+
+    },
 
     username :{
         type : String,
@@ -30,21 +35,41 @@ const UserSchema = new Schema({
         default : "Active"
     },
 
-    requestTo : {
-        type : Array,
-        default : []
+    requestTo : 
+        [{
+            list: {
+                type: mongoose.Schema.Types.ObjectId,
+                require: true,
+                ref: "user"
+            }
+      
        
-    },
-    requestFrom : {
-        type : Array,
-        default : []
+    }]
+      
        
-    }
     ,
-    following : {
-       type : Array,
-       default : []
-    }
+    requestFrom : 
+        [{
+            list: {
+                type: mongoose.Schema.Types.ObjectId,
+                require: true,
+                ref: "user"
+            }
+      
+       
+    }]
+    
+    ,
+    following : 
+    [{
+     
+            type: mongoose.Schema.Types.ObjectId,
+            require: true,
+            ref: "user"
+     
+  
+   
+}]
 })
 
 const userSchemma = mongoose.model('user', UserSchema)

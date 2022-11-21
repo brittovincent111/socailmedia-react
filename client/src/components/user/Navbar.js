@@ -8,6 +8,7 @@ import { AiOutlineHeart,AiOutlinePlus } from 'react-icons/ai'
 import profile from '../../assets/images/profile.jpg'
 import {update} from '../../redux/userRedux'
 import { useSelector } from 'react-redux'
+import { Link ,useNavigate } from 'react-router-dom'
 
 
 
@@ -58,9 +59,9 @@ export default function Navbar() {
             {/* right */}
             <div className='flex items-center  '>
                 <div className='flex items-center md:mx-2 mx-1 md:space-x-6 space-x-2 '>
-                <div className='flex items-center bg-white p-3 md:ml-2  rounded-full md:hover:bg-gray-100 cursor-pointer'>
+                <Link to='/' className='flex items-center bg-white p-3 md:ml-2  rounded-full md:hover:bg-gray-100 cursor-pointer'>
                         <FaHome className='md:text-2xl text-xl '/>
-                    </div>
+                    </Link>
                     <div className='flex items-center bg-white p-3 rounded-full md:hover:bg-gray-100 cursor-pointer '>
                         <SiMessenger className='md:text-2xl text-xl '/>
                     </div>
@@ -68,9 +69,9 @@ export default function Navbar() {
                         <IoMdNotifications className='md:text-2xl text-xl ' />
                     </div>
                    
-                    <div className='flex items-center bg-white  justify-center  rounded-full md:hover:bg-gray-100 cursor-pointer '>
-                       <img className='w-12 h-12 object-fit  rounded-full' src={profile} />{userDetails.username}
-                    </div>
+                    <Link to='/profile' className='flex items-center bg-white  justify-center  rounded-full md:hover:bg-gray-100 cursor-pointer '>
+                       <img className='w-12 h-12 object-fit  rounded-full' src={profile} />
+                    </Link>
                 </div>
 
             </div>

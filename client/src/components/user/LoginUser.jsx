@@ -151,7 +151,7 @@ function LoginUser() {
 
         </div>
         <div hidden className='hero w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block    '  >
-          <div className='w-20 h-20   ml-24 mt-48 rounded-full bg-blue-600 hover:bg-gray-200  flex justify-center items-center'>
+          <div className='w-20 h-20   ml-20 mt-48 rounded-full bg-blue-600 hover:bg-gray-200  flex justify-center items-center'>
             <Link to='/signup' className='text-xl text-white hover:text-blue-900 font-semibold '>SIGNUP</Link>
 
           </div>
