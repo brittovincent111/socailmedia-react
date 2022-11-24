@@ -10,6 +10,7 @@ import pro4 from '../../assets/images/pro4.jpg'
 import pro5 from '../../assets/images/pro5.jpg'
 import Axios from 'axios'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 
 
@@ -19,33 +20,47 @@ import { useSelector } from 'react-redux'
 function RightSide() {
 
   const [users, SetUsers] = useState([])
+  const [user, SetUser] = useState()
+  const [updation, SetUpdation] = useState(false)
 
-  const userDetails = useSelector(state=>state.user)
+
+
+  const userDetails = useSelector(state => state.user)
 
   const userId = userDetails._id
 
 
   useEffect(() => {
+    
 
-      Axios.get(`http://localhost:4000/users/${userId}`).then((response) => {
+    Axios.get(`http://localhost:4000/users/${userId}`).then((response) => {
 
       SetUsers(response.data)
 
 
+
+
     })
-  }, [])
-
-
-  const follow =(async(id)=>{
-
-  
-
-    await Axios.put(`http://localhost:4000/follow/${id}` , { userId: userId}).then((response) => {
+  },[updation])
 
 
 
 
-    }).catch((error)=>{
+  const follow = (async (id,e) => {
+
+    e.preventDefault()
+
+
+        
+
+    console.log("calllll")
+    await Axios.put(`http://localhost:4000/follow/${id}`, { userId: userId }).then((response) => {
+
+      console.log(response);
+      SetUpdation(!updation)
+
+
+    }).catch((error) => {
 
       console.log(error)
     })
@@ -53,6 +68,10 @@ function RightSide() {
 
   })
 
+
+
+
+ 
 
   return (
     <div className=' w-full h-full border-slate-300 border overflow-hidden rounded-2xl z-10 '>
@@ -76,7 +95,7 @@ function RightSide() {
 
                 return (
                   <div className='w-full h-16  flex items-center justify-between rounded-2xl  hover:cursor-pointer'>
-                    <div className='flex items-center'>
+                    <Link to={`/profile/${obj.username}`} className='flex items-center'>
 
 
                       <div className='w-max h-full flex rounded-2xl '>
@@ -86,8 +105,9 @@ function RightSide() {
                       <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.username}
 
                       </p>
-                    </div>
-                    <p className='items-center' onClick={(e)=>{follow(obj._id)}}>FOLLOW</p>
+                    </Link>
+               
+                          <p className='items-center' onClick={(e)=>{ follow(obj._id,e) }}>FOLLOW</p>
                   </div>
                 )
 
@@ -146,7 +166,7 @@ function RightSide() {
 
 
           </div>
-          <div className=' overflow-y-scroll space-y-2 w-full h-48'>
+          <div className=' overflow-y-scroll space-y-2 w-full h-48 no-scrollbar'>
             <div className='w-max h-16  flex items-center rounded-2xl  hover:cursor-pointer'>
 
               <div className='w-max h-full flex rounded-2xl '>

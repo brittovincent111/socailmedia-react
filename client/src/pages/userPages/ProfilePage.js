@@ -7,16 +7,16 @@ import Sidebar from '../../components/user/Sidebar'
 function ProfilePage() {
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div className='flex '>
         <div className='hidden md:block'>
-      <Sidebar/>
+          <Sidebar />
 
         </div>
 
-      <Profile/>
+        <Profile />
       </div>
-      
+
 
     </div>
   )

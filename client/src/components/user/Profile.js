@@ -3,23 +3,38 @@ import { FiSettings } from 'react-icons/fi'
 import { BsFillGrid1X2Fill } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
+import { useParams } from 'react-router-dom'
 
 
 
 
 function Profile() {
 
+  const [data, SetData] = useState()
   const [posts, SetPosts] = useState([])
 
-  const userDetails = useSelector(state => state.user)
+
+  const userDetails =useParams().username 
+
+  console.log(userDetails , "LLLLLLLLL")
 
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
 
   useEffect(() => {
 
-    axios.get(`http://localhost:4000/userprofile/${userDetails._id}`).then((response) => {
+    axios.get(`http://localhost:4000/userprofile/${userDetails}`).then((response) => {
 
-      SetPosts(response.data)
+      SetData(response.data)
+
+      
+
+
+    }).then(()=>{
+
+      axios.get(`http://localhost:4000/viewProfilePosts/${data._id}`).then((response)=>{
+
+          SetPosts(response.data)
+      })
 
 
     }).catch((error) => {
@@ -31,6 +46,8 @@ function Profile() {
 
   }, [])
 
+  console.log(data , "dataaaaaaaaaaaaaaaa")
+
   return (
     <div className='w-full h-screen  flex justify-center bg-gray-100'>
 
@@ -41,7 +58,7 @@ function Profile() {
         <div className=' h-max w-full  grid md:grid-cols-2 lg:grid-cols-3'>
           <div className=' h-full  flex-col flex justify-center items-center md:p-10'>
             <div className='w-44 h-44 bg-red-500 rounded-full mb-10 mt-5'></div>
-            <div className='font-semibold  text-xl'>{userDetails.username}</div>
+            <div className='font-semibold  text-xl'>{data?.username}</div>
           </div>
           <div className='  h-32 md:h-full lg:h-full   flex  justify-center items-center'>
             <div className=' flex flex-col md:justify-start justify-center'>
@@ -51,13 +68,13 @@ function Profile() {
 
               </div>
               <div className='flex items-center  space-x-3 rounded-2xl p-2  w-max'>
-                <div className='flex justify-center items-center '>
-                  <p className='font-semibold  text-xl'>45</p>
+                <div className='flex justify-center items-center space-x-2'>
+                  <p className='font-semibold  text-xl'>{data?.following?.length}</p>
                   <p className='font-semibold  text-base'>followers</p>
                 </div>
-                <div className='flex justify-center items-center'>
-                  <p className='font-semibold  text-xl'>45</p>
-                  <p className='font-semibold  text-base'>followers</p>
+                <div className='flex justify-center items-center space-x-2'>
+                  <p className='font-semibold  text-xl '>45</p>
+                  <p className='font-semibold  text-base'>Posts</p>
                 </div>
 
 

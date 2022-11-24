@@ -10,7 +10,6 @@ const userSchemma = require('../../schema/user/signUp')
 
 
 
-
 const controller = {
 
   userSignUp: async (req, res) => {
@@ -39,7 +38,7 @@ const controller = {
           let password = await bcrypt.hash(req.body.password, 10)
 
           await userSchemaa.create({
-            userfullname : req.body.userfullname,
+            userfullname: req.body.userfullname,
             username: req.body.username,
             email: req.body.email,
             password: password
@@ -129,20 +128,75 @@ const controller = {
   userDetails: async (req, res) => {
 
     try {
-          console.log(req.params.id , "param idddddddddddd")
-      await userSchemaa.find({_id :{ $nin:[req.params.id]}}).limit(3).then((response) => {
+      console.log(req.params.id, "param idddddddddddd")
+      let users = await userSchemaa.find({ _id: { $nin: [req.params.id] } })
+      let user = await userSchemaa.findById( req.params.id )
 
-        res.status(200).json(response)
+      console.log(user , "userrrrrrrrrrr")
+      let add =    users.filter((obj)=>{
 
-        console.log(response , "llllllllllll")
-      }).catch((error) => {
+          
+           if (!(user.requestTo.includes(obj._id)) && !(user.requestFrom.includes(obj._id)) && !(user.following.includes(obj._id))){
 
-        console.log(error)
+             return  obj
+           }
+  
+           
+          })
+          let sliced = add.slice(1,4)
 
-      })
+      res.status(200).json(sliced)
+
+      
 
     } catch (error) {
+      console.log(error.message, "llllllllllll")
 
+
+    }
+
+
+  },
+  
+
+
+  // add follow request 
+
+  followUsers: async (req, res) => {
+
+    try {
+
+      console.log(req.params.id)
+      console.log(req.body, "bodyyyyyyy")
+
+      let user = await userSchemaa.findOne({ _id: req.body.userId })
+      let requeseter = await userSchemaa.findOne({ _id: req.params.id, requestFrom:  req.body.userId }  )
+
+
+      if (user.requestTo.includes(req.params.id) || user.requestFrom.includes(req.params.id)) {
+
+
+
+        res.status(200).json("alread requested")
+        res.status(200).json("updated")
+
+
+      } else {
+
+
+        console.log(user, "kkkkkkkkkkk")
+        let userpush = await userSchemaa.updateOne({ _id: req.body.userId }, { $push: { requestTo: req.params.id } })
+        let requeseterPush = await userSchemaa.updateOne({ _id: req.params.id }, { $push: { requestFrom: req.body.userId } })
+        console.log(user, "hhhhhhhhhhhhhhhhhhhhhhhhhh")
+
+        res.status(200).json("updated")
+
+
+      }
+    } catch (error) {
+
+
+      console.log(error.message, "mmmmmmmmm")
     }
 
 
@@ -150,52 +204,6 @@ const controller = {
 
 
 
-  // add follow request 
-
-  followUsers: async (req, res) => {
-
-    try{
-
-    
-
-
-    console.log(req.params.id)
-    console.log(req.body, "bodyyyyyyy")
-
-    let user = await userSchemaa.findOne({_id : req.body.userId, requestFrom:{$elemMatch : { list : req.params.id }} })
-    let requeseter = await userSchemaa.findOne({_id : req.params.id , requestFrom:{$elemMatch : { list : req.body.userId }} })
-
-    console.log(requeseter , "llllllllllllllffffffffffff")
-    
-  if(user == null && requeseter == null){
-
-    console.log(user , "kkkkkkkkkkk")
-    let userpush =  await userSchemaa.updateOne({_id: req.body.userId},{ $push: { requestTo:{ list : req.params.id }} })
-    let requeseterPush = await userSchemaa.updateOne({_id: req.params.id},{ $push: { requestFrom:{ list : req.body.userId }} })
-
-     res.status(200).json("updated")
-     
-
-  }else {
-
-    res.status(200).json("alread requested")
-
-    console.log(user , "hhhhhhhhhhhhhhhhhhhhhhhhhh")
-
-    
-
-
-  }
-}catch(error){
-
-
-  console.log(error.message , "mmmmmmmmm")
-}
-
-    
-
-
-  },
   userFeed: (req, res) => {
 
 
@@ -208,25 +216,20 @@ const controller = {
 
     try {
 
-           
+
 
       let currentUser = await userSchemaa.findById(req.params.id)
       let userPosts = await postSchemma.find({ userId: currentUser._id }).sort({ createdAt: -1 })
       const friendsPost = await Promise.all(
         currentUser.following.map((friends) => {
 
-          return postSchemma.find({ userId: friends.list }).sort({ createdAt: -1 })
+          return postSchemma.find({ userId: friends }).sort({ createdAt: -1 })
         })
 
       )
 
-      console.log(friendsPost , "KKKKKKKDSSDASDASD")
-    //   currentUser.requestTo.map((friends) => {
-
-    //     return postSchemma.find({ userId: friends }).sort({ createdAt: -1 })
-    //   })
-
-    // )
+      console.log(friendsPost, "KKKKKKKDSSDASDASD")
+     
 
       res.json((userPosts.concat(...friendsPost)))
       console.log(userPosts.concat(...friendsPost), "friendspostssssssss")
@@ -339,50 +342,113 @@ const controller = {
     }
   },
 
-  viewComments: async(req, res) => {
+
+  savePost: async (req, res) => {
+
+    try {
+
+      console.log(req.params.id, "POSTiddddddddSAVED")
+      console.log(req.body.userId)
+
+      const postId = req.params.id
+      const { userId} = req.body
+
+      const post = await userSchemaa.findById( userId )
+
+      console.log(post , "postssssssdfasdfasfdasdfasdfasdfasdfasdf")
+
+      if(!(post.savedPost.includes(req.params.id))){
+         
+        let response = await userSchemaa.updateOne({_id: userId},{ $push: { savedPost: postId} })
+
+        res.status(200).json({message :"updated"})
+
+      }else{
+
+        
+
+        
+        console.log("already added ")
+        res.status(200).json({ message :"already added"})
+      }
+
+    } catch (error) {
+
+      console.log(error.message)
+
+
+
+    }
+  },
+
+  savedPost :async(req,res)=>{
+
+   try {
+
+    console.log(req.params.id , "savedpostssssssss idddddddddddddd")
+
+    let savedPosts = await userSchemaa.findOne({_id :req.params.id}).populate('savedPost')
+
+    console.log(savedPosts.savedPost , "savedpostsssssssssssssssssssssss")
+
+    res.status(200).json(savedPosts.savedPost)
+
+
+   }catch(error){
+
+    console.log(error.message , "eroorrrrrrerwerwe")
+
+
+   }
+
+  },
+
+  viewComments: async (req, res) => {
     console.log(req.params.id, "hiiiiiiiiiiiiiiiii")
 
     const postID = req.params.id
 
-    await commentScheema.find({postId : postID}).populate('userId').then((response) => {
+    await commentScheema.find({ postId: postID }).populate('userId').then((response) => {
 
       console.log(response, "commentdetailssssssssssss")
       res.status(200).json(response)
     }).catch((error) => {
-     
+
       console.log(error.message)
       res.status(401).json(error)
     })
 
 
-  
+
   },
 
   // view profile posts 
 
-  viewProfile : async(req,res)=>{
+  viewProfile: (req, res) => {
 
-    try{
+    console.log("abcdefg");
 
-      console.log(req.params.id,"gggggggggggg")
+    try {
+
+      console.log(req.params.id, "gggggggggggg")
 
       const userId = req.params.id
 
-      await postSchemma.find({userId : userId}).then((response)=>{
+       userSchemaa.findOne({ username: userId }).then((response) => {
 
-        console.log(response)
+        console.log(response , "userdetajsdfksgfhsgdfhsg")
 
         res.status(200).json(response)
-      }).catch((error)=>{
+      }).catch((error) => {
 
         console.log("sdfffffffffffffffff")
 
         res.status(401).json(error)
       })
 
-    }catch(error){
+    } catch (error) {
 
-      console.log(error.message , "ggggggggggg")
+      console.log(error.message, "ggggggggggg")
       res.status(500).json(error)
 
 
@@ -390,24 +456,49 @@ const controller = {
     }
   },
 
+
+  // view posts profile 
+
+ viewProfilePosts : async(req,res)=>{
+  
+ try{
+
+  console.log(req.params.id , "paramsiddd")
+
+   let posts = await postSchemma.find({userId : req.params.id})
+
+   console.log(posts , "postsssssssssss")
+
+   res.status(200).json(posts)
+
+
+ }catch{
+
+
+
+ }
+
+
+ },
+
   // friendRequests  
 
-  friendRequest :(req,res)=>{
+  friendRequest: (req, res) => {
 
-    try{
+    try {
 
       console.log(req.params.id)
       const userId = req.params.id
 
-      userSchemaa.findOne({_id:userId}).populate('requestFrom.list').then((response)=>{
+      userSchemaa.findOne({ _id: userId }).populate('requestFrom').then((response) => {
 
-       console.log(response.requestFrom , "responsemmmmmmm")
-       res.status(200).json(response.requestFrom)
+        console.log(response.requestFrom, "responsemmmmmmm")
+        res.status(200).json(response.requestFrom)
       })
 
-      
 
-    }catch(error){
+
+    } catch (error) {
 
       console.log(error.message)
 
@@ -416,37 +507,149 @@ const controller = {
 
   // accept request 
 
-  acceptRequest: async(req,res)=>{
+  acceptRequest: async (req, res) => {
 
-    try{
-       
+    try {
 
-      console.log(req.params.id ,"oooooooooo")
-      console.log(req.body.userID,"kkkkkkkkkk")
+
+      console.log(req.params.id, "oooooooooo")
+      console.log(req.body.userID, "kkkkkkkkkk")
 
       let userId = req.body.userID
       let requestId = req.params.id
-      
-
-
-     let user =  await userSchemaa.updateOne({_id: userId},{ $pull: { requestFrom:{ list : req.params.id }} })
-     let requeseter = await userSchemaa.updateOne({_id:  requestId},{ $pull: { requestFrom:{ list : userId }} })
-     let userUpdate =  await userSchemaa.updateOne({_id: userId},{ $push: { following:{ list : req.params.id }} })
-
-     let reqUpdate = await userSchemaa.updateOne({_id:  requestId},{ $push: { following:{ list : userId }} })
-
-       
 
 
 
+      let user = await userSchemaa.updateOne({ _id: userId }, { $pull: { requestFrom: req.params.id } })
+      let requeseter = await userSchemaa.updateOne({ _id: requestId }, { $pull: { requestFrom: userId } })
+      let userUpdate = await userSchemaa.updateOne({ _id: userId }, { $push: { following: req.params.id } })
+
+      let reqUpdate = await userSchemaa.updateOne({ _id: requestId }, { $push: { following: userId } })
 
 
-    }catch(error){
-      console.log(error , " messdfsdfsdfsdsageeeeeeeeeeeeeeeee")
+      res.status(200).json("accepted")
+
+
+
+
+    } catch (error) {
+      console.log(error, " messdfsdfsdfsdsageeeeeeeeeeeeeeeee")
 
 
     }
+  },
+
+  // decline request 
+
+  declineRequest: async (req, res) => {
+
+    try {
+
+
+
+      console.log(req.params.id, "oooooooooo")
+      console.log(req.body.userID, "kkkkkkkkkk")
+
+      let userId = req.body.userID
+      let requestId = req.params.id
+
+
+
+      let user = await userSchemaa.updateOne({ _id: userId }, { $pull: { requestFrom: req.params.id } })
+      let requeseter = await userSchemaa.updateOne({ _id: requestId }, { $pull: { requestTo: userId } })
+
+      res.status(200).json("declined")
+
+
+    } catch (error) {
+      console.log(error, " messdfsdfsdfsdsageeeeeeeeeeeeeeeee")
+
+
+    }
+
+  },
+
+
+  // cancel request
+
+  cancelRequest: async (req, res) => {
+
+    try {
+
+
+
+      console.log(req.params.id, "oooooooooo")
+      console.log(req.body.userID, "kkkkkkkkkk")
+
+      let userId = req.body.userID
+      let requestId = req.params.id
+
+
+
+      let user = await userSchemaa.updateOne({ _id: userId }, { $pull: { requestTo: req.params.id } })
+      let requeseter = await userSchemaa.updateOne({ _id: requestId }, { $pull: { requestFrom: userId } })
+
+      res.status(200).json("declined")
+
+
+    } catch (error) {
+      console.log(error, " messdfsdfsdfsdsageeeeeeeeeeeeeeeee")
+
+
+    }
+
+  },
+
+  unfollow: async(req, res) => {
+
+    try {
+
+
+
+      console.log(req.params.id, "oooooooooo")
+      console.log(req.body.userID, "kkkkkkkkkk")
+
+      let userId = req.body.userID
+      let requestId = req.params.id
+
+
+
+      let user = await userSchemaa.updateOne({ _id: userId }, { $pull: { following: req.params.id } })
+      let requeseter = await userSchemaa.updateOne({ _id: requestId }, { $pull: { following: userId } })
+
+      res.status(200).json("declined")
+
+
+    } catch (error) {
+      console.log(error, " messdfsdfsdfsdsageeeeeeeeeeeeeeeee")
+
+
+    }
+
+  },
+   /* ---------------------------- find single user ---------------------------- */
+  findUser :async(req,res)=>{
+
+
+    try {
+
+    console.log(req.params.id , "iddddd")
+
+     let User = await userSchemaa.findById(req.params.id)
+      
+
+     console.log(User , "user")
+     res.status(200).json(User)
+
+    }catch(error){
+
+      res.status(500).json(error)
+
+    }
   }
+
+
+
 
 
 }

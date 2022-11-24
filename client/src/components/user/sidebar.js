@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
-import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
+import { BsEmojiSmile } from 'react-icons/bs'
 
 
 import { BsFillBookmarkFill } from 'react-icons/bs'
@@ -15,9 +15,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import javascript from '../../assets/images/js.png'
 import node from '../../assets/images/nodejs.jpg'
 import stat from '../../assets/images/stat.png'
-import feedImage from '../../assets/images/messi.jpg'
 import ImageUpload from '../../assets/images/uploadimage2.jpg'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -56,11 +55,11 @@ function Sidebar() {
   const [postImage, setPostImage] = useState()
   const [showImage, setShowImage] = useState()
 
-  const handleImage =(e)=>{
-  console.log('yyyyyy');
-  setShowImage(URL.createObjectURL(e.target.files[0]))
-  SetFile(e.target.files[0])
-}
+  const handleImage = (e) => {
+    console.log('yyyyyy');
+    setShowImage(URL.createObjectURL(e.target.files[0]))
+    SetFile(e.target.files[0])
+  }
 
 
 
@@ -81,24 +80,18 @@ function Sidebar() {
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
 
-  },[file,showImage])
+  }, [file, showImage])
 
 
-  const imageClose =()=>{
+  const imageClose = () => {
 
     setShowImage()
     SetFile()
 
   }
-
-  // image upload 
-
-
-
-  // logout 
 
   const logout = () => {
 
@@ -135,11 +128,6 @@ function Sidebar() {
         );
       }
     });
-
-
-
-
-
   }
 
 
@@ -177,22 +165,27 @@ function Sidebar() {
     }
   }
 
-  const onHandleRequest = async () => {
+  const onHandleRequest = () => {
+    setReqMod(!reqMod)
+
+  }
+
+  useEffect(() => {
 
     console.log("jjjjjjjjjjjj")
 
     const userId = userDetails._id
 
-    await Axios.get(`http://localhost:4000/friendRequest/${userId}`).then((response) => {
+    Axios.get(`http://localhost:4000/friendRequest/${userId}`).then((response) => {
 
       console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
       setRequest(response.data)
 
-      setReqMod(!reqMod)
+
     })
 
 
-  }
+  }, [requestUpdate])
 
 
   // accept request 
@@ -203,11 +196,9 @@ function Sidebar() {
 
     console.log(id, 'iddddddddddddddddd')
 
-
-
     await Axios.post(`http://localhost:4000/acceptRequest/${id}`, { userID: userDetails._id }).then((response) => {
 
-      console.log(response.data)
+      console.log(response.data, "jjjjjjjjjjjjjj")
 
       setRequestUpdate(!requestUpdate)
     })
@@ -215,21 +206,27 @@ function Sidebar() {
 
   }
 
-  useEffect(() => {
+  const onHandleDec = async (id, e) => {
 
+    e.preventDefault()
 
-  }, [requestUpdate])
+    console.log(id, 'iddddddddddddddddd')
+    await Axios.post(`http://localhost:4000/declineRequest/${id}`, { userID: userDetails._id }).then((response) => {
 
+      console.log(response.data, "jjjjjjjjjjjjjj")
 
+      setRequestUpdate(!requestUpdate)
+    })
+  }
 
   return (
-    <div className=''>
+    <div className='hidden md:block'>
       <div className=' w-full h-full   overflow-hidden rounded-2xl '>
         <div className=' w-full h-full  '>
           <div className=' py-5 space-y-3 p-3 rounded-2xl '>
             <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
 
-              <div className='w-max h-full flex items-center rounded-2xl hover:cursor-pointer '>
+              <Link to='/savedPosts' className='w-max h-full flex items-center rounded-2xl hover:cursor-pointer '>
                 <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
 
                   <BsFillBookmarkFill className='text-2xl text-white' />
@@ -239,7 +236,7 @@ function Sidebar() {
                 </p>
 
 
-              </div>
+              </Link>
 
 
 
@@ -289,7 +286,7 @@ function Sidebar() {
 
           </div>
           <div className='w-full border'></div>
-          <div className=' py-5 space-y-3 mt-4 p-3 rounded-2xl'>
+          <div className=' py-5 space-y-3 mt-1 p-3 rounded-2xl'>
             <div className='w-max h-10  flex items-center justify-center'>
 
 
@@ -299,7 +296,7 @@ function Sidebar() {
 
 
             </div>
-            <div className=' overflow-y-scroll space-y-2 w-full h-48'>
+            <div className=' overflow-y-scroll space-y-2 w-full h-36 no-scrollbar'>
 
 
               <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
@@ -392,7 +389,7 @@ function Sidebar() {
                         </label>
                       </div>
                     }
-                    <input hidden id='fileupload' type='file' name='file'  onChange={   handleImage } />
+                    <input hidden id='fileupload' type='file' name='file' onChange={handleImage} />
                   </div>
                 </div>
                 <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 items-center border'>
@@ -441,10 +438,10 @@ function Sidebar() {
 
                             <HiUserAdd className='text-2xl text-white' />
                           </div>
-                          <div className='flex justify-center item-center'>{obj.list.username}</div>
+                          <div className='flex justify-center item-center'>{obj.username}</div>
                         </div>
                         <div className='flex items-center space-x-2'>
-                          <div className='flex items-center rounded-xl bg-blue-700 p-1'>
+                          <div className='flex items-center rounded-xl bg-blue-700 p-1' onClick={(e) => { onHandleDec(obj._id, e) }}>
                             <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
 
                               <HiUserAdd className='text-xl text-white' />
@@ -452,7 +449,7 @@ function Sidebar() {
 
                             <p className='text-sm text-white'>Decline</p>
                           </div>
-                          <div className='flex items-center rounded-xl bg-blue-700 p-1 cursor-pointer' onClick={(e) => { onHandleAcc(obj.list._id, e) }}>
+                          <div className='flex items-center rounded-xl bg-blue-700 p-1 cursor-pointer' onClick={(e) => { onHandleAcc(obj._id, e) }}>
                             <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
 
                               <HiUserAdd className='text-xl text-white' />

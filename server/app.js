@@ -8,7 +8,8 @@ const connection = require('./connection')
 
 var userRouter = require('./routes/user/user');
 var adminRouter = require('./routes/admin/admin');
-
+var chatRouter = require('./routes/chat/ChatRoute')
+var messageRouter = require('./routes/message/messageRouter')
 connection();
 
 
@@ -25,6 +26,10 @@ app.use('/images',express.static(path.join(__dirname,'public/images')))
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
+app.use('/chat', chatRouter);
+app.use('/message', messageRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

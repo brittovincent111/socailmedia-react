@@ -15,6 +15,8 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import { Provider } from 'react-redux';
 import store from './redux/store'
 import ProfilePage from './pages/userPages/ProfilePage';
+import MessagePage from './pages/userPages/MessagePage';
+import SavedPostPage from './pages/userPages/SavedPostPage';
 
 
 
@@ -32,7 +34,11 @@ function App() {
         <Route path='/login' element={<LoginUser/>}></Route>
         <Route path='/signup' element={<SignUpPage/>}></Route>
         <Route path='/' element={<FeedPage/>}></Route>
-        <Route path='/profile' element={<ProfilePage/>}></Route>
+        <Route path='/profile/:username' element={<ProfilePage/>}></Route>
+        <Route path='/message' element={<MessagePage/>}></Route>
+        <Route path='/savedPosts' element={<SavedPostPage/>}></Route>
+
+
        
 
 

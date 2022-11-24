@@ -62,9 +62,9 @@ export default function Navbar() {
                 <Link to='/' className='flex items-center bg-white p-3 md:ml-2  rounded-full md:hover:bg-gray-100 cursor-pointer'>
                         <FaHome className='md:text-2xl text-xl '/>
                     </Link>
-                    <div className='flex items-center bg-white p-3 rounded-full md:hover:bg-gray-100 cursor-pointer '>
+                    <Link to='/message' className='flex items-center bg-white p-3 rounded-full md:hover:bg-gray-100 cursor-pointer '>
                         <SiMessenger className='md:text-2xl text-xl '/>
-                    </div>
+                    </Link>
                     <div className='flex items-center bg-white p-3  rounded-full md:hover:bg-gray-100 cursor-pointer '>
                         <IoMdNotifications className='md:text-2xl text-xl ' />
                     </div>

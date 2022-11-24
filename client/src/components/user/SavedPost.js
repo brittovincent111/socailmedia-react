@@ -18,7 +18,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 
 
-function Feed() {
+function SavedPost() {
 
   const [post , setPosts] = useState([])
   const userDetails = useSelector(state => state.user)
@@ -54,7 +54,7 @@ function Feed() {
 
   useEffect (()=>{
     const fetchPost=async()=>{
-      const res=await Axios.get(`http://localhost:4000/post/timeline/${userId}`)
+      const res=await Axios.get(`http://localhost:4000/savedpost/${userId}`)
       console.log(res.data , "ggggggggggggg");
       
       setPosts(
@@ -105,4 +105,4 @@ function Feed() {
     
 }
 
-export default Feed
+export default SavedPost
