@@ -10,8 +10,8 @@ function Conversation({ data, currentUser, online }) {
   console.log(currentUser, "usggggggggggggerid")
   useEffect(() => {
 
-    const userId = data.members.find((id) => id !== currentUser)
-    console.log("hiiii");
+    const userId = data.members.find((id)=>id!== currentUser)
+    console.log(userId , "useridhgdhkfgdhfsdkhfkhd");
     const getUserData = async () => {
 
       try {
@@ -20,7 +20,7 @@ function Conversation({ data, currentUser, online }) {
         console.log(data, "datafcfcgxdgxdxaaaaaaaaa")
 
       } catch (error) {
-
+        console.log("error catched ")
         console.log(error)
 
       }
@@ -31,7 +31,7 @@ function Conversation({ data, currentUser, online }) {
   }, [])
   return (
     <div>
-      {online && 
+  
       <div>
         <a
           class="flex items-center px-3 py-2 text-sm transition duration-150 ease-in-out border-b border-gray-300 cursor-pointer hover:bg-gray-100 focus:outline-none">
@@ -46,7 +46,7 @@ function Conversation({ data, currentUser, online }) {
           </div>
         </a>
       </div>
-}
+
     </div>
   )
 }

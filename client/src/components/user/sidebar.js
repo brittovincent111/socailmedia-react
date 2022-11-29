@@ -45,7 +45,7 @@ function Sidebar() {
   const [requestUpdate, setRequestUpdate] = useState(false);
 
 
-  console.log(request, "rrrrrrrrrrrrr")
+  // console.log(request, "rrrrrrrrrrrrr")
 
 
 
@@ -148,7 +148,7 @@ function Sidebar() {
       newPost.img = fileName
       try {
         await Axios.post('http://localhost:4000/upload', data)
-        console.log(data, "data");
+        // console.log(data, "data");
 
         window.location.reload()
 
@@ -158,7 +158,7 @@ function Sidebar() {
     }
     try {
       await Axios.post('http://localhost:4000/post', newPost)
-      console.log(newPost, "klkl");
+      // console.log(newPost, "klkl");
 
     } catch (err) {
       console.log(err);
@@ -178,7 +178,7 @@ function Sidebar() {
 
     Axios.get(`http://localhost:4000/friendRequest/${userId}`).then((response) => {
 
-      console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
+      // console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
       setRequest(response.data)
 
 
@@ -213,14 +213,14 @@ function Sidebar() {
     console.log(id, 'iddddddddddddddddd')
     await Axios.post(`http://localhost:4000/declineRequest/${id}`, { userID: userDetails._id }).then((response) => {
 
-      console.log(response.data, "jjjjjjjjjjjjjj")
+      // console.log(response.data, "jjjjjjjjjjjjjj")
 
       setRequestUpdate(!requestUpdate)
     })
   }
 
   return (
-    <div className='hidden md:block'>
+    <div className='hidden md:block z-10'>
       <div className=' w-full h-full   overflow-hidden rounded-2xl '>
         <div className=' w-full h-full  '>
           <div className=' py-5 space-y-3 p-3 rounded-2xl '>
@@ -229,7 +229,7 @@ function Sidebar() {
               <Link to='/savedPosts' className='w-max h-full flex items-center rounded-2xl hover:cursor-pointer '>
                 <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
 
-                  <BsFillBookmarkFill className='text-2xl text-white' />
+                  <BsFillBookmarkFill className='text-2xl text-white ' />
                 </div>
                 <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Saved
 
@@ -246,9 +246,9 @@ function Sidebar() {
             <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer' onClick={addPost}>
 
 
-              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+              <div className='w-16 h-16 bg-sky-900  rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
 
-                <AiOutlinePlus className='text-2xl text-white ' />
+                <AiOutlinePlus className='text-2xl text-white z-10' />
               </div>
               <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Posts
 
@@ -285,7 +285,7 @@ function Sidebar() {
 
 
           </div>
-          <div className='w-full border'></div>
+          <div className='w-full border '></div>
           <div className=' py-5 space-y-3 mt-1 p-3 rounded-2xl'>
             <div className='w-max h-10  flex items-center justify-center'>
 
@@ -302,7 +302,7 @@ function Sidebar() {
               <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
 
                 <div className='w-max h-full flex rounded-2xl '>
-                  <img src={javascript} className='rounded-full bg-green-200 w-16 h-16 flex' />
+                  <img src={javascript} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
 
                 </div>
                 <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>JavaScript
@@ -314,7 +314,7 @@ function Sidebar() {
               <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
 
                 <div className='w-max h-full flex rounded-2xl '>
-                  <img src={node} className='rounded-full bg-green-200 w-16 h-16 flex' />
+                  <img src={node} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
 
                 </div>
                 <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>NodeJs
@@ -405,7 +405,7 @@ function Sidebar() {
 
             </div>
           </div>
-          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+          <div className="opacity-70 fixed inset-0 z-40 bg-black"></div>
         </>
       ) : null}
 
@@ -469,7 +469,7 @@ function Sidebar() {
 
             </div>
           </div>
-          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+          <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
         </>
       ) : null}
 

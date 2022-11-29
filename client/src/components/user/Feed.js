@@ -22,8 +22,9 @@ function Feed() {
 
   const [post , setPosts] = useState([])
   const userDetails = useSelector(state => state.user)
+  const [reportChange , SetReportChange] = useState('')
 
-  console.log(userDetails , "hhhhhhhhhhhhhhhhhhhhhhhhh")
+  // console.log(userDetails , "hhhhhhhhhhhhhhhhhhhhhhhhh")
 
 
   const navigate = useNavigate()
@@ -64,7 +65,7 @@ function Feed() {
      )
     }
     fetchPost()
- },[])
+ },[reportChange])
 
 //  console.log(post , "postsssssss")
 
@@ -79,13 +80,12 @@ function Feed() {
 {
    post.length !=0 ? 
    
-   post.map((post)=>{
+   post.map((post)=>(
 
-        return(
-          
-          <Post key={post.userId} post={post}/>
-        )
-      }) 
+         post?.reports.includes(userDetails._id) ? null :
+          <Post key={post.userId} post={post} SetReportChange={SetReportChange}/>
+       
+   )) 
       
       : 
         <div className='pl-5'>

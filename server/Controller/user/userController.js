@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const postSchemma = require('../../schema/user/posts')
 const commentScheema = require('../../schema/user/commentSchemma')
 const userSchemma = require('../../schema/user/signUp')
+const ReportModel = require('../../schema/user/ReportSchemma')
 
 
 
@@ -67,7 +68,7 @@ const controller = {
 
 
       let user = await userSchemaa.findOne({ email })
-      console.log(user, "userrrrrrrrrrrrr")
+      // console.log(user, "userrrrrrrrrrrrr")
 
       if (user && user.status == "Active") {
 
@@ -143,13 +144,16 @@ const controller = {
   
            
           })
-          let sliced = add.slice(1,4)
+          let sliced = add.slice(0,3)
 
       res.status(200).json(sliced)
+
+      console.log(add , "sliced")
 
       
 
     } catch (error) {
+      res.status(500).json(error)
       console.log(error.message, "llllllllllll")
 
 
@@ -228,6 +232,8 @@ const controller = {
 
       )
 
+    
+
       console.log(friendsPost, "KKKKKKKDSSDASDASD")
      
 
@@ -272,6 +278,7 @@ const controller = {
 
 
   },
+
 
   likePost: async (req, res) => {
     console.log(req.body.userId, req.params.id, "kkkkkkkkkkkkk")
@@ -434,7 +441,7 @@ const controller = {
 
       const userId = req.params.id
 
-       userSchemaa.findOne({ username: userId }).then((response) => {
+       userSchemaa.findOne({ _id: userId }).then((response) => {
 
         console.log(response , "userdetajsdfksgfhsgdfhsg")
 
@@ -465,14 +472,16 @@ const controller = {
 
   console.log(req.params.id , "paramsiddd")
 
-   let posts = await postSchemma.find({userId : req.params.id})
+  let userPosts = await postSchemma.find({ userId: req.params.id }).sort({ createdAt: -1 })
 
-   console.log(posts , "postsssssssssss")
+   console.log(userPosts , "postsssssssssss")
 
-   res.status(200).json(posts)
+   res.status(200).json(userPosts)
 
 
- }catch{
+ }catch(error){
+
+  console.log(error.message , "hhhhhh");
 
 
 
@@ -646,11 +655,91 @@ const controller = {
       res.status(500).json(error)
 
     }
+  } , 
+
+ 
+
+  /* ------------------------------- report post ------------------------------ */
+
+  reportPost : async(req,res)=>{
+
+   try{
+
+    let postId = req.params.id
+    let {userId  , reportValue} = req.body
+    console.log(reportValue)
+    let response = await postSchemma.updateOne({_id: postId},{$push :{ reports : userId }})
+    let report = await ReportModel.create({
+      userId : userId,
+      postId : postId,
+      reason : reportValue
+
+
+    })
+
+    console.log(report ,"report ")
+
+    res.json(200).status({message :"reported"})
+   
+
+
+
+   }catch(error){
+
+    console.log(error.message)
+
+
+   }
+
+  },
+
+  deletePost :async(req,res)=>{
+     
+
+    try{
+      console.log(req.params.id)
+      const postId = req.params.id
+      let deletePost = await postSchemma.deleteOne({_id : postId})
+      let comment = await commentScheema.deleteMany({postId : postId})
+      let saved = await userSchemaa.updateMany({ $pull :{savedPost : postId}})
+  
+      console.log(deletePost , "saved");
+      console.log(comment , "saved");
+  
+      console.log(saved , "saved");
+      res.status(200).json("deleted")
+    }catch(error){
+      res.status(500).json("Notdeleted")
+
+      console.log(error.message , "delete error message")
+    }
+   
+  },
+
+  /* ------------------------------ edit profile ------------------------------ */
+
+  editProfile : async(req,res)=>{
+
+    try{
+
+      console.log(req.body ,"update bodyyyyy")
+    const { username, userfullname, about, userId} = req.body
+
+    let updateProfile = await userSchemaa.updateOne({_id :userId },{
+       $set:req.body 
+       })
+
+       res.status(200).json("updated")
+
+    }catch(error){
+
+
+      console.log(error.message)
+    }
+
+    
+    
   }
-
-
-
-
 
 }
 

@@ -66,7 +66,7 @@ export default function AdminSideBar() {
   const Menus = [
     { name: "Dashboard", link: '/admin/dashboard', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
     { name: "Users", link: '/admin/usermanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6 '  /> },
-    { name: "Posts", link: '/admin/postmanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
+    { name: "Reported Posts", link: '/admin/report/postmanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
     
 
 

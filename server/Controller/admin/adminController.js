@@ -4,6 +4,8 @@ const userSchemaa = require('../../schema/user/signUp')
 const Email = "brittovincent@gmail.com"
 const Passsword = "123456"
 const jwt = require('jsonwebtoken')
+const postSchemma = require('../../schema/user/posts')
+const ReportModel = require('../../schema/user/ReportSchemma')
 
 const Controller = {
 
@@ -134,6 +136,95 @@ const Controller = {
     }catch{
       console.log("error")
 
+    }
+  },
+
+  viewReportedPost :async(req,res)=>{
+
+    try {
+
+      await postSchemma.find({reports : { $ne : []}}).then((response)=>{
+
+        res.status(200).json(response)
+
+        console.log(response , "response")
+      }).catch((error)=>{
+
+        res.status(401).json(error)
+
+      })
+
+
+    }catch(error){
+
+      res.status(500).json(error)
+
+
+    }
+
+
+
+  }, 
+  blockPost : async(req,res)=>{
+
+    try {  
+      const postid = req.params.id
+      await postSchemma.findByIdAndUpdate(postid, { status: 'Blocked' },
+        function (err, docs) {
+          if (err) {
+            console.log(err)
+          }
+          else {
+            res.status(200).json({updated: "true"})
+            console.log("Updated User : ", docs);
+          }
+        });
+
+    }catch{
+      console.log("error")
+
+    }
+
+
+  },
+  UnBlockPost: async(req, res) => {
+
+    console.log('dddddddd')
+
+    try {
+      const postid = req.params.id
+      await postSchemma.findByIdAndUpdate( postid, { status: 'Active' },
+        function (err, docs) {
+          if (err) {
+            console.log(err)
+          }
+          else {
+            res.status(200).json({updated: "true"})
+            console.log("Updated User : ", docs);
+          }
+        });
+
+    }catch{
+      console.log("error")
+
+    }
+  },
+
+  viewSingleReport : async(req,res)=>{
+     
+
+    const postId = req.params.postId
+
+    try{
+          let reports =  await ReportModel.find({postId : postId}).populate('userId')
+
+          console.log(reports , "reports")
+          res.status(200).json(reports)
+
+    }catch(error){
+    
+      res.status(500).json(error)
+      console.log(error.message)
     }
   }
 }  

@@ -7,7 +7,7 @@ const userDetails = JSON.parse(localStorage.getItem('user'))
 
 
 if(userDetails){
-    var { _id , username , email , userfullname} = userDetails
+    var { _id , username , email , userfullname , following ,requestTo , requestFrom} = userDetails
 
 }else{
 
@@ -20,7 +20,10 @@ export const userSlice = createSlice({
         _id , 
         username,
          email,
-         userfullname
+         userfullname,
+         following,
+         requestTo,
+         requestFrom
          
 
 
@@ -31,7 +34,10 @@ reducers :{
         state._id = action.payload._id
        state.username = action.payload.username
        state.email = action.payload.email
-       state.userfullname = action.payload.userfullname
+       state.following = action.payload.following
+       state.requestFrom = action.payload.requestFrom
+       state.requestTo = action.payload.requestTo
+
 
 
     },

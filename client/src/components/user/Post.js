@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { AiOutlineHeart, AiOutlinePlus, AiFillHeart } from 'react-icons/ai'
+import { AiOutlineHeart, AiOutlinePlus, AiFillHeart, AiOutlineFileSync } from 'react-icons/ai'
 // import {FaRegComment} from 'react-icons/fa'
 import { FaRegComment } from 'react-icons/fa'
 
 import { FiSend } from 'react-icons/fi'
 import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
 import { format } from 'timeago.js'
-
-import feedImage from '../../assets/images/messi.jpg'
-import ImageUpload from '../../assets/images/imageupload.png'
-import axios from 'axios'
+import axios, { Axios } from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import e from 'cors'
 
 
-function Post({ post }) {
+function Post({ post  , SetReportChange}) {
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
 
@@ -33,6 +31,12 @@ function Post({ post }) {
     const [comment, SetComment] = useState("")
     const [viewComment, setviewCommet] = useState(false)
     const [seeComments, SetSeeeComments] = useState([])
+    const [blockModal, setBlockModal] = useState(false)
+    const [postMod, setPostMod] = useState(false);
+    const [reportValue, setReportValue] = useState("");
+    const [refresh , SetRefresh] = useState(false)
+
+
 
 
 
@@ -40,7 +44,9 @@ function Post({ post }) {
 
     const userId = userDetails._id
 
-    console.log(comment, "commmmmmmmmenttttt")
+    // console.log(comment, "commmmmmmmmenttttt")
+
+
 
     useEffect(() => {
 
@@ -58,7 +64,7 @@ function Post({ post }) {
             setUser(res.data);
         };
         fetchUser();
-    }, [post.userId]);
+    }, [post.userId ]);
 
 
     const onHandlerLike = async () => {
@@ -86,7 +92,7 @@ function Post({ post }) {
         SetComment("")
     }
 
-    console.log(post, "userrrrrrrrrrrrreeeeeeeee")
+    // console.log(post, "userrrrrrrrrrrrreeeeeeeee")
 
     const onhandleViewComments = () => {
 
@@ -125,19 +131,19 @@ function Post({ post }) {
 
         await axios.put(`http://localhost:4000/savepost/${post._id}`, { ...data }).then((response) => {
 
-        console.log(response.data)
+            console.log(response.data)
 
-        if(response.data.message == "already added"){
+            if (response.data.message == "already added") {
 
 
-            
-            const notify = () => toast("Already Added !");
-            notify()
-        }else{
-            const notify = () => toast("Added To Saved!");
-            notify()
 
-        }
+                const notify = () => toast("Already Added !");
+                notify()
+            } else {
+                const notify = () => toast("Added To Saved!");
+                notify()
+
+            }
 
 
 
@@ -147,11 +153,66 @@ function Post({ post }) {
 
     }
 
+    const handleReport = (e) => {
+        e.preventDefault()
+        console.log(post._id, "report")
+        close();
+        SetReportChange(new Date() )
 
+        axios.put(`http://localhost:4000/post/report/${post._id}`, { userId,reportValue }).then((response) => {
+
+            console.log(response.data)
+
+            if (response.data.message == "already added") {
+
+
+
+                const notify = () => toast("Already Added !");
+                notify()
+            } else {
+                const notify = () => toast("Added To Saved!");
+                notify()
+
+            }
+
+        })
+
+
+
+
+    }
+
+    /* ------------------------------ close modals ------------------------------ */
+
+    const close = () => {
+        setPostMod(false)
+
+    }
+
+    /* ------------------------------- delete post ------------------------------ */
+
+    const postDelete = (id)=>{
+
+        axios.put(`http://localhost:4000/post/delete/${id}`).then((response)=>{
+
+        console.log(response)
+        console.log("deletedeeeeeeeeeeee")
+        SetReportChange(new Date() )
+
+        }).catch((error)=>{
+
+
+            console.log(error)
+        })
+
+
+    }
+
+    
 
     return (
 
-
+ <>
         <div className=' h-max  w-full bg-slate-200 justify-center flex pt-5   '>
             <ToastContainer
                 position="top-right"
@@ -185,73 +246,36 @@ function Post({ post }) {
                             <div className='rounded-full w-12 h-12 bg-black  '></div>
                             <div className=' flex flex-col justify-start  ml-2'>
                                 <div className='text-sm font-medium flex justify-start'>{user.username}</div>
-                                <div className='text-xs flex justify-start'>{format(post.createdAt)}</div>
+                                <div className='text-xs flex justify-start relative'>{format(post.createdAt)}</div>
                             </div>
                         </div>
-                        <div className='text-2xl p-2 '><BsThreeDots /> 
+                        <div className='text-2xl w-44 p-2  flex justify-end relative '><BsThreeDots className='flex justify-end' onClick={(e) => setBlockModal(!blockModal)} />
+                            {blockModal ?
+                                <div className='absolute top-8 right-1 cursor-pointer z-30 bg-white shadow-sm	 rounded-lg border  flex-col flex justify-end'>
+                                    <div className=''>
+                                        { userDetails._id == post.userId ?
+                                        <div className='text-base p-1 px-4'
+                                            //  onClick={handleReport}
+                                            onClick={(e)=>postDelete(post._id)}>Delete </div> :
+                                            <div className='text-base p-1 px-4'
+                                            //  onClick={handleReport}
+                                            onClick={(e) => setPostMod(!postMod)}>report </div>
 
-                        {/* <!-- component --> */}
-<div class="flex justify-center">
-    <div class="relative inline-block mb-20">
-        {/* <!-- Dropdown toggle button --> */}
-        <button class="relative z-10 flex items-center p-2 text-sm text-gray-600 bg-white border border-transparent rounded-md focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:text-white dark:bg-gray-800 focus:outline-none">
-            <span class="mx-1">Jane Doe</span>
-            <svg class="w-5 h-5 mx-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 15.713L18.01 9.70299L16.597 8.28799L12 12.888L7.40399 8.28799L5.98999 9.70199L12 15.713Z" fill="currentColor"></path>
-            </svg>
-        </button>
 
-        {/* <!-- Dropdown menu --> */}
-        <div class="absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
-            <a href="#" class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9" src="https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8d29tYW4lMjBibHVlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=face&w=500&q=200" alt="jane avatar" />
-                <div class="mx-1">
-                    <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Jane Doe</h1>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">janedoe@exampl.com</p>
-                </div>
-            </a>
+                                        }
+                                        <hr className='w-full' />
+                                        <div className='text-base p-1 px-4'  onClick={(e) => setBlockModal(!blockModal)} >Cancel</div>
 
-            <hr class="border-gray-200 dark:border-gray-700 " />
-            
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                view profile
-            </a>
-            
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Settings
-            </a>
+                                    </div>
 
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Keyboard shortcuts
-            </a>
+                                </div> : null}
 
-            <hr class="border-gray-200 dark:border-gray-700 " />
-            
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Company profile
-            </a>
 
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Team
-            </a>
 
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Invite colleagues
-            </a>
+                            {/* <!-- component --> */}
 
-            <hr class="border-gray-200 dark:border-gray-700 " />
-            
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Help
-            </a>
-            <a href="#" class="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                Sign Out
-            </a>
-        </div>
-    </div>
-</div>
-                        
-                        
+
+
                         </div>
                     </div>
                 </div>
@@ -330,7 +354,132 @@ function Post({ post }) {
                 }
 
             </div>
+            
+
+
+            {/* { ? (
+                <>
+                    <div
+                        className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
+                    >
+                        <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={close}>
+                            <AiOutlineClose className='text-white text-2xl' />
+                        </div>
+                        <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300  shadow-xl border '>
+
+                            <div className='flex justify-center'>
+                                <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Add Post </div>
+
+                            </div>
+                            <form onSubmit={handleReport}>
+                                <div className='m-5'>
+                                    <div class="flex items-center mb-4">
+                                        <input onClick={(e)=>{setReportValue(e.target.value)}} id="default-radio-1" type="radio" value="violence" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <label for="default-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">violence </label>
+                                    </div>
+                                    <div class="flex items-center mb-4">
+                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-2" type="radio" value="harassment" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <label for="default-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">harassment </label>
+                                    </div>
+                                    <div class="flex items-center mb-4">
+                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-4" type="radio" value="terrorism" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <label for="default-radio-4" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">terrorism </label>
+                                    </div>
+                                    <div class="flex items-center mb-4">
+                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-5" type="radio" value="hate speech" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <label for="default-radio-5" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">hate speech</label>
+                                    </div>
+                                    <div class="flex items-center mb-4">
+                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-6" type="radio" value="other" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <label for="default-radio-6" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">other</label>
+                                    </div>
+
+                                </div>
+                                <div className='flex justify-center p-2'>
+
+                                    <button type='submit' className='px-5 py-2 bg-sky-900 text-white h-max w-max flex justify-center'>
+                                        submit
+                                    </button>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                    <div className="opacity-70 fixed inset-0 z-40 bg-black"></div>
+                </>
+            ) : null} */}
+
+
         </div>
+        {
+            postMod ? 
+            <>
+          
+          
+          
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative w-auto my-6 mx-auto max-w-3xl">
+                  {/* {/content/} */}
+                  <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                    {/* {/header/} */}
+                    <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                      <h3 className="text-xl font-semibold">Why are you Reporting this?</h3>
+                      <button
+                        className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                        onClick={close}
+                      >
+                        <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                          ×
+                        </span>
+                      </button>
+                    </div>
+                    {/* {/body/} */}
+                    <div className="flex">
+                    <input type="radio" className="m-2" name="Content" value="Violation of someone's privacy" onClick={(e)=>{setReportValue(e.target.value)}} checked/>
+                    <label htmlFor="" className="p-2">Violation of someone's privacy
+                    </label>
+                    </div>
+                    <div className="flex">
+                    <input type="radio" className="m-2" name="Content" value="Public shaming" onClick={(e)=>{setReportValue(e.target.value)}}  />
+                    <label htmlFor="" className="p-2">Public shaming
+                    </label>
+                    </div>
+                    <div className="flex">
+                    <input type="radio" className="m-2" name="Content" value="Goes against my beliefs, values or politics" onClick={(e)=>{setReportValue(e.target.value)}} />
+                    <label htmlFor="" className="p-2">Goes against my beliefs, values or politics
+                    </label>
+                    </div>
+                    <div className="flex">
+                    <input type="radio" className="m-2" name="Content" value="Supporting or promoting a hate group" onClick={(e)=>{setReportValue(e.target.value)}} />
+                    <label htmlFor="" className="p-2">Supporting or promoting a hate group
+                    </label>
+                    </div>
+                    
+                 
+                    {/* {/footer/} */}
+                    <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                      <button
+                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        type="button"
+                    onClick={close}
+                      >
+                        Close
+                      </button>
+                      <button
+                        className="bg-blue-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        type="button" onClick={handleReport}
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-50 fixed inset-0 z-60 bg-black"></div>
+          
+            </>:null}
+            </>
     )
 
 

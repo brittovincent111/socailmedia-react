@@ -17,6 +17,8 @@ import store from './redux/store'
 import ProfilePage from './pages/userPages/ProfilePage';
 import MessagePage from './pages/userPages/MessagePage';
 import SavedPostPage from './pages/userPages/SavedPostPage';
+import ReportedPosts from './components/admin/ReportedPosts';
+import ReportDetailView from './components/admin/ReportDetailView';
 
 
 
@@ -49,7 +51,10 @@ function App() {
         <Route path='/admin' element={<Structure/>}>
         <Route path='/admin/dashboard' element={<AdminDashboard/>}></Route>
         <Route path='/admin/usermanagment' element={<UserManagment/>}></Route>
-        <Route path='/admin/postmanagment' element={<PostManagment/>}></Route>
+        <Route path='/admin/report/postmanagment' element={<ReportedPosts/>}></Route>
+        <Route path='/admin/viewreport/postmanagment/:postId' element={<ReportDetailView/>}></Route>
+
+   
         </Route>
       </Routes>
 

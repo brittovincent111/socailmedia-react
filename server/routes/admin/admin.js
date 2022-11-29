@@ -1,7 +1,7 @@
 const express = require('express')
 const { verify } = require('jsonwebtoken')
 const router = express.Router()
-const {AdminLogin, userManagment, BlockUser, UnBlockUser, dashboard} = require("../../Controller/admin/adminController")
+const {AdminLogin, userManagment, BlockUser, UnBlockUser, dashboard, viewReportedPost, blockPost, UnBlockPost, viewSingleReport} = require("../../Controller/admin/adminController")
 const verifyJWT = require('../../MiddleWare/Verify')
 
 
@@ -14,5 +14,12 @@ router.get('/usermanagment' ,userManagment )
 router.put('/block/:id' , BlockUser)
 
 router.put('/unblock/:id' , UnBlockUser)
+router.put('/post/block/:id' , blockPost)
+router.put('/post/unblock/:id' , UnBlockPost)
+
+
+router.get('/report/postmanagment', viewReportedPost )
+
+router.get('/viewreport/postmanagment/:postId' , viewSingleReport  )
 
 module.exports = router;

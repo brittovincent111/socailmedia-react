@@ -20,6 +20,10 @@ const postSchemmas  = new Schema({
        
 
      },
+     reports:{
+      type: Array ,
+      default :[]
+    },
 
     
     likes:{

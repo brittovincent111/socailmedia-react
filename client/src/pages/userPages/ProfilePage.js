@@ -9,7 +9,7 @@ function ProfilePage() {
     <div>
       <Navbar />
       <div className='flex '>
-        <div className='hidden md:block'>
+        <div className='hidden md:block '>
           <Sidebar />
 
         </div>

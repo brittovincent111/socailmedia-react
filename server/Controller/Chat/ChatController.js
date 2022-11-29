@@ -20,9 +20,11 @@ const controller = {
 
     userChats : async(req,res)=>{
 
+        console.log(req.params.userId , "iffffffffffffffff")
+
         try{
 
-            console.log(req.params.id , "iddddddddddd")
+            
 
             const chat = await ChatModel.find({
                 members : {$in : [req.params.userId]}
@@ -33,7 +35,8 @@ const controller = {
         res.status(200).json(chat)
 
         }catch(error){
-
+            
+            
             console.log(error.message)
              
         }

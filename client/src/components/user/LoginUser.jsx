@@ -57,15 +57,15 @@ function LoginUser() {
           password: Login.password
 
         }).then((response) => {
-
+         
           localStorage.setItem('userToken', response.data.userToken)
             localStorage.setItem('user' ,JSON.stringify( response.data.user))
             dispatch(update(response.data.user))
        
-          console.log(response.data.user , "jjjjjjjjjjjj");
+          // console.log(response.data.user , "jjjjjjjjjjjj");
           Navigate('/')
         }).catch((data) => {
-          console.log(data.response.data.error, "sdffsd");
+          // console.log(data.response.data.error, "sdffsd");
           setErrorMessage(data.response.data.error);
          
         })
