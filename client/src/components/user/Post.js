@@ -327,7 +327,7 @@ function Post({ post  , SetReportChange}) {
                                             <div className='rounded-full w-12 h-12 bg-black  '></div>
                                             <div className='ml-3 flex flex-col justify-start'>
                                                 <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
-                                                <div className='text-xs flex justify-start'>{format(post.createdAt)}</div>
+                                                <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
                                             </div>
                                             <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
 

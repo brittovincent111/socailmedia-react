@@ -1,0 +1,300 @@
+
+const groupCommentSchemma = require("../../schema/user/GroupComment")
+const postGroupSchemma = require("../../schema/user/groupPostSchemma")
+const GroupSchemma = require("../../schema/user/GroupSchemma")
+
+
+
+const controller = {
+
+  createGroup: async (req, res) => {
+
+
+    try {
+
+
+      console.log(req.body, "req.body")
+
+      await GroupSchemma.create(req.body).then((response) => {
+
+        console.log(response, "response")
+
+        res.status(200).json(response)
+      })
+
+    } catch (error) {
+
+      console.log(error)
+    }
+
+  },
+
+
+  Groupe: async (req, res) => {
+
+    try {
+      console.log("hiiiiiiiiii")
+      console.log("drftgh8uht7idscjsfdc");
+
+      await GroupSchemma.find().then((response) => {
+
+        res.status(200).json(response)
+      })
+
+
+
+    } catch (error) {
+
+
+      res.status(500).json(error)
+    }
+  },
+
+  groupDetails: async (req, res) => {
+
+    console.log(req.params.groupId, "paramassssssssssssssssssssssssidddddddddddddddddddddd")
+
+    try {
+
+      let groupDet = await GroupSchemma.findOne({ _id: req.params.groupId })
+
+      res.status(200).json(groupDet)
+
+      console.log(groupDet, "group detailsssssssssssssssssssss");
+
+
+
+    } catch (error) {
+
+
+
+      res.status(500).json(error)
+
+
+
+    }
+  },
+
+  joinGroup: async (req, res) => {
+
+    console.log("call reached")
+
+
+    try {
+
+      let join = await GroupSchemma.updateOne({ _id: req.body.groupId }, { $addToSet: { groupMembers: req.params.userId } })
+
+      console.log(join, "joinnnnnnnnnn")
+
+      res.status(200).json("updated")
+    } catch (error) {
+
+      res.status(500).json(error)
+      console.log(error.message)
+
+
+    }
+  },
+
+  addPost: async (req, res) => {
+
+    try {
+      console.log(req.body, "postbody")
+      let postUpload = await postGroupSchemma.create(req.body)
+
+      res.status(200).json("postUpload")
+    } catch (error) {
+
+      res.status(500).json(error)
+    }
+
+  },
+
+  viewGroupPost: async (req, res) => {
+
+    console.log(req.params.groupId, "hiiiiiiiiiiiiiiii");
+
+    try {
+
+      let response = await postGroupSchemma.find({ groupId: req.params.groupId }).populate('userId')
+
+      console.log(response, "groupPosts")
+      res.status(200).json(response)
+
+
+    } catch (error) {
+
+      console.log(error.message);
+      res.status(500).json(error)
+
+
+    }
+
+
+  },
+  likePost: async (req, res) => {
+    console.log(req.body.userId, req.params.id, "kkkkkkkkkkkkk")
+
+    try {
+
+      console.log("jjjjjjjjjjjjjjjjjj")
+      const post = await postGroupSchemma.findById(req.params.id)
+
+      console.log(post)
+
+      if (post.likes.includes(req.body.userId)) {
+
+        await post.updateOne({ $pull: { likes: req.body.userId } })
+
+        res.status(200).json("unliked")
+      } else {
+
+
+        await post.updateOne({ $push: { likes: req.body.userId } })
+        res.status(200).json("liked ")
+
+
+      }
+
+
+
+    } catch (error) {
+
+
+      console.log(error.message)
+
+
+    }
+
+
+  },
+  commentPost: async (req, res) => {
+
+    try {
+
+      // console.log(req.params.id, "idddddddd")
+      console.log(req.body, "hiiiiiihelooooooo")
+
+      const postId = req.params.id
+      const { userId, comment, groupId } = req.body
+
+
+      let response = await groupCommentSchemma.create({
+        groupId,
+        userId,
+        comment,
+        postId: postId
+      })
+
+      res.status(200).json("updated")
+
+
+
+    } catch (error) {
+
+      console.log(error.message)
+
+
+
+    }
+  },
+  viewComments: async (req, res) => {
+    console.log(req.params.id, "hiiiiiiiiiiiiiiiii")
+
+    const postID = req.params.id
+
+    await groupCommentSchemma.find({ postId: postID }).populate('userId').then((response) => {
+
+      console.log(response, "commentdetailssssssssssss")
+      res.status(200).json(response)
+    }).catch((error) => {
+
+      console.log(error.message)
+      res.status(401).json(error)
+    })
+
+
+
+  },
+  groupUpdate: async (req, res) => {
+
+    try {
+
+      console.log(req.body, "update bodyyyyy")
+      const { groupId } = req.body
+
+      let updateGroup = await GroupSchemma.updateOne({ _id: groupId }, {
+        $set: req.body
+      })
+
+      res.status(200).json("updated")
+
+    } catch (error) {
+
+
+      console.log(error.message)
+    }
+
+
+
+  },
+
+  removeMember : async(req,res)=>{
+
+    console.log(req.params.id , req.body ,"ifrerwefwsdsfd")
+
+
+   try{
+
+    
+    let data = await GroupSchemma.updateOne({_id : req.body.groupId},{$pull : {groupMembers : req.params.id}})
+       
+
+    res.status(200).json(data)
+   }catch(error){
+
+    console.log(error ,"errrorrrrr")
+
+    res.status(200).json(error)
+
+
+
+
+   }
+    
+  },
+
+  groupMembers : async(req,res)=>{
+      
+    console.log(req.params.groupId , "groupppppppppppppidddddddddddddddd")
+    try{
+
+         
+      let groupDet = await GroupSchemma.findOne({ _id: req.params.groupId }).populate('groupMembers')
+      
+
+      console.log(groupDet , "grooupmemberssssssssssssssssssssssssidddddddddddddddddddddddddddddd")
+      res.status(200).json(groupDet.groupMembers)
+
+    }catch(error){
+
+      res.status(500).json(error)
+
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+}
+
+
+module.exports = controller

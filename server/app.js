@@ -10,6 +10,7 @@ var userRouter = require('./routes/user/user');
 var adminRouter = require('./routes/admin/admin');
 var chatRouter = require('./routes/chat/ChatRoute')
 var messageRouter = require('./routes/message/messageRouter')
+var groupRouter = require('./routes/group/groupRoute')
 connection();
 
 
@@ -28,6 +29,7 @@ app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/chat', chatRouter);
 app.use('/message', messageRouter);
+app.use('/group', groupRouter);
 
 
 

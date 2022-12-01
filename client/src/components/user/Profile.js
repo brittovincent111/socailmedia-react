@@ -7,6 +7,8 @@ import { useLocation, useParams } from 'react-router-dom'
 import { HiLockClosed } from 'react-icons/hi'
 import { SlUserFollow, SlUserFollowing, SlUserUnfollow } from 'react-icons/sl'
 import { getUser } from '../../API/User'
+import avatar from '../../assets/images/avatar.jpg'
+
 // import Axios from 'axios'
 
 
@@ -144,7 +146,7 @@ function Profile() {
   // console.log(edit , "edit");
 
   return (
-    <div className='w-full h-screen  flex justify-center bg-gray-100'>
+    <div className='w-full h-screen  flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
 
       <div className='md:w-11/12 w-full bg-white   h-full'>
         {/* profile details  */}
@@ -152,7 +154,14 @@ function Profile() {
 
         <div className=' h-max w-full  grid md:grid-cols-2 lg:grid-cols-3'>
           <div className=' h-full  flex-col flex justify-center items-center md:p-10'>
-            <div ><img className='w-44 h-44 bg-red-500 rounded-full mb-10 mt-5' src={ PF+ data?.profilePicture}/></div>
+            <div >
+              {
+                data?.profilePicture ?
+                <img className='w-44 h-44 bg-red-500 rounded-full mb-10 mt-5' src={ PF+ data?.profilePicture}/>
+                :
+                <img className='w-44 h-44 bg-red-500 rounded-full mb-10 mt-5' src={avatar}/>
+              }
+              </div>
             <div className='font-semibold  text-xl'>{data?.username}</div>
           </div>
           <div className='  h-32 md:h-full lg:h-full   flex  justify-center items-center'>
@@ -239,7 +248,7 @@ function Profile() {
                       return (
 
 
-                        <img src={PF + obj.img} className=' w-full md:h-[290px]  h-[180px] p-2  ' />
+                        <img src={PF + obj.img} className=' w-full md:h-[290px]  h-[180px] p-4  ' />
 
                       )
                     })
@@ -289,7 +298,7 @@ function Profile() {
                     <hr />
                     <div className='flex flex-col p-2 justify-start items-center' onClick={(e) => { SetUpdateDetails("photo") }}>Profile Photo</div>
                     <hr />
-                    <div className='flex flex-col p-2 justify-start items-center' onClick={(e) => { SetUpdateDetails("password") }}>Password</div>
+                    {/* <div className='flex flex-col p-2 justify-start items-center' onClick={(e) => { SetUpdateDetails("password") }}>Password</div> */}
 
 
                   </div>

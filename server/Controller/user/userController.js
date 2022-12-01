@@ -51,6 +51,7 @@ const controller = {
         }
 
       }
+      
 
     } catch (error) {
 
@@ -84,7 +85,7 @@ const controller = {
           })
 
           console.log("calll")
-          res.json({ user: user, userToken: token })
+          res.status(200).json({ user: user, userToken: token })
 
         }
 
@@ -129,11 +130,11 @@ const controller = {
   userDetails: async (req, res) => {
 
     try {
-      console.log(req.params.id, "param idddddddddddd")
+      // console.log(req.params.id, "param idddddddddddd")
       let users = await userSchemaa.find({ _id: { $nin: [req.params.id] } })
       let user = await userSchemaa.findById( req.params.id )
 
-      console.log(user , "userrrrrrrrrrr")
+      // console.log(user , "userrrrrrrrrrr")
       let add =    users.filter((obj)=>{
 
           
@@ -148,7 +149,7 @@ const controller = {
 
       res.status(200).json(sliced)
 
-      console.log(add , "sliced")
+      // console.log(add , "sliced")
 
       
 
@@ -188,10 +189,10 @@ const controller = {
       } else {
 
 
-        console.log(user, "kkkkkkkkkkk")
+        // console.log(user, "kkkkkkkkkkk")
         let userpush = await userSchemaa.updateOne({ _id: req.body.userId }, { $push: { requestTo: req.params.id } })
         let requeseterPush = await userSchemaa.updateOne({ _id: req.params.id }, { $push: { requestFrom: req.body.userId } })
-        console.log(user, "hhhhhhhhhhhhhhhhhhhhhhhhhh")
+        // console.log(user, "hhhhhhhhhhhhhhhhhhhhhhhhhh")
 
         res.status(200).json("updated")
 
@@ -238,7 +239,7 @@ const controller = {
      
 
       res.json((userPosts.concat(...friendsPost)))
-      console.log(userPosts.concat(...friendsPost), "friendspostssssssss")
+      // console.log(userPosts.concat(...friendsPost), "friendspostssssssss")
 
 
 
@@ -262,7 +263,7 @@ const controller = {
       const user = await userSchemaa.findById(userId)
 
 
-      console.log(user, " userdetalissssssssss")
+      // console.log(user, " userdetalissssssssss")
       const { password, requestFrom, requestTo, date, status, ...others } = user._doc
 
       res.status(200).json(others)
@@ -323,7 +324,7 @@ const controller = {
 
     try {
 
-      console.log(req.params.id, "idddddddd")
+      // console.log(req.params.id, "idddddddd")
       console.log(req.body.userId)
 
       const postId = req.params.id
@@ -501,7 +502,7 @@ const controller = {
 
       userSchemaa.findOne({ _id: userId }).populate('requestFrom').then((response) => {
 
-        console.log(response.requestFrom, "responsemmmmmmm")
+        // console.log(response.requestFrom, "responsemmmmmmm")
         res.status(200).json(response.requestFrom)
       })
 

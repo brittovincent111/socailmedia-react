@@ -21,6 +21,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { remove } from '../../redux/userRedux'
+import avatar from '../../assets/images/avatar.jpg'
 
 
 
@@ -33,6 +34,9 @@ function Sidebar() {
   const dispatch = useDispatch()
   const imageRef = useRef(null);
 
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER
+
+
   const userDetails = useSelector(state => state.user)
 
 
@@ -43,6 +47,7 @@ function Sidebar() {
   const [reqMod, setReqMod] = useState(false);
   const [request, setRequest] = useState([]);
   const [requestUpdate, setRequestUpdate] = useState(false);
+  const [group, SetGroup] = useState([])
 
 
   // console.log(request, "rrrrrrrrrrrrr")
@@ -54,6 +59,7 @@ function Sidebar() {
 
   const [postImage, setPostImage] = useState()
   const [showImage, setShowImage] = useState()
+ 
 
   const handleImage = (e) => {
     console.log('yyyyyy');
@@ -187,6 +193,30 @@ function Sidebar() {
 
   }, [requestUpdate])
 
+  /* ------------------------------- view group suggetions------------------------------- */
+
+  
+
+  useEffect(()=>{
+    try{
+
+      Axios.get('http://localhost:4000/group/suggestions' ).then((response) => {
+
+        console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
+        SetGroup(response.data)
+
+      })
+
+      
+    }catch(error){
+
+          console.log(error)
+
+    }
+
+
+  },[])
+
 
   // accept request 
 
@@ -218,6 +248,8 @@ function Sidebar() {
       setRequestUpdate(!requestUpdate)
     })
   }
+
+  console.log(group , "group")
 
   return (
     <div className='hidden md:block z-10'>
@@ -298,55 +330,34 @@ function Sidebar() {
             </div>
             <div className=' overflow-y-scroll space-y-2 w-full h-36 no-scrollbar'>
 
+              {group.map((obj) => {
 
-              <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+                return (
 
-                <div className='w-max h-full flex rounded-2xl '>
-                  <img src={javascript} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
+                <Link to={`/group/${obj._id}`} className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
 
-                </div>
-                <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>JavaScript
+                  <div className='w-max h-full flex rounded-2xl '>
+                    { obj.groupProfile ? 
+                    <img src={PF + obj.groupProfile} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
+                    : 
 
-                </p>
+                    <img src={avatar} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
 
+                  
+                  }
 
-              </div>
-              <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+                  </div>
+                  <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.groupName}
 
-                <div className='w-max h-full flex rounded-2xl '>
-                  <img src={node} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
-
-                </div>
-                <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>NodeJs
-
-                </p>
+                  </p>
 
 
-              </div>
-              <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+                </Link>
+                )
 
-                <div className='w-max h-full flex rounded-2xl '>
-                  <img src={stat} className='rounded-full bg-green-200 w-16 h-16 flex' />
-
-                </div>
-                <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>Fans
-
-                </p>
+              })}
 
 
-              </div>
-              <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
-
-                <div className='w-max h-full flex rounded-2xl '>
-                  <img className='rounded-full bg-green-200 w-16 h-16 flex' />
-
-                </div>
-                <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>Malayalam
-
-                </p>
-
-
-              </div>
 
             </div>
 

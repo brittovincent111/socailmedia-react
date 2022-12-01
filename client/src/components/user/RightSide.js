@@ -88,7 +88,7 @@ const follow = (async (id, e) => {
 
 
 return (
-  <div className=' w-full h-full border-slate-300 border overflow-hidden rounded-2xl z-10 '>
+  <div className=' w-full h-full border-slate-300 border overflow-hidden rounded-2xl z-0 '>
     <div className=' w-full h-full  '>
       <div className=' py-5 space-y-3 mt-4 p-3 rounded-2xl'>
         <div className='w-2/3 h-10  flex items-center justify-start'>
@@ -169,7 +169,7 @@ return (
 
 
       </div>
-      <div className='w-full border'></div>
+      <div className='w-full border z-0'></div>
       <div className=' py-5 space-y-3 mt-4 p-3 rounded-2xl'>
         <div className='w-2/3 h-10  flex items-center justify-start'>
 

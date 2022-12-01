@@ -19,6 +19,7 @@ import MessagePage from './pages/userPages/MessagePage';
 import SavedPostPage from './pages/userPages/SavedPostPage';
 import ReportedPosts from './components/admin/ReportedPosts';
 import ReportDetailView from './components/admin/ReportDetailView';
+import GroupPage from './pages/userPages/GroupPage';
 
 
 
@@ -39,6 +40,9 @@ function App() {
         <Route path='/profile/:username' element={<ProfilePage/>}></Route>
         <Route path='/message' element={<MessagePage/>}></Route>
         <Route path='/savedPosts' element={<SavedPostPage/>}></Route>
+        <Route path='/group/:groupid' element={<GroupPage/>}></Route>
+
+
 
 
        
