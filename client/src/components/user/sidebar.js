@@ -299,18 +299,18 @@ function Sidebar() {
 
 
             </div>
-            <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer' >
+            <Link to='/view/groups' className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer' >
 
 
-              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' onClick={logout}>
+              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
 
                 <AiOutlineLogout className='text-2xl text-white ' />
               </div>
-              <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Logout
+              <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Groups
 
               </p>
 
-            </div>
+            </Link>
 
 
 

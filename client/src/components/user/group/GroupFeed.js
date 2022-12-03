@@ -48,6 +48,8 @@ export default function GroupFedd() {
   const [reqMod, setReqMod] = useState(false)
   const [refresh, setRefresh] = useState(false)
   const [members, setMembers] = useState([])
+  const [reportChange , SetReportChange] = useState('')
+
 
 
 
@@ -177,7 +179,10 @@ export default function GroupFedd() {
         await Axios.post('http://localhost:4000/upload', data)
         // console.log(data, "data");
 
-        window.location.reload()
+        setRefresh(!refresh)
+        close()
+
+    
 
       } catch (error) {
         console.log(error);
@@ -245,7 +250,7 @@ export default function GroupFedd() {
 
     postView(groupId)
 
-  }, [groupId, refresh])
+  }, [groupId, refresh , reportChange])
 
 
   const onHandleRemove = async (userId) => {
@@ -276,7 +281,7 @@ export default function GroupFedd() {
 
 
 
-  console.log(groupDetailss?.groupMembers.includes(userDetails._id), userID, members, "includessssssssss")
+  console.log(groupDetailss?.groupMembers.includes(userDetails._id), userID,  members, "includessssssssss")
 
   return (
 
@@ -364,38 +369,15 @@ export default function GroupFedd() {
           </div>
         </div>
 
-        <div className=' h-max  w-full bg-slate-200 justify-center flex pt-5   '>
-          <ToastContainer
-            position="top-right"
-            autoClose={1000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-          />
-          <ToastContainer
-            position="top-right"
-            autoClose={1000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-          />
+        <div className=' h-max  w-full bg-slate-200 flex-col flex  items-center  pt-5   '>
+     
           {groupPost.map((post) => {
             return (
               <>
                 {
                   (groupDetailss?.groupMembers.includes(userDetails._id)) || groupDetailss.admin == userDetails._id ?
 
-                    <GroupPost key={post.userId} post={post} groupId={groupId} />
+                    <GroupPost key={post.userId} post={post} groupId={groupId} SetReportChange={SetReportChange} />
                     : <div className='flex justify-center w-full h-[200px] bg-gray-200 m-5'>
                       <div className='flex items-center'>
                         <div className='rounded-full bg-white'>

@@ -6,6 +6,8 @@ const Passsword = "123456"
 const jwt = require('jsonwebtoken')
 const postSchemma = require('../../schema/user/posts')
 const ReportModel = require('../../schema/user/ReportSchemma')
+const postGroupSchemma = require('../../schema/user/groupPostSchemma')
+const groupPostReportModel = require('../../schema/user/groupReportPost')
 
 const Controller = {
 
@@ -226,7 +228,57 @@ const Controller = {
       res.status(500).json(error)
       console.log(error.message)
     }
-  }
+  },
+
+  viewGroupReportedPost :async(req,res)=>{
+
+    try {
+
+      await postGroupSchemma.find({reports : { $ne : []}}).populate("groupId").populate("userId").then((response)=>{
+
+        res.status(200).json(response)
+
+        console.log(response , "response")
+      }).catch((error)=>{
+        
+
+        console.log(error.message , "message")
+        res.status(401).json(error)
+
+      })
+
+
+    }catch(error){
+      
+      console.log(error.message , "message")
+      res.status(500).json(error)
+
+
+    }
+
+
+
+  },
+
+  viewGroupSingleReport : async(req,res)=>{
+     
+
+    const postId = req.params.postId
+
+    console.log(postId , "postId")
+
+    try{
+          let reports =  await groupPostReportModel.find({postId : postId}).populate('userId')
+
+          console.log(reports , "reports")
+          res.status(200).json(reports)
+
+    }catch(error){
+    
+      res.status(500).json(error)
+      console.log(error.message)
+    }
+  },
 }  
 
 

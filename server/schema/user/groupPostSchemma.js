@@ -12,8 +12,10 @@ const postGroupSchemmaS = new Schema({
             require : true
    },
    groupId: {
-      type: String,
-      required: true
+      type : mongoose.Schema.Types.ObjectId , 
+      
+      ref:"group",
+      require : true
    },
    desc: {
       type: String,

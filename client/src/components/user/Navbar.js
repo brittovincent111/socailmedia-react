@@ -7,9 +7,15 @@ import logo from '../../assets/images/logo.png'
 import { AiOutlineHeart, AiOutlinePlus } from 'react-icons/ai'
 import profile from '../../assets/images/profile.jpg'
 import { update } from '../../redux/userRedux'
-import { useSelector } from 'react-redux'
+
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { useSelector, useDispatch } from 'react-redux'
+import { remove } from '../../redux/userRedux'
+import { findSearch } from '../../API/User'
+
 
 
 
@@ -17,16 +23,20 @@ import axios from 'axios'
 
 
 export default function Navbar({ setStatus}) {
-
+    
+    const PF = process.env.REACT_APP_PUBLIC_FOLDER
     const [file, setFile] = useState("")
     const [updateDetails, SetUpdateDetails] = useState("Details")
     const [edit, SetEdit] = useState([])
     const [showMod, SetShowMod] = useState(false)
     // const [file, SetFile] = useState("")
     const [updation, setUpdation] = useState(false)
+    const [searchUser , setSearchUser] = useState([])
 
     const userDetails = useSelector(state => state.user)
     const [open, setOpen] = useState(false)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
 
     const handleEdit = async (e) => {
@@ -76,12 +86,68 @@ export default function Navbar({ setStatus}) {
 
     }
 
+    const logout = () => {
 
 
+        confirmAlert({
+          customUI: ({ onClose }) => {
+            return (
+              <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
+                <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
+                {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
+                <div className='flex space-x-2 p-2 '>
+                  <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
+                  <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
+                    onClick={() => {
+    
+    
+    
+                      onClose();
+                      // this.handleClickDelete();
+                      localStorage.removeItem('userToken')
+                      localStorage.removeItem('user')
+                      navigate('/login')
+                      dispatch(remove())
+    
+    
+                    }}
+                  >
+                    Logout
+                  </button>
+    
+                </div>
+    
+              </div>
+            );
+          }
+        });
+      }
+
+    const handleSearch = async (e)=>{
+
+        const val = e.target.value
+
+        if( val == ""){
+            setSearchUser([])
+        }
+
+        try {
+            console.log(val , "valllllllllllllll")
+            const {data} = await findSearch(val)
+            setSearchUser(data)
+            console.log(data , "searched user")
+        }catch(error){
+
+
+        }
+    }
+
+
+    console.log(searchUser , "userdataaaaaaaaaaa")
 
     return (
 
-
+<>
         <div className='flex items-center justify-between bg-sky-900 h-14 sm:h-16  sticky top-0 z-10'>
             {/* left  */}
             <div className='md:pl-6  pl-2 flex justify-between '>
@@ -103,7 +169,7 @@ export default function Navbar({ setStatus}) {
             <div className='flex items-center '>
                 <div hidden className='sm:flex items-center bg-gray-100 ml-2 p-2 rounded-2xl w-24  md:w-60'>
                     <FaSearch className='mx-2 text-gray-600' />
-                    <input type="text" className="flex justify-center outline-none bg-transparent" placeholder="search" />
+                    <input type="text" onChange={handleSearch} className="flex justify-center outline-none bg-transparent" placeholder="search" />
                 </div>
                 <div className='w-max h-max bg-white rounded-full m-1'>
 
@@ -136,22 +202,28 @@ export default function Navbar({ setStatus}) {
                     {
                         open &&
 
-                        <div class="absolute right-0 z-20 w-56 py-2  overflow-hidden  rounded-md shadow-xl dark:bg-blue-200 mt-72 bg-sky-100 mr-20 m-10">
+                        <div class="absolute right-0 z-20 w-56 py-2  overflow-hidden  rounded-md shadow-xl dark:bg-blue-200 mt-72 bg-sky-100  ">
                             <a href="#" class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9" src="https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8d29tYW4lMjBibHVlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=face&w=500&q=200" alt="jane avatar" />
-                                <div class="mx-1 flex flex-col justify-start">
-                                    <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900">{userDetails.username}</h1>
-                                    <p class="text-sm text-gray-900 dark:text-gray-900 ">{userDetails.email}</p>
+                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
+                                <div class="mx-1 flex flex-col justify-center w-full">
+                                    <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">{userDetails.userfullname}</h1>
+                                    <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p>
                                 </div>
                             </a>
                             <div onClick={(e) => SetShowMod(!showMod)} class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9" src="https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8d29tYW4lMjBibHVlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=face&w=500&q=200" alt="jane avatar" />
+                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src="https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8d29tYW4lMjBibHVlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=face&w=500&q=200" alt="jane avatar" />
                                 <div class="mx-1 flex flex-col justify-start">
                                     <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900">Create Group</h1>
                                     {/* <p class="text-sm text-gray-900 dark:text-gray-900 ">{userDetails.email}</p> */}
                                 </div>
                             </div>
-
+                            <a onClick={logout}class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
+                                <div class="mx-1 flex flex-col justify-center w-full">
+                                    <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">LogOut</h1>
+                                    {/* <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p> */}
+                                </div>
+                            </a>
 
                             <Link to={`/profile/${userDetails.username}`} state={{ userID: userDetails._id }} ><a href="" class="block px-4 py-3 text-sm text-gray-600 capitalize font-extrabold  transition-colors duration-200 transform dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
                                 view profile
@@ -235,6 +307,33 @@ export default function Navbar({ setStatus}) {
                 </>
             ) : null}
         </div>
+         
+         <div>
+            <div className='fixed md:top-18 top-16 z-30 bg-white left-1/3 md:w-1/5 w-2/5 rounded-2xl shadow-lg  h-max'>
+                {
+                searchUser.map((obj)=>{
+
+                    return(
+                        <Link to={`/profile/${obj.username}`} state={{ userID: obj._id }}>
+                        <div className='w-full h-14 flex p-2 justify-between items-center'>
+                           <img className = "h-10 rounded-full shadow-md w-10"src={PF +obj.profilePicture}/>
+                            
+                           
+                            <div className='font-normal'>
+                            
+                             {obj.userfullname}
+                            </div>
+                           
+                        </div>
+                        </Link>
+                    )
+                })
+            }
+            </div>
+         </div>
+
+
+        </>
     )
 }
 

@@ -8,6 +8,13 @@ import { HiLockClosed } from 'react-icons/hi'
 import { SlUserFollow, SlUserFollowing, SlUserUnfollow } from 'react-icons/sl'
 import { getUser } from '../../API/User'
 import avatar from '../../assets/images/avatar.jpg'
+import { AiOutlineHeart, AiOutlinePlus, AiFillHeart, AiOutlineFileSync, AiOutlineComment } from 'react-icons/ai'
+// import {FaRegComment} from 'react-icons/fa'
+import { FaComment, FaRegComment } from 'react-icons/fa'
+
+import { FiSend } from 'react-icons/fi'
+import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
+import e from 'cors'
 
 // import Axios from 'axios'
 
@@ -24,7 +31,9 @@ function Profile() {
   const [updateDetails, SetUpdateDetails] = useState("Details")
   const [edit, SetEdit] = useState([])
   // const [file, SetFile] = useState("")
-  const [updation ,setUpdation] = useState(false)
+  const [updation, setUpdation] = useState(false)
+  const [editMod, SetEditMod] = useState(false)
+  const [ desc , setDesc] = useState({ desc :"" , img : "" , postId:""})
 
 
 
@@ -70,12 +79,8 @@ function Profile() {
     axios.get(`http://localhost:4000/userprofile/${userID}`).then((response) => {
 
       SetData(response.data)
-
-
-
-
     }).then((data) => {
-      
+
       console.log("erroerwerwefsdf");
 
       axios.get(`http://localhost:4000/viewProfilePosts/${userID}`).then((response) => {
@@ -83,22 +88,19 @@ function Profile() {
         SetPosts(response.data)
       }).catch((error) => {
 
-        console.log(error , "WHAT IS ERROE")
+        console.log(error, "WHAT IS ERROE")
       })
-
-
     }).catch((error) => {
 
-      console.log(error ,"EROORERERE")
-
+      console.log(error, "EROORERERE")
     })
-
-
-  }, [userID, userName ,updation])
+  }, [userID, userName, updation])
 
   // console.log(userDetails, "dataaaaaaaaaaaaaaaa")
 
-  const handleEdit = async(e) => {
+
+
+  const handleEdit = async (e) => {
 
     e.preventDefault()
     const newEdit = {
@@ -122,13 +124,13 @@ function Profile() {
     }
     try {
       console.log("suiiiiiiiii")
-      await axios.post('http://localhost:4000/update',{ ...edit , userId : userDetail._id}).then((response)=>{
+      await axios.post('http://localhost:4000/update', { ...edit, userId: userDetail._id }).then((response) => {
 
         setUpdation(!updation)
-        SetShowMod(!showMod) 
+        SetShowMod(!showMod)
       })
-      
-  
+
+
 
     } catch (err) {
       console.log(err);
@@ -145,6 +147,120 @@ function Profile() {
   }
   // console.log(edit , "edit");
 
+  const editPost=(desc,img,id ,e )=>{
+    e.preventDefault()
+    setDesc({desc : desc , img : img , postId :id})
+    SetEditMod(!editMod) 
+  }
+
+  const updateDesc =async(e,postId)=>{
+    e.preventDefault(e)
+    
+
+    try{
+      const Desc = { desc : desc.desc , postId : desc.postId }
+      
+
+     let data = await axios.put('http://localhost:4000/post/edit',  Desc  )
+
+     SetEditMod(!editMod)
+     setDesc({img:"",desc:"",postId :""})    
+            
+
+    }catch(error){
+
+      console.log(error)
+
+
+    }
+
+
+
+  }
+
+  
+const follow = async (e) => {
+
+  e.preventDefault()
+  console.log("calllll")
+  await axios.put(`http://localhost:4000/follow/${userID}`, { userId: userDetails._id }).then((response) => {
+
+    console.log(response);
+    setUpdation(!updation)
+
+
+  }).catch((error) => {
+
+    console.log(error)
+  })
+
+
+}
+
+
+const cancelRequest = async (e) => {
+
+  e.preventDefault()
+  console.log("calllll")
+  await axios.put(`http://localhost:4000/cancelRequest/${userID}`, { userID: userDetails._id }).then((response) => {
+
+    console.log(response);
+    setUpdation(!updation)
+  }).catch((error) => {
+
+    console.log(error)
+  })
+}
+
+const acceptRequest = async (e) => {
+
+  e.preventDefault()
+  console.log("calllll")
+  await axios.put(`http://localhost:4000/acceptRequest/${userID}`, { userID: userDetails._id }).then((response) => {
+
+    console.log(response);
+    setUpdation(!updation)
+  }).catch((error) => {
+
+    console.log(error)
+  })
+
+
+}
+const declineRequest = async (e) => {
+
+  e.preventDefault()
+  console.log("calllll")
+  await axios.put(`http://localhost:4000/declineRequest/${userID}`, { userID: userDetails._id }).then((response) => {
+
+    console.log(response);
+    setUpdation(!updation)
+  }).catch((error) => {
+
+    console.log(error)
+  })
+
+
+}
+
+const unFollow = async (e) => {
+
+  e.preventDefault()
+  console.log("calllll")
+  await axios.put(`http://localhost:4000/unfollow/${userID}`, { userID: userDetails._id }).then((response) => {
+
+    console.log(response);
+    setUpdation(!updation)
+  }).catch((error) => {
+
+    console.log(error)
+  })
+
+
+}
+
+
+
   return (
     <div className='w-full h-screen  flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
 
@@ -157,39 +273,39 @@ function Profile() {
             <div >
               {
                 data?.profilePicture ?
-                <img className='w-44 h-44 bg-red-500 rounded-full mb-10 mt-5' src={ PF+ data?.profilePicture}/>
-                :
-                <img className='w-44 h-44 bg-red-500 rounded-full mb-10 mt-5' src={avatar}/>
+                  <img className='w-44 h-44 shadow-xl bg-red-500 rounded-full mb-10 mt-5' src={PF + data?.profilePicture} />
+                  :
+                  <img className='w-44 h-44 shadow-2xl bg-red-500 rounded-full mb-10 mt-5' src={avatar} />
               }
-              </div>
+            </div>
             <div className='font-semibold  text-xl'>{data?.username}</div>
           </div>
           <div className='  h-32 md:h-full lg:h-full   flex  justify-center items-center'>
             <div className=' flex flex-col md:justify-start justify-center'>
               {(userDetail?._id == data?._id) ?
-                <div className='flex items-center space-x-2 rounded-2xl p-2 bg-gray-100 w-max' onClick={(e) => { SetShowMod(!showMod) }}>
+                <div className='flex items-center   space-x-2 shadow-md rounded-2xl p-2 bg-gray-100 w-max' onClick={(e) => { SetShowMod(!showMod) }}>
                   <div><FiSettings /> </div>
-                  <div className='font-semibold  text-base'>Edit Profile</div>
+                  <div className='font-semibold  text-base '>Edit Profile</div>
 
                 </div>
                 : (userDetail?.following.includes(data?._id)) ?
-                  <div className='flex items-center space-x-2 rounded-2xl p-2 bg-gray-100 w-max'>
+                  <div  onClick={unFollow} className='flex items-center space-x-2 shadow-md rounded-2xl p-2 bg-gray-100 w-max'>
                     <div><FiSettings /> </div>
                     <div className='font-semibold  text-base'>unfollow</div>
 
                   </div> : (userDetail?.requestTo.includes(data?._id)) ?
-                    <div className='flex items-center space-x-3 rounded-3xl p-2 bg-sky-900 w-max'>
+                    <div onClick={cancelRequest} className='flex items-center space-x-3 shadow-md rounded-3xl p-2 bg-sky-900 w-max'>
                       <div className='rounded-full bg-white '><SlUserUnfollow className='text-lg m-1.5' /> </div>
                       <div className='font-semibold  text-base text-white'>Cancel</div>
                     </div>
                     : (userDetail?.requestFrom.includes(data?._id)) ?
-                      <div className='flex items-center  p-2 space-x-3 w-max'>
-                        <div className='flex items-center space-x-3 rounded-3xl p-2 bg-sky-900 w-max'>
+                      <div className='flex items-center shadow-md p-2 space-x-3 w-max'>
+                        <div onClick={acceptRequest} className='flex items-center space-x-3 rounded-3xl p-2 bg-sky-900 w-max'>
                           <div className='rounded-full bg-white '><SlUserFollowing className='text-lg m-1.5' /> </div>
 
                           <div className='font-semibold  text-base text-white'>Accept</div>
                         </div>
-                        <div className='flex items-center space-x-3 rounded-3xl p-2 bg-gray-400 w-max'>
+                        <div className='flex items-center space-x-3 shadow-md rounded-3xl p-2 bg-gray-400 w-max'>
                           <div className='rounded-full bg-white '><SlUserUnfollow className='text-lg m-1.5' /> </div>
                           <div className='font-semibold  text-base text-white'>Decline</div>
 
@@ -197,7 +313,7 @@ function Profile() {
                       </div>
 
                       :
-                      <div className='flex items-center space-x-3 rounded-3xl p-2 bg-sky-900 w-max'>
+                      <div className='flex items-center space-x-3 shadow-md rounded-3xl p-2 bg-sky-900 w-max' onClick={(e) => { follow(e) }}>
                         <div className='rounded-full bg-white '><SlUserFollow className='text-lg m-1.5' /> </div>
                         <div className='font-semibold  text-base text-white'>follow</div>
                       </div>
@@ -227,7 +343,7 @@ function Profile() {
         </div>
 
         {/* center  */}
-        <div className="h-16 items-center border border-white bg-sky-900 m-2">
+        <div className="h-16 shadow-lg items-center border border-white bg-sky-900 m-2">
           <div className='flex items-center h-full justify-center space-x-3' >
             <div><BsFillGrid1X2Fill className='font-semibold  text-xl text-white' /></div>
             <div className='font-semibold  text-xl text-white'>POST</div>
@@ -236,30 +352,49 @@ function Profile() {
 
         </div>
         {/* posts */}
-        <div className='w-full h-max  flex justify-center'>
+        <div className='w-full h-max  flex justify-center bg-white pt-5 px-5'>
           {
 
             (userDetail?._id == data?._id) || (userDetail?.following.includes(data?._id)) ?
-              <div className='grid grid-cols-3 w-full    justify-evenly'>
-             
-                  {
-                    posts.map((obj) => {
+              <div className='grid grid-cols-3 w-full gap-6 justify-evenly'>
 
-                      return (
+                {
+                  posts.map((obj) => {
 
+                    return (
 
-                        <img src={PF + obj.img} className=' w-full md:h-[290px]  h-[180px] p-4  ' />
+                      <div className='group relative md:px-5 w-full md:h-[290px] shadow-lg sm:h-[260px] h-[200px]  items-center flex justify-center '>
 
-                      )
-                    })
-                  }
-              
+                        <img src={PF + obj.img} className='h-full w-full z-10 ' />
+                        <div className='absolute grid place-items-center bg-transparent duration-500  group-hover:bg-[#00000096] w-full h-full z-20'>
+                          <div className='text-transparent group-hover:text-white flex text-lg   justify-center items-center'>
+                            {(userDetail?._id == data?._id) ?
+
+                              <div className='absolute top-2 right-2 text-xl' onClick={(e)=>{editPost(obj?.desc,obj.img, obj._id,e)} }><BsThreeDots /></div> : null
+                            }
+                            <div>
+                              <div className='text-3xl flex justify-center items-center'><AiFillHeart /></div>
+                              <div className='text-normal  justify-center items-center' >{obj.likes.length}</div>
+                            </div>
+                            {/* <div>
+
+                             <div className='text-2xl flex justify-center items-center'><FaComment/></div>
+                             <div className='Pt-2 text-normal  justify-center items-center'></div>
+                              </div> */}
+                          </div>
+                        </div>
+                      </div>
+
+                    )
+                  })
+                }
+
 
 
               </div>
 
 
-              : <div className='flex justify-center w-full h-[200px] bg-gray-200 m-5'>
+              : <div className='flex justify-center shadow-md w-full h-[200px] bg-gray-200 m-5'>
                 <div className='flex items-center'>
                   <div className='rounded-full bg-white'>
 
@@ -381,6 +516,31 @@ function Profile() {
             </div>
           </div>
           <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+
+      {editMod ? (
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto p-2 fixed inset-0 z-50 outline-none focus:outline-none ">
+
+            <div className='w-[450px] rounded-2xl'>
+              <div className='h-14  w-full bg-white flex justify-between items-center px-2 rounded-t-2xl'>
+                <div className='w-max h-max p-5 rounded-xl ' onClick={(e)=>{setDesc({desc:"" , img:""} , SetEditMod(!editMod))}}>Cancel</div>
+                <div className='w-max h-max px-4 py-2 rounded-xl bg-sky-900 text-white font-base' onClick={updateDesc}>Done</div>
+              </div>
+              <div className=' h-[300px] bg-gray-200 '>
+                <img src={PF + desc.img} className="h-full w-full rounded-xl"/>
+
+              </div>
+              <div className='bg-gray-200 rounded-b-2xl'>
+                <div className='p-2 font-semibold'>Edit Your Description</div>
+                <div className='w-full pb-2 px-1  '>
+                  <textarea className='w-full p-5 border ' value={desc.desc} onChange={(e)=>{setDesc({...desc ,desc : e.target.value})}}/>
+                </div>
+              </div >
+            </div>
+          </div>
+          <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
         </>
       ) : null}
     </div>

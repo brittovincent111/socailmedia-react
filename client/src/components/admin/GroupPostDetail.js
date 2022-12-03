@@ -1,3 +1,4 @@
+ 
 import React, { useEffect, useState, useReducer } from 'react'
 import Axios from 'axios'
 import { Link, } from 'react-router-dom'
@@ -6,7 +7,7 @@ import moment from 'moment'
 
 
 
-function ReportDetailView() {
+export default function GroupPostDetail() {
 
     const [postDetails, SetPostDetails] = useState([])
 
@@ -17,14 +18,16 @@ function ReportDetailView() {
     useEffect(()=>{
 
 
-        Axios.get(`http://localhost:4000/admin/viewreport/postmanagment/${postId}`, { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
+        Axios.get(`http://localhost:4000/admin/group/viewreport/postmanagment/${postId}`, { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
 
             console.log(response , "mmmammamsmd")
             SetPostDetails(response.data)
         })
     },[])
 
-    console.log(postDetails ,postId, "postDetsiddddd")
+    // console.log(postId , "postDetsiddddd")
+
+    console.log(postId , "postiddddddddddd")
 
     return (
 
@@ -100,4 +103,3 @@ function ReportDetailView() {
     )
 }
 
-export default ReportDetailView

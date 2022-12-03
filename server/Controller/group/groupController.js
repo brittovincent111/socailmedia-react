@@ -1,7 +1,9 @@
 
 const groupCommentSchemma = require("../../schema/user/GroupComment")
 const postGroupSchemma = require("../../schema/user/groupPostSchemma")
+const groupPostReportModel = require("../../schema/user/groupReportPost")
 const GroupSchemma = require("../../schema/user/GroupSchemma")
+const userSchemma = require("../../schema/user/signUp")
 
 
 
@@ -283,12 +285,83 @@ const controller = {
     }
 
 
+  },
+
+  /* ------------------------------ report group ------------------------------ */
+
+
+
+  reportPost : async(req,res)=>{
+
+
+    console.log(req.body)
+    let postId = req.params.postId
+    let {userId  ,groupId , reportValue} = req.body
+
+
+    try{
+      let response = await postGroupSchemma.updateOne({_id: postId},{$addToSet :{ reports : userId }})
+
+      let data = await groupPostReportModel.create({
+        userId : userId,
+        postId : postId,
+        groupId : groupId,
+        reason : reportValue
+      }) 
+
+      console.log(response , data )
+      res.json(200).status("updated")
+}catch(error){
+ 
+
+  console.log(error.message)
+  res.status(500).json(error)
+
+
+}
+  },
+
+  deletePost :async(req,res)=>{
+     
+
+    try{
+      console.log(req.params.id)
+      const postId = req.params.id
+      let deletePost = await postGroupSchemma.deleteOne({_id : postId})
+      let comment = await groupCommentSchemma.deleteMany({postId : postId})
+      let saved = await userSchemma.updateMany({ $pull :{savedPost : postId}})
+  
+      console.log(deletePost , "saved");
+      console.log(comment , "saved");
+  
+      console.log(saved , "saved");
+      res.status(200).json("deleted")
+    }catch(error){
+      res.status(500).json("Notdeleted")
+
+      console.log(error.message , "delete error message")
+    }
+   
+  },
+
+  viewGroups :async(req,res)=>{
+
+    console.log(req.params.userId ,"myname is sdafasdfsadfasdf")
+    try{
+
+      let data = await GroupSchemma.find({ $or: [ { admin: req.params.userId }, { groupMembers : {$in:[req.params.userId]} } ] })
+       
+
+      console.log(data , "dataaaaaaaaaaaa")
+      res.status(200).json(data)
+    }catch(error){
+      
+      res.status(500).json(error.message)
+      console.log(error.message ,"messsssssssssssssssageeeeeeeeeeeeeeee")
+
+
+    }
   }
-
-
-
-
-
 
 
 

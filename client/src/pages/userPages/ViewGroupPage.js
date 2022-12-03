@@ -1,11 +1,16 @@
+
+
+
+ 
 import React, { useState } from 'react'
 import Navbar from '../../components/user/Navbar'
 import Sidebar from '../../components/user/Sidebar'
 import Feed from '../../components/user/Feed'
 import RightSide from '../../components/user/RightSide'
 import MobileView from '../../components/user/MobileView'
+import ViewGroups from '../../components/user/group/ViewGroups'
 
-function FeedPage() {
+export default function ViewGroupPage() {
 
   const [status , setStatus] = useState(false)
   return (
@@ -17,16 +22,17 @@ function FeedPage() {
 
           <Sidebar  />
         </div>
-        <div className='flex h-max w-full justify-center md:justify-end lg:justify-center  '>
-          <div className='md:w-3/4 lg:w-6/12 w-full md:mx-2 lg:mx-6  rounded-2xl'>
+        <div className='flex w-full justify-center md:justify-end lg:justify-center  '>
+          <div className='md:w-3/4 lg:w-6/12  w-full md:mx-2 lg:mx-6  rounded-2xl'>
 
-            <Feed />
+          <ViewGroups />
 
           </div>
         </div>
         <div hidden className=' lg:block md:w-1/4 lg:w-3/12   fixed top-20 right-0 p-2 '>
-           
-          <RightSide/>
+
+         
+        <RightSide />
         </div>
 
       </div>
@@ -42,4 +48,3 @@ function FeedPage() {
   )
 }
 
-export default FeedPage

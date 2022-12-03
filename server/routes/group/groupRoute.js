@@ -1,6 +1,7 @@
 let  express = require('express');
 const router = express.Router()
-const { createGroup,  Groupe, groupDetails, joinGroup, addPost, viewGroupPost, likePost, commentPost, viewComments, groupUpdate, removeMember, groupMembers } = require('../../Controller/group/groupController');
+const { createGroup,  Groupe, groupDetails, joinGroup, addPost, viewGroupPost, likePost, commentPost, viewComments, groupUpdate, removeMember, groupMembers, reportPost, deletePost, viewGroups } = require('../../Controller/group/groupController');
+
 
 
 
@@ -16,6 +17,10 @@ router.get('/viewcomment/post/:id' , viewComments )
 router.post('/update' , groupUpdate)
 router.get('/members/:groupId' , groupMembers )
 router.post('/remove/:id' , removeMember)
+router.post('/post/report/:postId' , reportPost)
+router.post('/post/delete/:id' , deletePost )
+router.get('/viewAll/:userId' , viewGroups)
+
 
 
 

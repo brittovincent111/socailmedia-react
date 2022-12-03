@@ -20,6 +20,9 @@ import SavedPostPage from './pages/userPages/SavedPostPage';
 import ReportedPosts from './components/admin/ReportedPosts';
 import ReportDetailView from './components/admin/ReportDetailView';
 import GroupPage from './pages/userPages/GroupPage';
+import GroupPostReport from './components/admin/GroupPostReport';
+import GroupPostDetail from './components/admin/GroupPostDetail';
+import ViewGroupPage from './pages/userPages/ViewGroupPage';
 
 
 
@@ -41,6 +44,7 @@ function App() {
         <Route path='/message' element={<MessagePage/>}></Route>
         <Route path='/savedPosts' element={<SavedPostPage/>}></Route>
         <Route path='/group/:groupid' element={<GroupPage/>}></Route>
+        <Route path='/view/groups' element={<ViewGroupPage/>}></Route>
 
 
 
@@ -57,6 +61,8 @@ function App() {
         <Route path='/admin/usermanagment' element={<UserManagment/>}></Route>
         <Route path='/admin/report/postmanagment' element={<ReportedPosts/>}></Route>
         <Route path='/admin/viewreport/postmanagment/:postId' element={<ReportDetailView/>}></Route>
+        <Route path='/admin/group/report/postmanagment' element={<GroupPostReport/>}></Route>
+        <Route path='/admin/group/viewreport/postmanagment/:postId' element={<GroupPostDetail/>}></Route>
 
    
         </Route>

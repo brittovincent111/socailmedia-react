@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile} = require("../../Controller/user/userController")
+const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers} = require("../../Controller/user/userController")
 const verifyJwtUser = require('../../MiddleWare/VerifyUser')
 const multer = require('multer');
 
@@ -44,12 +44,12 @@ router.get('/viewProfilePosts/:id' , viewProfilePosts )
 
 
 router.get('/friendRequest/:id' ,friendRequest  )
-router.post('/acceptRequest/:id' , acceptRequest  )
-router.post('/declineRequest/:id' , declineRequest  )
-router.post('/cancelRequest/:id' ,cancelRequest  )
+router.put('/acceptRequest/:id' , acceptRequest  )
+router.put('/declineRequest/:id' , declineRequest  )
+router.put('/cancelRequest/:id' ,cancelRequest  )
 router.put('/savepost/:id' , savePost  )
 router.get('/savedpost/:id' , savedPost  )
-router.post('/unfollow/:id' , unfollow  )
+router.put('/unfollow/:id' , unfollow  )
 router.put('/post/report/:id' ,reportPost)
 
 
@@ -59,6 +59,12 @@ router.get('/:id' ,findUser )
 router.put('/post/delete/:id' , deletePost )
 
 router.post('/update' , editProfile)
+
+router.put('/post/edit' , editPost)
+
+router.get('/find/user/:val' , searchUsers)
+
+
 
 
 

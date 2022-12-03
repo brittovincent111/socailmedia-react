@@ -189,7 +189,7 @@ const controller = {
       } else {
 
 
-        // console.log(user, "kkkkkkkkkkk")
+        console.log(user, "kkkkkkkkkkk")
         let userpush = await userSchemaa.updateOne({ _id: req.body.userId }, { $push: { requestTo: req.params.id } })
         let requeseterPush = await userSchemaa.updateOne({ _id: req.params.id }, { $push: { requestFrom: req.body.userId } })
         // console.log(user, "hhhhhhhhhhhhhhhhhhhhhhhhhh")
@@ -531,7 +531,7 @@ const controller = {
 
 
       let user = await userSchemaa.updateOne({ _id: userId }, { $pull: { requestFrom: req.params.id } })
-      let requeseter = await userSchemaa.updateOne({ _id: requestId }, { $pull: { requestFrom: userId } })
+      let requeseter = await userSchemaa.updateOne({ _id: requestId }, { $pull: { requestTo: userId } })
       let userUpdate = await userSchemaa.updateOne({ _id: userId }, { $push: { following: req.params.id } })
 
       let reqUpdate = await userSchemaa.updateOne({ _id: requestId }, { $push: { following: userId } })
@@ -613,9 +613,6 @@ const controller = {
   unfollow: async(req, res) => {
 
     try {
-
-
-
       console.log(req.params.id, "oooooooooo")
       console.log(req.body.userID, "kkkkkkkkkk")
 
@@ -740,6 +737,43 @@ const controller = {
 
     
     
+  },
+
+  editPost : async(req,res)=>{
+
+    console.log(req.body)
+
+    try{
+
+      let post = await postSchemma.updateOne({_id : req.body.postId},{$set:{ desc : req.body.desc}})
+
+      console.log(post)
+
+      res.status(200).json("updated")
+
+    }catch(error){
+
+      res.status(500).json(error)
+    }
+  },
+
+  searchUsers : async(req,res)=>{
+
+    console.log(req.params.val , "valllllllalllll")
+
+    try{
+    let users = await userSchemaa.find({userfullname : {$regex :'^' + req.params.val  , $options: "i"}})
+
+    console.log(users , "searched usersssssss")
+
+    res.status(200).json(users)
+  
+        
+    }catch(error){
+
+      console.log(error.message)
+
+    }
   }
 
 }
