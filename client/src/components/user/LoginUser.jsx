@@ -21,7 +21,7 @@ function LoginUser() {
     password: ""
   })
 
-
+  /* ------------------------------ HANDLE CHANGE ----------------------------- */
   const onHandleChange = ((e) => {
 
     e.preventDefault()
@@ -30,7 +30,9 @@ function LoginUser() {
     console.log(Login)
 
   })
+  
 
+  /* -------------------------------- ON LOGIN -------------------------------- */
   const OnLogin = (async (e) => {
     e.preventDefault()
     try {
@@ -39,8 +41,6 @@ function LoginUser() {
         setErrorMessage("Email is required");
       } else if (!Login.email.match(/^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/)) {
         setErrorMessage("Enter a valid email");
-
-
       } else if (!Login.password) {
         setErrorMessage("Password is required");
       } else if (Login.password.length < 4) {
@@ -58,14 +58,16 @@ function LoginUser() {
 
         }).then((response) => {
          
-          localStorage.setItem('userToken', response.data.userToken)
-            localStorage.setItem('user' ,JSON.stringify( response.data.user))
+          localStorage.
+          setItem('userToken', response.data.userToken)
+            localStorage.
+            setItem('user' ,JSON.stringify( response.data.user))
             dispatch(update(response.data.user))
        
-          // console.log(response.data.user , "jjjjjjjjjjjj");
           Navigate('/')
+
         }).catch((data) => {
-          // console.log(data.response.data.error, "sdffsd");
+          
           setErrorMessage(data.response.data.error);
          
         })

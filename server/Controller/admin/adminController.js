@@ -12,29 +12,21 @@ const groupPostReportModel = require('../../schema/user/groupReportPost')
 const Controller = {
 
 
-  // adminlogin 
+  /* ------------------------------- adminlogin ------------------------------- */
 
   AdminLogin: async (req, res) => {
-    console.log(req.body.email)
+
     const { email, password } = req.body
 
     try {
 
-
       if (Email == email) {
-
-        // const checkPassword = await bcrypt.compare(password,user.password)
-
-        console.log("calllsssssssss")   
         if (Passsword == password) {
           const id = "123456"
           const token = jwt.sign({ id }, process.env.JWT_KEY, {
             expiresIn: "365d",
-
-
           })
 
-          console.log("calll")
           res.json({ token: token, auth: true })
 
         } else {
@@ -46,25 +38,25 @@ const Controller = {
 
 
       } else {
+
         res.status(401).json({ error: "Email Wrong" })
-        console.log("email error")
 
       }
 
     } catch (e) {
-      console.log(e)
       res.status(500).json({ error: "server error" })
 
     }
   },
+ 
 
+  /* -------------------------------- dashboard ------------------------------- */
 
   dashboard : (req,res)=>{
     try{
       console.log('dashboard')
 
     }catch{
-
 
       console.log(hiiii)
     }
@@ -73,17 +65,14 @@ const Controller = {
   },
 
 
-  // view users 
+  /* ------------------------------- view users ------------------------------- */
 
 
   userManagment: async (req, res) => {
 
-    console.log("call reached")
     try {
-      console.log("call reached")
       let user = await userSchemaa.find()
       if (user) {
-        console.log("call reacheddddddddd")
         res.status(200).json(user)
       }
 
@@ -92,16 +81,16 @@ const Controller = {
       res.status(401).json({message : "something went wrong "})
 
     }
-
-
   },
 
+  /* -------------------------------- BlockUser ------------------------------- */
 
   BlockUser: async(req, res) => {
 
     try {  
       const userid = req.params.id
-      await userSchemaa.findByIdAndUpdate(userid, { status: 'Blocked' },
+      await userSchemaa.
+      findByIdAndUpdate(userid, { status: 'Blocked' },
         function (err, docs) {
           if (err) {
             console.log(err)
@@ -112,15 +101,16 @@ const Controller = {
           }
         });
 
-    }catch{
-      console.log("error")
+    }catch(error){
+
+      res.status(500).json(error)
 
     }
   },
 
-  UnBlockUser: async(req, res) => {
+  /* ------------------------------ UnBlock User ------------------------------ */
 
-    console.log('dddddddd')
+  UnBlockUser: async(req, res) => {
 
     try {
       const userid = req.params.id
@@ -131,31 +121,26 @@ const Controller = {
           }
           else {
             res.status(200).json({updated: "true"})
-            console.log("Updated User : ", docs);
           }
         });
 
-    }catch{
-      console.log("error")
+    }catch(error){
+
+      res.status(500).json(error)
 
     }
   },
 
+  /* --------------------------- view Reported Post --------------------------- */
+  
   viewReportedPost :async(req,res)=>{
 
     try {
 
-      await postSchemma.find({reports : { $ne : []}}).then((response)=>{
+      let response = await postSchemma.
+      find({reports : { $ne : []}})
 
         res.status(200).json(response)
-
-        console.log(response , "response")
-      }).catch((error)=>{
-
-        res.status(401).json(error)
-
-      })
-
 
     }catch(error){
 
@@ -164,9 +149,9 @@ const Controller = {
 
     }
 
-
-
   }, 
+  /* -------------------------------- blockPost ------------------------------- */
+
   blockPost : async(req,res)=>{
 
     try {  
@@ -178,105 +163,91 @@ const Controller = {
           }
           else {
             res.status(200).json({updated: "true"})
-            console.log("Updated User : ", docs);
           }
         });
 
-    }catch{
-      console.log("error")
+    }catch(error){
+      res.status(500).json(error)
 
     }
 
-
   },
+
+  /* ------------------------------- UnBlockPost ------------------------------ */
+
   UnBlockPost: async(req, res) => {
 
-    console.log('dddddddd')
 
     try {
       const postid = req.params.id
-      await postSchemma.findByIdAndUpdate( postid, { status: 'Active' },
+      await postSchemma.
+      findByIdAndUpdate( postid, { status: 'Active' },
         function (err, docs) {
           if (err) {
             console.log(err)
           }
           else {
             res.status(200).json({updated: "true"})
-            console.log("Updated User : ", docs);
           }
         });
 
-    }catch{
-      console.log("error")
+    }catch(error){
+      res.status(500).json(error)
 
     }
   },
+
+  /* ---------------------------- viewSingleReport ---------------------------- */
 
   viewSingleReport : async(req,res)=>{
      
 
     const postId = req.params.postId
+      try{
 
-    try{
           let reports =  await ReportModel.find({postId : postId}).populate('userId')
-
-          console.log(reports , "reports")
           res.status(200).json(reports)
 
     }catch(error){
     
       res.status(500).json(error)
-      console.log(error.message)
+
     }
   },
+  /* ------------------------ view Group Reported Post ------------------------ */
 
   viewGroupReportedPost :async(req,res)=>{
 
     try {
 
-      await postGroupSchemma.find({reports : { $ne : []}}).populate("groupId").populate("userId").then((response)=>{
+      let response = await postGroupSchemma.
+      find({reports : { $ne : []}}).
+      populate("groupId").
+      populate("userId")
 
         res.status(200).json(response)
 
-        console.log(response , "response")
-      }).catch((error)=>{
-        
-
-        console.log(error.message , "message")
-        res.status(401).json(error)
-
-      })
-
-
     }catch(error){
       
-      console.log(error.message , "message")
       res.status(500).json(error)
-
-
     }
-
-
-
   },
+
+  /* ------------------------ view Group Single Report ------------------------ */
 
   viewGroupSingleReport : async(req,res)=>{
      
 
     const postId = req.params.postId
-
-    console.log(postId , "postId")
-
     try{
-          let reports =  await groupPostReportModel.find({postId : postId}).populate('userId')
-
-          console.log(reports , "reports")
+          let reports =  await groupPostReportModel.
+          find({postId : postId}).
+          populate('userId')
           res.status(200).json(reports)
 
     }catch(error){
     
       res.status(500).json(error)
-      console.log(error.message)
     }
   },
 }  

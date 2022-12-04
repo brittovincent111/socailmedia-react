@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { viewGroupDet } from '../../../API/groupAxios'
 import groupWall from '../../../assets/images/groupWall.jpg'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+
+
 
 
 function ViewGroups() {
@@ -14,6 +17,8 @@ function ViewGroups() {
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
 
+    /* ------------------------------- VIEW GROUPS ------------------------------ */
+
     useEffect(() => {
         const view = async () => {
             try {
@@ -21,7 +26,6 @@ function ViewGroups() {
                 const viewGroups = await viewGroupDet(userDetails._id)
 
                 setDetails(viewGroups.data)
-                console.log(viewGroups.data, "viewgroupssssssssssss")
             } catch (error) {
 
                 console.log(error)
@@ -30,7 +34,6 @@ function ViewGroups() {
         view()
     }, [])
 
-    console.log(details, "detailsssssssssssssssssssssssss")
     return (
         <>
 
@@ -51,7 +54,9 @@ function ViewGroups() {
                                     <div className='text-sm py-1'>Member</div>
 
                                 }
+                                <Link to={`/group/${det._id}`}>
                                 <div className='px-4 py-1 text-lg bg-sky-900 rounded-3xl text-white border shadow-md'>View</div>
+                                </Link>
                             </div>
                         )
 

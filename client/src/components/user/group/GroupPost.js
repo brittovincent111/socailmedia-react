@@ -18,19 +18,6 @@ import { deletePost, reportPost } from '../../../API/groupAxios'
 function GroupPost({ post, groupId , SetReportChange }) {
 
 
-
-
-  //   const [likes, SetLikes] = useState(post.likes.length)
-  //   const [isLike, SetIsLike] = useState(false)
-  //   const [comment, SetComment] = useState("")
-  //   const [viewComment, setviewCommet] = useState(false)
-  //   const [seeComments, SetSeeeComments] = useState([])
-
-  //   const [showImage, setShowImage] = useState()
-
-  //   const [postMod, setPostMod] = useState(false);
-  //   const [groupPost, setGroupPost] = useState([])
-
   const [likes, SetLikes] = useState(post.likes.length)
   const [isLike, SetIsLike] = useState(false)
   const [comment, SetComment] = useState("")
@@ -41,34 +28,33 @@ function GroupPost({ post, groupId , SetReportChange }) {
   const [reportValue, setReportValue] = useState("");
 
 
-
-
-
-
   const userDetails = useSelector(state => state.user)
-
-  //   const groupId = useParams().groupid
-
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
-
   const userID = userDetails._id
 
 
 
-  console.log(post, "LLLLLLLLL")
+/* -------------------------------- LIKE POST ------------------------------- */
 
   const onHandlerLike = async () => {
-    console.log(post._id, " postid")
-    // console.log(userId)
 
-    let res = await axios.put(`http://localhost:4000/group/like/post/${post._id}`, { userId: userID })
+  try {
+
+    let res = await axios.
+    put(`http://localhost:4000/group/like/post/${post._id}`,
+     { userId: userID })
 
     SetLikes(isLike ? likes - 1 : likes + 1)
     SetIsLike(!isLike)
 
+  }catch(error){
 
   }
+  
+  }
 
+
+   /* -------------------------------- POST LIKE ------------------------------- */
   useEffect(() => {
 
     SetIsLike(post.likes.includes(userID))
@@ -76,6 +62,7 @@ function GroupPost({ post, groupId , SetReportChange }) {
   }, [userID, post._id])
 
 
+  /* ------------------------------ COMMENT POST ------------------------------ */
   const onhandlerCommemt = async () => {
 
     const data = {
@@ -85,43 +72,37 @@ function GroupPost({ post, groupId , SetReportChange }) {
       comment: comment
     }
 
-    let res = await axios.put(`http://localhost:4000/group/comment/post/${post._id}`, { ...data })
+    let res = await axios.
+    put(`http://localhost:4000/group/comment/post/${post._id}`,
+     { ...data })
 
     SetComment("")
   }
 
-  // console.log(post, "userrrrrrrrrrrrreeeeeeeee")
+  /* ------------------------------ VIEW COMMENTS ----------------------------- */
 
-  const onhandleViewComments = () => {
 
-    console.log(post._id, "postidddddddddddddddddddddddddd")
+  const onhandleViewComments = async() => {
+
     setviewCommet(!viewComment)
 
     // if(viewComment){
 
-    axios.get(`http://localhost:4000/group/viewcomment/post/${post._id}`).then((response) => {
-
-      console.log("hiiiiiiiiiiiiiiiiii")
-
-      console.log(response.data, "dataaaaaaaaaa")
+    await axios.
+    get(`http://localhost:4000/group/viewcomment/post/${post._id}`).
+    then((response) => {
       SetSeeeComments(response.data)
 
     }).catch((error) => {
 
-      console.log(error)
 
       console.log(error)
     })
-    // }
-
-
-
-
+  
   }
 
   const handleReport = async (e) => {
     e.preventDefault()
-    console.log(post._id, "report")
     close();
 
 
@@ -133,22 +114,6 @@ function GroupPost({ post, groupId , SetReportChange }) {
       console.log(error)
 
     }
-    // if (response.data.message == "already added") {
-
-
-
-    //     const notify = () => toast("Already Added !");
-    //     notify()
-    // } else {
-    //     const notify = () => toast("Added To Saved!");
-    //     notify()
-
-    // }
-
-
-
-
-
 
   }
 
@@ -172,12 +137,8 @@ function GroupPost({ post, groupId , SetReportChange }) {
 
       console.log(error)
     }
-
-
-
   }
 
-  console.log(post , userDetails._id , "asdfghjkl")
 
 
   return (

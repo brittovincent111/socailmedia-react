@@ -18,17 +18,16 @@ function Message() {
     const [reciveMessage, setReciveMessage] = useState(null)
 
 
-    console.log(sendMessage, "sendmessage")
-    //    send message to socket server 
+    // SEND MESSAGE FROM SOCKET SERVER 
+
     useEffect(() => {
         if (sendMessage !== null) {
             socket.current.emit('send-message', sendMessage)
         }
     }, [sendMessage])
 
-    //    recieved message from socket server 
 
-
+    /* -------------------------------- GET USER -------------------------------- */
 
     useEffect(() => {
         socket.current = io('http://localhost:8800')
@@ -39,33 +38,35 @@ function Message() {
         })
     }, [userDetails])
 
+
+           /* ----------------------- RECIEVED MESAGE FROM SOCKET ---------------------- */
+
     useEffect(() => {
         socket.current.on("receieve-message", (data) => {
             setReciveMessage(data)
         })
     }, [])
 
-
+     /* -------------------------------- GET CHAT -------------------------------- */
     useEffect(() => {
         const getChats = async () => {
             try {
 
                 const { data } = await userChats(userDetails._id)
                 setChats(data)
-                console.log(data, "dataaaaaaaa");
 
             } catch (error) {
 
                 console.log(error)
 
             }
-
         }
 
         getChats()
 
     }, [userDetails])
 
+    /* --------------------------- CHECK ONLINE USERS --------------------------- */
 
     const checkOnlineUsers = (chat)=>{
 
@@ -74,13 +75,11 @@ function Message() {
     
        const online = onlineUsers.find((user)=>user.userId === chatMembers)
         
-       console.log(chatMembers , "onlineeeeeeeeeeeeeeee")
         return online ? true : false  
    
     }
 
 
-    // always to last message 
 
     
     return (
@@ -109,8 +108,6 @@ function Message() {
                                 chats.map((chat) => {
 
                                     return (
-
-                                        
 
                                             <div onClick={() => SetCurrentChat(chat)}>
 

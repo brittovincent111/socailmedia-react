@@ -3,23 +3,12 @@ import React, { useState, useRef, useEffect } from 'react'
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import { BsEmojiSmile } from 'react-icons/bs'
-
-
 import { BsFillBookmarkFill } from 'react-icons/bs'
 import Axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import {FaHome} from 'react-icons/fa'
-
-
-
-import javascript from '../../assets/images/js.png'
-import node from '../../assets/images/nodejs.jpg'
-import stat from '../../assets/images/stat.png'
 import ImageUpload from '../../assets/images/uploadimage2.jpg'
 import { Link, useNavigate } from 'react-router-dom'
-
-
 import { useSelector, useDispatch } from 'react-redux'
 import { remove } from '../../redux/userRedux'
 

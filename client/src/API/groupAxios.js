@@ -13,3 +13,5 @@ export const removeGroup = (userId , groupId) => API.post(`/group/remove/${userI
 export const reportPost = (postId , groupId , userId , reportValue)=> API.post(`/group/post/report/${postId}` , { groupId , userId , reportValue})
 export const deletePost =(postId)=> API.post(`/group/post/delete/${postId}`)
 export const viewGroupDet = (userId)=> API.get(`/group/viewAll/${userId}`)
+export const leaveGroup = (userId , groupId) => API.put(`/group/leave/${groupId}` , {userId})
+export const deleteGroup = (groupId , userId) => API.post(`/group/delete/${groupId}` , {userId})

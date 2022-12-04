@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-
 import { useLocation, useParams } from 'react-router-dom'
-
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import Axios from 'axios'
 import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
-
 import { ToastContainer, toast } from 'react-toastify';
-
-
 import 'react-toastify/dist/ReactToastify.css';
-import { groupDetails, groupPosts, joinGroup, removeGroup, viewMembers } from '../../../API/groupAxios'
+import { deleteGroup, groupDetails, groupPosts, joinGroup, leaveGroup, removeGroup, viewMembers } from '../../../API/groupAxios'
 import ImageUpload from '../../../assets/images/uploadimage2.jpg'
 import GroupPost from './GroupPost'
-
 import { BiEditAlt } from 'react-icons/bi'
 import { HiLockClosed } from 'react-icons/hi'
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
@@ -31,60 +25,39 @@ export default function GroupFedd() {
   const [groupDetailss, setGroupDetailss] = useState()
   const [desc, SetDesc] = useState("")
   const [groupDesc, SetGroupDesc] = useState("")
-
   const [file, SetFile] = useState("")
   const [showImage, setShowImage] = useState()
-
   const [postMod, setPostMod] = useState(false);
   const [groupPost, setGroupPost] = useState([])
   const [showMod, SetShowMod] = useState(false)
   const [groupSet, SetGroupSet] = useState(true)
-
   const [updateDetails, SetUpdateDetails] = useState("Details")
   const [edit, SetEdit] = useState([])
-  // const [file, SetFile] = useState("")
   const [updation, setUpdation] = useState(false)
   const [blockModal, setBlockModal] = useState(false)
   const [reqMod, setReqMod] = useState(false)
   const [refresh, setRefresh] = useState(false)
   const [members, setMembers] = useState([])
-  const [reportChange , SetReportChange] = useState('')
-
-
-
-
-
-
-
+  const [reportChange, SetReportChange] = useState('')
   const userDetails = useSelector(state => state.user)
 
+
+
   const groupId = useParams().groupid
-
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
-
-
-
-
   const userID = userDetails._id
 
-  console.log(groupId, "groupdetailsidddddddddddddddddddddddd")
+
+  /* ------------------------------ GROUP DETAILS ----------------------------- */
 
   useEffect(() => {
 
     const call = async (groupId) => {
-
-
-
       try {
         const { data } = await groupDetails(groupId)
 
         setGroupDetailss(data)
         console.log(data, "detailssssssssss");
-
-
-
-
-
       } catch (error) {
 
         console.log(error, "error")
@@ -96,15 +69,13 @@ export default function GroupFedd() {
 
   }, [groupId, groupSet, reqMod, refresh])
 
-  console.log(groupDetailss, "groupdetails")
-  console.log(userID, "groupdetails")
+
+
+  /* ------------------------------- JOON GROUP ------------------------------- */
 
 
 
   const handleJoin = async () => {
-
-    console.log("callllllll")
-
     try {
 
       const { data } = await joinGroup(userID, groupId)
@@ -115,6 +86,7 @@ export default function GroupFedd() {
     }
   }
 
+/* ------------------------------- EDIT GROUP ------------------------------- */
 
   const handleEdit = async (e) => {
 
@@ -130,16 +102,12 @@ export default function GroupFedd() {
       edit.groupProfile = fileName
       try {
         await Axios.post('http://localhost:4000/upload', datas)
-        console.log(datas, "data");
-
-        // window.location.reload()
 
       } catch (error) {
         console.log(error);
       }
     }
     try {
-      console.log("suiiiiiiiii")
       await Axios.post('http://localhost:4000/group/update', { ...edit, groupId: groupId }).then((response) => {
 
         setUpdation(!updation)
@@ -148,19 +116,20 @@ export default function GroupFedd() {
       })
 
 
-
     } catch (err) {
       console.log(err);
     }
   }
 
-
+  /* ------------------------------- EDIT STATE ------------------------------- */
   const handleChange = (e) => {
 
     SetEdit({ ...edit, [e.target.name]: e.target.value })
 
   }
 
+
+  /* ------------------------------- SUBMIT POST ------------------------------ */
   const onSubmit = async (e) => {
 
     e.preventDefault()
@@ -177,12 +146,8 @@ export default function GroupFedd() {
       newPost.img = fileName
       try {
         await Axios.post('http://localhost:4000/upload', data)
-        // console.log(data, "data");
-
-        setRefresh(!refresh)
+   
         close()
-
-    
 
       } catch (error) {
         console.log(error);
@@ -190,22 +155,19 @@ export default function GroupFedd() {
     }
     try {
       await Axios.post('http://localhost:4000/group/post', newPost)
-      // console.log(newPost, "klkl");
-
+      setRefresh(!refresh)
     } catch (err) {
       console.log(err);
     }
 
-
-
-
   }
 
-
+/* ----------------------------- ADD POST MODAL ----------------------------- */
   const addPost = () => {
-    console.log("hiiiiiiiiiiiii")
     setPostMod(true)
   }
+
+  /* -------------------------- ADD POST MODAL CLOSE -------------------------- */
   const close = () => {
     setPostMod(false)
     setShowImage()
@@ -215,12 +177,12 @@ export default function GroupFedd() {
 
 
   }
-
+  /* ------------------------------ IMAGE PREVIEW ----------------------------- */
   useEffect(() => {
-
-
   }, [file, showImage])
 
+
+  /* ------------------------ IMSGE DELETEFROM PREVIEW ------------------------ */
   const imageClose = () => {
 
     setShowImage()
@@ -229,13 +191,13 @@ export default function GroupFedd() {
   }
 
 
-
+/* ------------------------------- IMAGE STATE ------------------------------ */
   const handleImage = (e) => {
-    console.log('yyyyyy');
     setShowImage(URL.createObjectURL(e.target.files[0]))
     SetFile(e.target.files[0])
   }
 
+  /* -------------------------------- POST VIEW ------------------------------- */
 
   useEffect(() => {
 
@@ -243,22 +205,23 @@ export default function GroupFedd() {
 
       const { data } = await groupPosts(groupId)
 
-      setGroupPost(data)
-
-
-    }
+      setGroupPost(
+        data.sort((p1,p2)=>{
+          return new Date(p2.createdAt)-new Date(p1.createdAt)
+        })
+      )
+   }
 
     postView(groupId)
 
-  }, [groupId, refresh , reportChange])
+  }, [groupId, refresh, reportChange])
 
 
+  /* ---------------------------- REMOVE FROM GROUP --------------------------- */
   const onHandleRemove = async (userId) => {
 
 
     try {
-
-      console.log(userId, "userIDDDDDDDDDDDDDDDDDDDDDDDDD")
       const { data } = await removeGroup(userId, groupId)
       setReqMod(!reqMod)
       setRefresh(!refresh)
@@ -270,6 +233,9 @@ export default function GroupFedd() {
 
   }
 
+
+  /* ------------------------------ VIEW MEMBERS ------------------------------ */
+
   const callMembers = async (e) => {
 
     setReqMod(!reqMod)
@@ -280,22 +246,47 @@ export default function GroupFedd() {
   }
 
 
+  /* ------------------------------- LEAVE GROUP ------------------------------ */
+  const handleLeave=async()=>{
+   try{
 
-  console.log(groupDetailss?.groupMembers.includes(userDetails._id), userID,  members, "includessssssssss")
+     let {data} = await leaveGroup(userID,groupId)
+     setRefresh(!refresh)
+
+
+   }catch(error){
+
+    console.log(error)
+   }
+
+  }
+
+  /* ------------------------------ DELETE GROUP ------------------------------ */
+  const handleDelete=()=>{
+    
+    try{
+
+      const{data} = deleteGroup(groupId , userID)
+    }catch(error){
+
+      console.log(error)
+    }
+
+
+  }
 
   return (
 
 
-    <div className='w-full h-screen  flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
-
+    <div className='md:w-3/4 w-full flex justify-center p-1 bg-gray-100  overflow-y-auto no-scrollbar'>
       <div className='md:w-11/12 w-full bg-white   h-full'>
         <div className='w-full h-[400px]'>
           <div className='w-full rounded-2xl  bg-white'>
             <div className='w-full  h-[300px] rounded-2xl bg-blue-100 relative'>
               {
                 groupDetailss?.groupProfile ?
-              <img className='h-full w-full rounded-2xl' src={PF + groupDetailss?.groupProfile} /> :
-              <img className='h-full w-full rounded-2xl' src={groupWall} />
+                  <img className='h-full w-full rounded-2xl' src={PF + groupDetailss?.groupProfile} /> :
+                  <img className='h-full w-full rounded-2xl' src={groupWall} />
               }
               {
                 groupDetailss?.admin == userDetails._id ?
@@ -305,24 +296,24 @@ export default function GroupFedd() {
           </div>
           <div className='flex justify-between items-center h-[100px]'>
             <div>
-              <div className='flex px-10 text-2xl font-semibold'>{groupDetailss?.groupName}</div>
+              <div className='flex md:px-10 px-1 text-2xl font-semibold'>{groupDetailss?.groupName}</div>
 
-              <div className='flex px-10 text-normal font-semibold'>{groupDetailss?.about}</div>
+              <div className='md:flex px-10 hidden  text-normal font-semibold'>{groupDetailss?.about}</div>
             </div>
             {
               groupDetailss?.groupMembers.includes(userDetails._id) || groupDetailss?.admin == userDetails._id ?
 
 
-                <div className=' p-5 rounded-full bg-sky-400 text-white text-2xl' onClick={(e) => { setPostMod(!postMod) }}><AiOutlinePlus /></div>
+                <div className=' p-5 rounded-full bg-sky-400 text-white text-lg' onClick={(e) => { setPostMod(!postMod) }}><AiOutlinePlus /></div>
                 : null}
-            <div className='flex px-10 space-x-3'>
+            <div className='flex md:px-10 md:space-x-3 px-2 space-x-1'>
               {
                 groupDetailss?.admin == userDetails._id ?
-                  <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleJoin}>DELETE</div>
+                  <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white text-base ' onClick={handleDelete}>DELETE</div>
                   :
 
                   groupDetailss?.groupMembers.includes(userDetails._id) ?
-                    <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleJoin}>LEAVE</div>
+                    <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleLeave}>LEAVE</div>
                     : <div>
 
                       <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleJoin}>JOIN</div>
@@ -330,7 +321,7 @@ export default function GroupFedd() {
 
 
               }
-              <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white'>INVITE</div>
+              {/* <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white'>INVITE</div> */}
               {
                 groupDetailss?.admin == userDetails._id ?
                   <div className='py-2 rounded-2xl relative ' onClick={(e) => { setBlockModal(!blockModal) }}><BsThreeDots className='text-2xl' />
@@ -370,38 +361,36 @@ export default function GroupFedd() {
         </div>
 
         <div className=' h-max  w-full bg-slate-200 flex-col flex  items-center  pt-5   '>
-     
-          {groupPost.map((post) => {
-            return (
-              <>
-                {
-                  (groupDetailss?.groupMembers.includes(userDetails._id)) || groupDetailss.admin == userDetails._id ?
+
+          {
+            (groupDetailss?.groupMembers.includes(userDetails._id)) || groupDetailss?.admin == userDetails._id ?
+
+              groupPost.map((post) => {
+                return (
+                  <>
+
 
                     <GroupPost key={post.userId} post={post} groupId={groupId} SetReportChange={SetReportChange} />
-                    : <div className='flex justify-center w-full h-[200px] bg-gray-200 m-5'>
-                      <div className='flex items-center'>
-                        <div className='rounded-full bg-white'>
 
-                          <HiLockClosed className='m-5 text-2xl' />
-                        </div>
-                        <p className='m-5 text-lg'>This Account Is Locked</p>
-
-                      </div>
+                  </>
 
 
-                    </div>
-                }
-              </>
+                )
+              })
+
+              : <div className='flex justify-center w-full h-[200px] bg-gray-200 m-5'>
+                <div className='flex items-center'>
+                  <div className='rounded-full bg-white'>
+
+                    <HiLockClosed className='m-5 text-2xl' />
+                  </div>
+                  <p className='m-5 text-lg'>This Account Is Locked</p>
+
+                </div>
 
 
-            )
-          })}
-
-
-
-
-
-
+              </div>
+          }
 
         </div>
 

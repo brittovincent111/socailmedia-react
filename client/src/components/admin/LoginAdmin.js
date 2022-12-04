@@ -1,7 +1,6 @@
 import React from 'react'
 import { FaRegEnvelope, FaLock } from 'react-icons/fa'
 import google from '../../assets/images/google.png'
-// import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import image from '../../assets/images/img1.jpg'
 import { useState } from 'react'
 import './LoginPage.css'

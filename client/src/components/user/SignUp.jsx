@@ -20,14 +20,16 @@ function SignUp() {
     })
 
 
+    /* ------------------------------ HANDLE CHANGE ----------------------------- */
+
     const onHandleChange = (e) => {
         e.preventDefault()
-        console.log(signUp)
-
         SetSignUp({ ...signUp, [e.target.name]: e.target.value })
 
 
     }
+
+    /* --------------------------------- SIGNUP --------------------------------- */
 
     const OnSignup = (async (e) => {
         e.preventDefault()
@@ -61,9 +63,9 @@ function SignUp() {
                 setErrorMessage("Password Incorrect");
             } else {
 
-                console.log("hhhhhhhhhhhhhhhhhhh")
 
-                await axios.post('http://localhost:4000/signup', {
+                await axios.
+                post('http://localhost:4000/signup', {
 
                 userfullname : signUp.userfullname,
                     username: signUp.username,
@@ -73,17 +75,10 @@ function SignUp() {
 
                 }).then((response) => {
                     
-
-                    console.log(response)
-                    console.log("hjhhgg");
-                    // console.log(response.error);
                     Navigate('/login')
                 }).catch((data) => {
-                    console.log(data.response.data.error, "sdffsd");
                     setErrorMessage(data.response.data.error);
                 })
-
-
             }
         } catch (error) {
             console.log();

@@ -1,97 +1,55 @@
 import React, { useState, useRef, useEffect } from 'react'
-
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import { BsEmojiSmile } from 'react-icons/bs'
-
-
 import { BsFillBookmarkFill } from 'react-icons/bs'
 import Axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
-
-
-
-import javascript from '../../assets/images/js.png'
-import node from '../../assets/images/nodejs.jpg'
-import stat from '../../assets/images/stat.png'
 import ImageUpload from '../../assets/images/uploadimage2.jpg'
-import { Link, useNavigate } from 'react-router-dom'
-
-
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { remove } from '../../redux/userRedux'
 import avatar from '../../assets/images/avatar.jpg'
-
-
-
-
-
+import './sidebar.css'
 
 
 function Sidebar() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const imageRef = useRef(null);
-
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
-
-
   const userDetails = useSelector(state => state.user)
 
 
   const [desc, SetDesc] = useState("")
   const [file, SetFile] = useState("")
-
   const [postMod, setPostMod] = useState(false);
   const [reqMod, setReqMod] = useState(false);
   const [request, setRequest] = useState([]);
   const [requestUpdate, setRequestUpdate] = useState(false);
   const [group, SetGroup] = useState([])
-
-
-  // console.log(request, "rrrrrrrrrrrrr")
-
-
-
-
-  // const PF =process.env.REACT_APP_PUBLIC_FOLDER;
-
   const [postImage, setPostImage] = useState()
   const [showImage, setShowImage] = useState()
- 
+
+  /* --------------------------- HANDLE UPLOAD IMAGE -------------------------- */
 
   const handleImage = (e) => {
-    console.log('yyyyyy');
     setShowImage(URL.createObjectURL(e.target.files[0]))
     SetFile(e.target.files[0])
   }
 
+  /* --------------------------- UPLOAD CLOSE MODAL --------------------------- */
 
-
-
-
-  // show modal add post 
-  const addPost = () => {
-    console.log("hiiiiiiiiiiiii")
-    setPostMod(true)
-  }
   const close = () => {
     setPostMod(false)
     setShowImage()
     SetFile()
-
-
-
-
   }
 
-  useEffect(() => {
 
 
-  }, [file, showImage])
-
-
+  /* ---------------------------- IMAGE CLOSE MODAL --------------------------- */
   const imageClose = () => {
 
     setShowImage()
@@ -99,46 +57,8 @@ function Sidebar() {
 
   }
 
-  const logout = () => {
 
-
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        return (
-          <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
-            <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
-            {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
-            <div className='flex space-x-2 p-2 '>
-              <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
-              <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
-                onClick={() => {
-
-
-
-                  onClose();
-                  // this.handleClickDelete();
-                  localStorage.removeItem('userToken')
-                  localStorage.removeItem('user')
-                  navigate('/login')
-                  dispatch(remove())
-
-
-                }}
-              >
-                Logout
-              </button>
-
-            </div>
-
-          </div>
-        );
-      }
-    });
-  }
-
-
-
-
+  /* -------------------------------- ADD POST -------------------------------- */
 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -153,169 +73,167 @@ function Sidebar() {
       data.append("name", fileName)
       newPost.img = fileName
       try {
-        await Axios.post('http://localhost:4000/upload', data)
-        // console.log(data, "data");
+        await Axios.
+          post('http://localhost:4000/upload', data)
 
+        await Axios.
+          post('http://localhost:4000/post', newPost)
         window.location.reload()
 
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
       }
     }
-    try {
-      await Axios.post('http://localhost:4000/post', newPost)
-      // console.log(newPost, "klkl");
-
-    } catch (err) {
-      console.log(err);
-    }
   }
 
-  const onHandleRequest = () => {
-    setReqMod(!reqMod)
-
-  }
+  /* -------------------------- VIEW FRIEND REQUESTS -------------------------- */
 
   useEffect(() => {
 
-    console.log("jjjjjjjjjjjj")
-
     const userId = userDetails._id
+    const userReq = async (userId) => {
 
-    Axios.get(`http://localhost:4000/friendRequest/${userId}`).then((response) => {
+      try {
 
-      // console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
-      setRequest(response.data)
+        let response = await Axios.
+          get(`http://localhost:4000/friendRequest/${userId}`)
+        setRequest(response.data)
+      } catch (error) {
 
-
-    })
-
-
-  }, [requestUpdate])
-
-  /* ------------------------------- view group suggetions------------------------------- */
-
-  
-
-  useEffect(()=>{
-    try{
-
-      Axios.get('http://localhost:4000/group/suggestions' ).then((response) => {
-
-        console.log(response.data, "jjjjjjwwwwwwwwwwwwwwwwwww")
-        SetGroup(response.data)
-
-      })
-
-      
-    }catch(error){
-
-          console.log(error)
+        console.log(error, "what is error")
+      }
 
     }
 
+    userReq(userId)
+  }, [requestUpdate])
 
-  },[])
+  /* -------------------------- VIEW GROUP SUGGESTION ------------------------- */
 
 
-  // accept request 
+  useEffect(() => {
+    const suggetGroup = async () => {
+      try {
+
+        let response = await Axios.
+          get('http://localhost:4000/group/suggestions')
+        SetGroup(response.data)
+
+      } catch (error) {
+
+        console.log(error)
+
+      }
+    }
+
+    suggetGroup()
+
+  }, [])
+
+
+  /* ----------------------------- ACCEPT REQUEST ----------------------------- */
 
   const onHandleAcc = async (id, e) => {
 
     e.preventDefault()
-
-    console.log(id, 'iddddddddddddddddd')
-
-    await Axios.post(`http://localhost:4000/acceptRequest/${id}`, { userID: userDetails._id }).then((response) => {
-
-      console.log(response.data, "jjjjjjjjjjjjjj")
-
+    try {
+      await Axios.
+        post(`http://localhost:4000/acceptRequest/${id}`,
+          { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
-    })
 
+    } catch (error) {
 
+    }
   }
+
+  /* ----------------------------- DECLINE REQUEST ---------------------------- */
 
   const onHandleDec = async (id, e) => {
 
     e.preventDefault()
-
-    console.log(id, 'iddddddddddddddddd')
-    await Axios.post(`http://localhost:4000/declineRequest/${id}`, { userID: userDetails._id }).then((response) => {
-
-      // console.log(response.data, "jjjjjjjjjjjjjj")
-
+    try {
+      await Axios.post(`http://localhost:4000/declineRequest/${id}`,
+        { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
-    })
+
+    } catch (error) {
+
+
+    }
   }
 
-  console.log(group , "group")
 
   return (
     <div className='hidden md:block z-10'>
       <div className=' w-full h-full   overflow-hidden rounded-2xl '>
         <div className=' w-full h-full  '>
-          <div className=' py-5 space-y-3 p-3 rounded-2xl '>
-            <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+          <div className=' py-5 gap-y-2 grid p-3 w-full rounded-2xl '>
+            <NavLink to='/savedPosts' className='w-full  h-max'>
+              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
 
-              <Link to='/savedPosts' className='w-max h-full flex items-center rounded-2xl hover:cursor-pointer '>
-                <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+                <div className='w-max h-full flex items-center justify-center rounded-2xl  hover:cursor-pointer '>
+                  <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
 
-                  <BsFillBookmarkFill className='text-2xl text-white ' />
+                    <BsFillBookmarkFill className='text-xl text-white ' />
+                  </div>
+                  <p className='hidden  lg:block   font-medium p-2 text-xl block:sm '>Saved
+
+                  </p>
+
+
                 </div>
-                <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Saved
-
-                </p>
-
-
-              </Link>
-
-
-
-
-
-            </div>
-            <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer' onClick={addPost}>
-
-
-              <div className='w-16 h-16 bg-sky-900  rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
-
-                <AiOutlinePlus className='text-2xl text-white z-10' />
               </div>
-              <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Posts
+            </NavLink>
 
-              </p>
+            <div className='w-full  h-max hover:bg-gray-300' onClick={(e) => { setReqMod(!reqMod) }}>
+              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded  hover:cursor-pointer' >
+                <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer'>
 
-            </div>
-            <div className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+                  <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
 
-              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' onClick={onHandleRequest}>
+                    <HiUserAdd className='text-2xl text-white' />
+                  </div>
+                  <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Follow Request
 
-                <HiUserAdd className='text-2xl text-white' />
+                  </p>
+
+
+                </div>
               </div>
-              <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Follow Request
-
-              </p>
-
-
             </div>
-            <Link to='/view/groups' className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer' >
+            <NavLink to='/view/groups' className='w-full  h-max'>
+              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
+                <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
 
 
-              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+                  <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
 
-                <AiOutlineLogout className='text-2xl text-white ' />
+                    <HiOutlineUserGroup className='text-2xl text-white ' />
+                  </div>
+                  <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Groups
+
+                  </p>
+
+                </div>
               </div>
-              <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Groups
+            </NavLink>
+            <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(true) }}>
+              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
+                <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
 
-              </p>
 
+                  <div className='w-14 h-14 bg-sky-900  rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+
+                    <AiOutlinePlus className='text-lg text-white z-10' />
+                  </div>
+                  <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Posts
+
+                  </p>
+
+                </div>
+              </div>
             </Link>
-
-
-
-
-
           </div>
           <div className='w-full border '></div>
           <div className=' py-5 space-y-3 mt-1 p-3 rounded-2xl'>
@@ -328,31 +246,31 @@ function Sidebar() {
 
 
             </div>
-            <div className=' overflow-y-scroll space-y-2 w-full h-36 no-scrollbar'>
+            <div className=' overflow-y-scroll space-y-2 w-full h-32 no-scrollbar'>
 
               {group.map((obj) => {
 
                 return (
 
-                <Link to={`/group/${obj._id}`} className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+                  <Link to={`/group/${obj._id}`} className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
 
-                  <div className='w-max h-full flex rounded-2xl '>
-                    { obj.groupProfile ? 
-                    <img src={PF + obj.groupProfile} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
-                    : 
+                    <div className='w-max h-full flex rounded-2xl '>
+                      {obj.groupProfile ?
+                        <img src={PF + obj.groupProfile} className='rounded-full bg-green-200 w-14 h-14 flex z-10' />
+                        :
 
-                    <img src={avatar} className='rounded-full bg-green-200 w-16 h-16 flex z-10' />
-
-                  
-                  }
-
-                  </div>
-                  <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.groupName}
-
-                  </p>
+                        <img src={avatar} className='rounded-full bg-green-200 w-14 h-14 flex z-10' />
 
 
-                </Link>
+                      }
+
+                    </div>
+                    <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.groupName}
+
+                    </p>
+
+
+                  </Link>
                 )
 
               })}
@@ -440,38 +358,48 @@ function Sidebar() {
               <div className='w-full h-[300px] bg-white py-2  border-t-2 border-black'>
                 <div className='m-6 h-full  '>
 
+                  {
+                    request?.length != 0 ?
 
-                  {request.map((obj) => {
-                    return (
-                      <div className='flex  justify-evenly items-center w-full  space-x-2 ' >
-                        <div className="flex   items-center w-full space-x-2">
-                          <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' onClick={onHandleRequest}>
 
-                            <HiUserAdd className='text-2xl text-white' />
-                          </div>
-                          <div className='flex justify-center item-center'>{obj.username}</div>
-                        </div>
-                        <div className='flex items-center space-x-2'>
-                          <div className='flex items-center rounded-xl bg-blue-700 p-1' onClick={(e) => { onHandleDec(obj._id, e) }}>
-                            <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+                      request.map((obj) => {
+                        return (
+                          <div className='flex  justify-evenly items-center w-full  space-x-2 ' >
+                            <div className="flex   items-center w-full space-x-2">
+                              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
 
-                              <HiUserAdd className='text-xl text-white' />
+                                <HiUserAdd className='text-2xl text-white' />
+                              </div>
+                              <div className='flex justify-center item-center'>{obj.username}</div>
                             </div>
+                            <div className='flex items-center space-x-2'>
+                              <div className='flex items-center rounded-xl bg-blue-700 p-1' onClick={(e) => { onHandleDec(obj._id, e) }}>
+                                <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
 
-                            <p className='text-sm text-white'>Decline</p>
-                          </div>
-                          <div className='flex items-center rounded-xl bg-blue-700 p-1 cursor-pointer' onClick={(e) => { onHandleAcc(obj._id, e) }}>
-                            <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+                                  <HiUserAdd className='text-xl text-white' />
+                                </div>
 
-                              <HiUserAdd className='text-xl text-white' />
+                                <p className='text-sm text-white'>Decline</p>
+                              </div>
+                              <div className='flex items-center rounded-xl bg-blue-700 p-1 cursor-pointer' onClick={(e) => { onHandleAcc(obj._id, e) }}>
+                                <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+
+                                  <HiUserAdd className='text-xl text-white' />
+                                </div>
+
+                                <p className='text-sm text-white'>Accept</p>
+                              </div>
                             </div>
-
-                            <p className='text-sm text-white'>Accept</p>
                           </div>
-                        </div>
+                        )
+                      })
+
+                      :
+                      <div className='flex flex-col w-full justify-center items-center h-full  '>
+                        <HiUserAdd className='text-[60px]' />
+                        <div className='text-xl'>No Requests</div>
+
                       </div>
-                    )
-                  })
 
                   }
                 </div>

@@ -3,7 +3,7 @@ import { FiSettings } from 'react-icons/fi'
 import { BsFillGrid1X2Fill } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { HiLockClosed } from 'react-icons/hi'
 import { SlUserFollow, SlUserFollowing, SlUserUnfollow } from 'react-icons/sl'
 import { getUser } from '../../API/User'
@@ -15,6 +15,7 @@ import { FaComment, FaRegComment } from 'react-icons/fa'
 import { FiSend } from 'react-icons/fi'
 import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
 import e from 'cors'
+import { newUserChat } from '../../API/chatRequest'
 
 // import Axios from 'axios'
 
@@ -30,28 +31,19 @@ function Profile() {
   const [file, setFile] = useState("")
   const [updateDetails, SetUpdateDetails] = useState("Details")
   const [edit, SetEdit] = useState([])
-  // const [file, SetFile] = useState("")
   const [updation, setUpdation] = useState(false)
   const [editMod, SetEditMod] = useState(false)
   const [ desc , setDesc] = useState({ desc :"" , img : "" , postId:""})
 
 
-
+  const Navigate = useNavigate()
   const userDetails = useSelector(state => state.user)
-
   const userName = useParams().username
-
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
-
-
-
-
-  // console.log(userDetail, "LLLLLLLLL")
-
   const userID = useLocation().state.userID
-  // console.log(userID , "USERIDDDDDDDDDD")
 
 
+  /* ------------------------------ GET USER DATA ----------------------------- */
 
   useEffect(() => {
 
@@ -60,7 +52,6 @@ function Profile() {
       try {
         const { data } = await getUser(userDetails._id)
         SetUserDetails(data)
-        console.log(data, "datafcfcgxdgxdxaaaaaaaaa")
 
       } catch (error) {
 
@@ -74,31 +65,40 @@ function Profile() {
 
   }, [updation])
 
+
+  /* ---------------------------- PROFILE USER DATA --------------------------- */
+
   useEffect(() => {
+    
+    let userPro= async(userID)=>{
 
-    axios.get(`http://localhost:4000/userprofile/${userID}`).then((response) => {
+       await axios.
+       get(`http://localhost:4000/userprofile/${userID}`).
+       then((response) => {
+        SetData(response.data)
 
-      SetData(response.data)
-    }).then((data) => {
+      }).then((data) => {
+        axios.
+        get(`http://localhost:4000/viewProfilePosts/${userID}`).
+        then((response) => {
+          SetPosts(response.data)
 
-      console.log("erroerwerwefsdf");
-
-      axios.get(`http://localhost:4000/viewProfilePosts/${userID}`).then((response) => {
-        console.log(response.data, "potsss")
-        SetPosts(response.data)
+        }).catch((error) => {
+  
+          console.log(error)
+        })
       }).catch((error) => {
-
-        console.log(error, "WHAT IS ERROE")
+  
+        console.log(error)
       })
-    }).catch((error) => {
 
-      console.log(error, "EROORERERE")
-    })
+    }
+    userPro(userID)
+   
   }, [userID, userName, updation])
 
-  // console.log(userDetails, "dataaaaaaaaaaaaaaaa")
 
-
+/* ------------------------------ EDIT PROFILE ------------------------------ */
 
   const handleEdit = async (e) => {
 
@@ -113,10 +113,9 @@ function Profile() {
       datas.append("name", fileName)
       edit.profilePicture = fileName
       try {
-        await axios.post('http://localhost:4000/upload', datas)
+        await axios.
+        post('http://localhost:4000/upload', datas)
         console.log(datas, "data");
-
-        // window.location.reload()
 
       } catch (error) {
         console.log(error);
@@ -124,7 +123,10 @@ function Profile() {
     }
     try {
       console.log("suiiiiiiiii")
-      await axios.post('http://localhost:4000/update', { ...edit, userId: userDetail._id }).then((response) => {
+      await axios.
+      post('http://localhost:4000/update', 
+      { ...edit, userId: userDetail._id }).
+      then((response) => {
 
         setUpdation(!updation)
         SetShowMod(!showMod)
@@ -136,16 +138,16 @@ function Profile() {
       console.log(err);
     }
   }
+  
+  /* ------------------------------ HANDLE CHANGE ----------------------------- */
 
   const handleChange = (e) => {
 
     SetEdit({ ...edit, [e.target.name]: e.target.value })
 
-
-
-
   }
-  // console.log(edit , "edit");
+
+  /* --------------------------- SET EDIT POST STATE -------------------------- */
 
   const editPost=(desc,img,id ,e )=>{
     e.preventDefault()
@@ -159,9 +161,9 @@ function Profile() {
 
     try{
       const Desc = { desc : desc.desc , postId : desc.postId }
-      
-
-     let data = await axios.put('http://localhost:4000/post/edit',  Desc  )
+     let data = await axios.
+     put('http://localhost:4000/post/edit',
+       Desc  )
 
      SetEditMod(!editMod)
      setDesc({img:"",desc:"",postId :""})    
@@ -171,98 +173,125 @@ function Profile() {
 
       console.log(error)
 
-
     }
-
-
 
   }
 
+  /* ----------------------------- FOLLOW REQUEST ----------------------------- */
+
   
 const follow = async (e) => {
+   
 
-  e.preventDefault()
-  console.log("calllll")
-  await axios.put(`http://localhost:4000/follow/${userID}`, { userId: userDetails._id }).then((response) => {
+  try{
+    e.preventDefault()
+    let response  = await axios.
+    put(`http://localhost:4000/follow/${userID}`,
+     { userId: userDetails._id })
+  
+      console.log(response);
+      setUpdation(!updation)
 
-    console.log(response);
-    setUpdation(!updation)
-
-
-  }).catch((error) => {
+  }
+  catch(error){
 
     console.log(error)
-  })
+  }
 
 
 }
 
-
+/* ----------------------------- CANCEL REQUEST ----------------------------- */
 const cancelRequest = async (e) => {
+  
+  try{
+    e.preventDefault()
+  let response = await axios.
+  put(`http://localhost:4000/cancelRequest/${userID}`,
+  { userID: userDetails._id })
 
-  e.preventDefault()
-  console.log("calllll")
-  await axios.put(`http://localhost:4000/cancelRequest/${userID}`, { userID: userDetails._id }).then((response) => {
-
-    console.log(response);
     setUpdation(!updation)
-  }).catch((error) => {
+
+  }catch(error){
 
     console.log(error)
-  })
+  }
 }
+
+/* ----------------------------- ACCEPT REQUEEST ---------------------------- */
 
 const acceptRequest = async (e) => {
+  try{
+    e.preventDefault()
+    await axios.put(`http://localhost:4000/acceptRequest/${userID}`,
+     { userID: userDetails._id })
+      setUpdation(!updation)
 
-  e.preventDefault()
-  console.log("calllll")
-  await axios.put(`http://localhost:4000/acceptRequest/${userID}`, { userID: userDetails._id }).then((response) => {
-
-    console.log(response);
-    setUpdation(!updation)
-  }).catch((error) => {
+  }
+   catch(error){
 
     console.log(error)
-  })
-
-
+  }
 }
+
+/* ----------------------------- DECLINE REQUEST ---------------------------- */
 const declineRequest = async (e) => {
+  
+  try{
+    e.preventDefault()
+    await axios.
+    put(`http://localhost:4000/declineRequest/${userID}`, 
+    { userID: userDetails._id })
+  
+      setUpdation(!updation)
 
-  e.preventDefault()
-  console.log("calllll")
-  await axios.put(`http://localhost:4000/declineRequest/${userID}`, { userID: userDetails._id }).then((response) => {
-
-    console.log(response);
-    setUpdation(!updation)
-  }).catch((error) => {
+  }catch(error){
 
     console.log(error)
-  })
+  }
 
 
 }
+
+/* ---------------------------- UNFOLLOW REQUEST ---------------------------- */
 
 const unFollow = async (e) => {
-
+  try{
+    
   e.preventDefault()
-  console.log("calllll")
-  await axios.put(`http://localhost:4000/unfollow/${userID}`, { userID: userDetails._id }).then((response) => {
+  await axios.
+  put(`http://localhost:4000/unfollow/${userID}`, 
+  { userID: userDetails._id })
 
-    console.log(response);
     setUpdation(!updation)
-  }).catch((error) => {
+
+  }catch(error){
 
     console.log(error)
-  })
-
-
+  }
 }
 
+ /* ------------------------------ SEND MESSAGE ------------------------------ */
+
+ const onHandleMessage =async()=>{
+  let users = {
+
+    senderId : userDetail._id,
+    receivedId : userID
+  }
+  try{
+
+    const {data} = await newUserChat(users)
+    Navigate('/message')
+  }catch(error){
+
+    console.log(error)
+  }
+}
 
 
   return (
-    <div className='w-full h-screen  flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
+    <div className='w-3/4 flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
 
       <div className='md:w-11/12 w-full bg-white   h-full'>
         {/* profile details  */}
@@ -289,12 +318,20 @@ const unFollow = async (e) => {
 
                 </div>
                 : (userDetail?.following.includes(data?._id)) ?
-                  <div  onClick={unFollow} className='flex items-center space-x-2 shadow-md rounded-2xl p-2 bg-gray-100 w-max'>
+                <div className='flex items-center  p-2 space-x-3 w-max'>
+                <div  onClick={unFollow} className='flex items-center space-x-2 shadow-md rounded-2xl p-2 bg-gray-100  hover:bg-gray-400 w-max'>
                     <div><FiSettings /> </div>
                     <div className='font-semibold  text-base'>unfollow</div>
 
-                  </div> : (userDetail?.requestTo.includes(data?._id)) ?
-                    <div onClick={cancelRequest} className='flex items-center space-x-3 shadow-md rounded-3xl p-2 bg-sky-900 w-max'>
+                  </div>
+                <div  onClick={onHandleMessage} className='flex items-center space-x-3 shadow-md rounded-3xl p-2 hover:bg-gray-400 hover:text-black bg-sky-900 w-max'>
+                  <div className='rounded-full bg-white '><SlUserUnfollow className='text-lg m-1.5' /> </div>
+                  <div className='font-semibold  text-base hover:text-black text-white'>Message</div>
+
+                </div>
+              </div>
+                   : (userDetail?.requestTo.includes(data?._id)) ?
+                    <div onClick={cancelRequest} className='flex items-center space-x-3 shadow-md rounded-3xl p-2  bg-sky-900 w-max'>
                       <div className='rounded-full bg-white '><SlUserUnfollow className='text-lg m-1.5' /> </div>
                       <div className='font-semibold  text-base text-white'>Cancel</div>
                     </div>
@@ -305,7 +342,7 @@ const unFollow = async (e) => {
 
                           <div className='font-semibold  text-base text-white'>Accept</div>
                         </div>
-                        <div className='flex items-center space-x-3 shadow-md rounded-3xl p-2 bg-gray-400 w-max'>
+                        <div onClick={declineRequest} className='flex items-center space-x-3 shadow-md rounded-3xl p-2 bg-gray-400 w-max'>
                           <div className='rounded-full bg-white '><SlUserUnfollow className='text-lg m-1.5' /> </div>
                           <div className='font-semibold  text-base text-white'>Decline</div>
 
@@ -521,10 +558,10 @@ const unFollow = async (e) => {
 
       {editMod ? (
         <>
-          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto p-2 fixed inset-0 z-50 outline-none focus:outline-none ">
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto p-2 fixed inset-0 z-50 outline-none focus:outline-none  ">
 
-            <div className='w-[450px] rounded-2xl'>
-              <div className='h-14  w-full bg-white flex justify-between items-center px-2 rounded-t-2xl'>
+            <div className='w-[450px] rounded-2xl px-5 bg-gray-100'>
+              <div className='h-14  w-full  flex justify-between items-center  rounded-t-2xl'>
                 <div className='w-max h-max p-5 rounded-xl ' onClick={(e)=>{setDesc({desc:"" , img:""} , SetEditMod(!editMod))}}>Cancel</div>
                 <div className='w-max h-max px-4 py-2 rounded-xl bg-sky-900 text-white font-base' onClick={updateDesc}>Done</div>
               </div>
@@ -532,7 +569,7 @@ const unFollow = async (e) => {
                 <img src={PF + desc.img} className="h-full w-full rounded-xl"/>
 
               </div>
-              <div className='bg-gray-200 rounded-b-2xl'>
+              <div className=' rounded-b-2xl'>
                 <div className='p-2 font-semibold'>Edit Your Description</div>
                 <div className='w-full pb-2 px-1  '>
                   <textarea className='w-full p-5 border ' value={desc.desc} onChange={(e)=>{setDesc({...desc ,desc : e.target.value})}}/>

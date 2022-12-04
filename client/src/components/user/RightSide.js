@@ -2,12 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import pro1 from '../../assets/images/pro1.jpg'
 import pro2 from '../../assets/images/pro2.jpg'
-
-import pro3 from '../../assets/images/pro3.jpg'
-
 import pro4 from '../../assets/images/pro4.jpg'
-
-import pro5 from '../../assets/images/pro5.jpg'
 import Axios from 'axios'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -26,59 +21,48 @@ function RightSide() {
 
 
   const userDetails = useSelector(state => state.user)
-
   const userId = userDetails._id
 
+  
+
+  /* ---------------------------- SUGGESTED FRIENDS --------------------------- */
 
   useEffect(() => {
-
-   
-
-     try{
-      console.log(userId, "userId")
-      Axios.get(`http://localhost:4000/suggest/${userId}`).then((response) => {
+    try{
+    
+    const suggestFriends = async(userId)=>{
+      
+       let response = await Axios.get(`http://localhost:4000/suggest/${userId}`)
 
         SetUsers(response.data)
 
-        console.log(response, "sidebar suggested")
-      }).catch((error)=>{
+    }
+    suggestFriends(userId)
 
-        console.log(error)
-      })
     }catch(error){
 
-      console.log(error)
     }
-   
-
-
-
-
 
 }, [updation])
 
 
 
-
+/* ------------------------------- FOLLOW USER ------------------------------ */
 const follow = (async (id, e) => {
 
-  e.preventDefault()
 
+  try{
 
+    e.preventDefault()
+    await Axios.
+    put(`http://localhost:4000/follow/${id}`,
+     { userId: userId })
+  
+      SetUpdation(!updation)
+  
+  }catch(error){
 
-
-  console.log("calllll")
-  await Axios.put(`http://localhost:4000/follow/${id}`, { userId: userId }).then((response) => {
-
-    console.log(response);
-    SetUpdation(!updation)
-
-
-  }).catch((error) => {
-
-    console.log(error)
-  })
-
+  }
 
 })
 
@@ -113,7 +97,7 @@ return (
 
 
                     <div className='w-max h-full flex rounded-2xl '>
-                      <img src={pro2} className='rounded-full  w-16 h-16 flex border  ' />
+                      <img src={pro2} className='rounded-full  w-14 h-14 flex border  ' />
 
                     </div>
                     <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.username}
@@ -184,7 +168,7 @@ return (
           <div className='w-max h-16  flex items-center rounded-2xl  hover:cursor-pointer'>
 
             <div className='w-max h-full flex rounded-2xl '>
-              <img className='rounded-full  w-16 h-16 flex' src={pro4} />
+              <img className='rounded-full  w-14 h-14 flex' src={pro4} />
 
             </div>
             <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>Anfal A R
@@ -199,7 +183,7 @@ return (
           <div className='w-max h-16  flex items-center rounded-2xl  hover:cursor-pointer'>
 
             <div className='w-max h-full flex rounded-2xl '>
-              <img className='rounded-full  w-16 h-16 flex' src={pro2} />
+              <img className='rounded-full  w-14 h-14 flex' src={pro2} />
 
             </div>
             <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>Arvind S

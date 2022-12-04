@@ -1,7 +1,6 @@
  
 import React, { useEffect, useState, useReducer } from 'react'
 import Axios from 'axios'
-import { Link, } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import moment from 'moment'
 
@@ -10,24 +9,28 @@ import moment from 'moment'
 export default function GroupPostDetail() {
 
     const [postDetails, SetPostDetails] = useState([])
-
     const postId = useParams().postId
 
 
+    /* --------------------- view details group post report --------------------- */
 
     useEffect(()=>{
 
+    try{
 
         Axios.get(`http://localhost:4000/admin/group/viewreport/postmanagment/${postId}`, { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
 
-            console.log(response , "mmmammamsmd")
             SetPostDetails(response.data)
         })
+
+    }catch(error){
+
+
+    }
+       
     },[])
 
-    // console.log(postId , "postDetsiddddd")
 
-    console.log(postId , "postiddddddddddd")
 
     return (
 
@@ -80,14 +83,7 @@ export default function GroupPostDetail() {
                                                     <td className="text-center">{index + 1}</td>
                                                     <td className="text-center">{obj.userId.username}</td>
                                                     <td className="text-center">{obj.reason}</td>
-                                                    {/* <td className="text-center h-16 w-16"><img src={ PF+obj.img}/>{}</td> */}
                                                     <td className="text-center">{obj.date}</td>
-
-                                                    {/* <td className="text-center">{obj.reports.length}</td> */}
-                                                    {/* <td className="text-center">{obj.status}</td> */}
-                                                    {/* <Link to="/admin/viewreport/postmanagment">view</Link> */}
-
-
                                                     
                                                 </tr>
                                             )

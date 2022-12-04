@@ -17,12 +17,16 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
 
     const scroll = useRef()
 
+/* ------------------------------- SET MESSAGE ------------------------------ */
 
     useEffect(() => {
         if (reciveMessage !== null && reciveMessage.chatId == chat._id)
             SetMessages([...messages, reciveMessage])
 
     }, [reciveMessage])
+
+
+    /* ------------------------------ GET USER DATA ----------------------------- */
 
     useEffect(() => {
         const userId = chat?.members?.find((id) => id !== currentUser)
@@ -31,7 +35,6 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
             try {
                 const { data } = await getUser(userId)
                 SetUserData(data)
-                console.log(data, "suiiiiiiiiiiii")
 
             } catch (error) {
 
@@ -46,6 +49,9 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
 
     }, [chat, currentUser])
 
+     
+
+    /* ------------------------------ FETCH MESSAGE ----------------------------- */
 
     useEffect(() => {
 
@@ -54,7 +60,6 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
             try {
 
                 const { data } = await getMessages(chat._id)
-                console.log(data, "ffffff")
                 SetMessages(data)
 
             } catch (error) {
@@ -67,15 +72,18 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
 
     }, [chat])
 
+    
 
     const handleEmojiChange = (newMessage) => {
         SetNewMessages(newMessage)
 
 
     }
+  
+
+    /* ------------------------------ SEND MESSAGE ------------------------------ */
 
     const handleSend = async (e) => {
-        console.log("jjjjjjj")
 
         e.preventDefault()
         const message = {
@@ -84,12 +92,10 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
             chatId: chat._id
         }
 
-        // send messgae to database 
         try {
             const { data } = await addMessage(message)
             SetMessages([...messages, data])
             SetNewMessages("")
-            console.log(message, "messageeee")
 
         } catch (error) {
             console.log(error)
@@ -100,7 +106,8 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
         setSendMessage({ ...message, receiverId })
     }
 
-
+    /* ------------------------------- SET SCROLL ------------------------------- */
+    
     useEffect(() => {
 
         scroll.current?.scrollIntoView({ behavior: "smooth" })

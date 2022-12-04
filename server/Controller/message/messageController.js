@@ -3,6 +3,8 @@ let MessageModel = require('../../schema/user/Message')
 
 const controller = {
 
+    /* ------------------------------- add message ------------------------------ */
+
     addMessage: async (req, res) => {
 
 
@@ -16,7 +18,6 @@ const controller = {
 
         try {
             
-            console.log("hiiiiiiiiiii")
             const result = await message.save()
             res.status(200).json(result)
         } catch (error) {
@@ -24,16 +25,16 @@ const controller = {
         }
     },
 
+    /* ------------------------------- get message ------------------------------ */
+
     getMessages: async (req, res) => {
 
-       
-
         try {
-            const result = await MessageModel.find({ chatId : req.params.chatId })
+            const result = await MessageModel.
+            find({ chatId : req.params.chatId })
             res.status(200).json(result)
             console.log(result , "where are you")
         } catch (error) {
-
 
             res.status(500).json(error)
 

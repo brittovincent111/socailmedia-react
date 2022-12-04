@@ -1,64 +1,70 @@
 let ChatModel = require('../../schema/user/ChatModal')
 const controller = {
 
-    createChat : async(req,res)=>{
+    /* ------------------------------- create chat ------------------------------ */
 
+    createChat: async (req, res) => {
+
+        const { senderId, receivedId } = req.body.users
         const newChat = new ChatModel({
-            members :[req.body.senderId , req.body.receviedId]
+            members: [senderId, receivedId]
 
         })
 
-        try{
-            const result = await newChat.save();
-            res.status(200).json(result)
+        try {
+            const chat = await ChatModel.findOne({
+                members: { $all: [senderId, receivedId] }
+            })
 
-        }catch(error){
+
+            if (!chat) {
+                const result = await newChat.save();
+                res.status(200).json(result)
+
+            } else {
+                res.status(200).json(chat)
+            }
+
+
+        } catch (error) {
 
             res.status(500).json(error)
         }
     },
 
-    userChats : async(req,res)=>{
+    /* -------------------------------- user chat ------------------------------- */
+    
+    userChats: async (req, res) => {
 
-        console.log(req.params.userId , "iffffffffffffffff")
-
-        try{
-
-            
-
+        try {
             const chat = await ChatModel.find({
-                members : {$in : [req.params.userId]}
-        })
+                members: { $in: [req.params.userId] }
+            })
+            res.status(200).json(chat)
 
-        console.log(chat ,"chat")
+        } catch (error) {
 
-        res.status(200).json(chat)
+            res.status(500).json(error)
 
-        }catch(error){
-            
-            
-            console.log(error.message)
-             
+
         }
 
 
     },
 
-    findChat: async(req,res)=>{
+    /* -------------------------------- find chat ------------------------------- */
 
-        try{
-             
+    findChat: async (req, res) => {
 
-            console.log(req.params.firstId , "iddddddddddd")
+        try {
 
             const chat = await ChatModel.findOne({
-                  members:{$all:[req.params.firstId , req.params.secondId]} 
+                members: { $all: [req.params.firstId, req.params.secondId] }
             })
-          
-             console.log(chat , dddddddd);
+
             res.status(200).json(chat)
 
-        }catch(error){
+        } catch (error) {
             res.status(500).json(error)
         }
 
@@ -68,4 +74,4 @@ const controller = {
 
 }
 
-module.exports =controller
+module.exports = controller

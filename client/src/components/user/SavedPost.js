@@ -23,34 +23,15 @@ function SavedPost() {
   const [post , setPosts] = useState([])
   const userDetails = useSelector(state => state.user)
 
-  console.log(userDetails , "hhhhhhhhhhhhhhhhhhhhhhhhh")
 
 
   const navigate = useNavigate()
-
   const userId = userDetails._id
-// console.log(post , "postssssssssssssssssssssssssssssssss")
+  
   
 
-
-  useEffect(()=>{
-
-    console.log("call reached")
-    Axios.get('http://localhost:4000/' ,{headers:{"x-access-token":localStorage.getItem("userToken")}}).then((response)=>{
-        
-    
-     
-    navigate('/')
-    }).catch((error)=>{
-      
-      navigate('/login')
-      console.log(error)
-      
-    })
-
-  },[])
-
   
+/* ------------------------------- SAVED POST ------------------------------- */
 
   useEffect (()=>{
     const fetchPost=async()=>{
@@ -66,7 +47,6 @@ function SavedPost() {
     fetchPost()
  },[])
 
-//  console.log(post , "postsssssss")
 
   return (
     <>

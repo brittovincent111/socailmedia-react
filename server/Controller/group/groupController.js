@@ -9,27 +9,25 @@ const userSchemma = require("../../schema/user/signUp")
 
 const controller = {
 
+
+  /* ------------------------------ Create Group ------------------------------ */
+
   createGroup: async (req, res) => {
-
-
     try {
 
+      let response = await GroupSchemma
+        .create(req.body)
+      res.status(200).json(response)
 
-      console.log(req.body, "req.body")
-
-      await GroupSchemma.create(req.body).then((response) => {
-
-        console.log(response, "response")
-
-        res.status(200).json(response)
-      })
 
     } catch (error) {
 
-      console.log(error)
+      res.status(500).json(error)
     }
 
   },
+
+  /* ------------------------------- find group ------------------------------- */
 
 
   Groupe: async (req, res) => {
@@ -43,68 +41,103 @@ const controller = {
         res.status(200).json(response)
       })
 
-
-
     } catch (error) {
 
 
       res.status(500).json(error)
     }
   },
+
+  /* ------------------------------ group details ----------------------------- */
 
   groupDetails: async (req, res) => {
 
-    console.log(req.params.groupId, "paramassssssssssssssssssssssssidddddddddddddddddddddd")
 
     try {
 
-      let groupDet = await GroupSchemma.findOne({ _id: req.params.groupId })
-
+      let groupDet = await GroupSchemma.
+        findOne({ _id: req.params.groupId })
       res.status(200).json(groupDet)
-
-      console.log(groupDet, "group detailsssssssssssssssssssss");
-
-
 
     } catch (error) {
 
-
-
       res.status(500).json(error)
-
-
-
     }
   },
+
+  /* ------------------------------- join group ------------------------------- */
+
 
   joinGroup: async (req, res) => {
 
-    console.log("call reached")
 
 
     try {
 
-      let join = await GroupSchemma.updateOne({ _id: req.body.groupId }, { $addToSet: { groupMembers: req.params.userId } })
-
-      console.log(join, "joinnnnnnnnnn")
-
+      let join = await GroupSchemma.
+        updateOne({ _id: req.body.groupId }, { $addToSet: { groupMembers: req.params.userId } })
       res.status(200).json("updated")
+
     } catch (error) {
 
       res.status(500).json(error)
-      console.log(error.message)
-
 
     }
   },
+
+
+  /* ------------------------------- leave group ------------------------------ */
+
+  leaveGroup: async (req, res) => {
+
+    try {
+
+
+      await GroupSchemma
+        .updateOne({ _id: req.params.groupId },
+          { $pull: { groupMembers: req.body.userId } })
+      res.status(200).json("updated")
+
+    } catch (error) {
+
+      res.status(500).json('some error occured')
+    }
+  },
+
+
+  /* ------------------------------ delete group ------------------------------ */
+
+  deleteGroup: async (req, res) => {
+    try {
+
+
+      await GroupSchemma
+        .deleteOne({ _id: req.params.groupId, admin: req.body.userId })
+      await postGroupSchemma
+        .deleteMany({ groupId: req.params.groupId })
+      await groupCommentSchemma
+        .deleteMany({ groupId: req.params.groupId })
+      await groupPostReportModel
+        .deleteMany({ groupId: req.params.groupId })
+      res.status(200).json("deleted")
+
+    } catch (error) {
+
+      res.status(500).json('some error occured')
+
+    }
+
+  },
+
+  /* -------------------------------- add post -------------------------------- */
 
   addPost: async (req, res) => {
 
     try {
-      console.log(req.body, "postbody")
-      let postUpload = await postGroupSchemma.create(req.body)
-
+      await postGroupSchemma
+        .create(req.body)
       res.status(200).json("postUpload")
+
     } catch (error) {
 
       res.status(500).json(error)
@@ -112,70 +145,57 @@ const controller = {
 
   },
 
-  viewGroupPost: async (req, res) => {
+  /* ---------------------------- view group posts ---------------------------- */
 
-    console.log(req.params.groupId, "hiiiiiiiiiiiiiiii");
+  viewGroupPost: async (req, res) => {
 
     try {
 
-      let response = await postGroupSchemma.find({ groupId: req.params.groupId }).populate('userId')
-
-      console.log(response, "groupPosts")
+      let response = await postGroupSchemma.
+        find({ groupId: req.params.groupId }).
+        populate('userId')
       res.status(200).json(response)
 
 
     } catch (error) {
 
-      console.log(error.message);
       res.status(500).json(error)
 
-
     }
-
-
   },
+
+  /* ------------------------------- liked posts ------------------------------ */
+
   likePost: async (req, res) => {
-    console.log(req.body.userId, req.params.id, "kkkkkkkkkkkkk")
 
     try {
 
-      console.log("jjjjjjjjjjjjjjjjjj")
       const post = await postGroupSchemma.findById(req.params.id)
-
-      console.log(post)
 
       if (post.likes.includes(req.body.userId)) {
 
         await post.updateOne({ $pull: { likes: req.body.userId } })
-
         res.status(200).json("unliked")
-      } else {
 
+      } else {
 
         await post.updateOne({ $push: { likes: req.body.userId } })
         res.status(200).json("liked ")
 
-
       }
-
-
-
     } catch (error) {
 
-
-      console.log(error.message)
-
+      res.status(500).json(error)
 
     }
-
-
   },
+
+  /* ------------------------------ comment posts ----------------------------- */
+
+
   commentPost: async (req, res) => {
 
     try {
-
-      // console.log(req.params.id, "idddddddd")
-      console.log(req.body, "hiiiiiihelooooooo")
 
       const postId = req.params.id
       const { userId, comment, groupId } = req.body
@@ -190,95 +210,85 @@ const controller = {
 
       res.status(200).json("updated")
 
+    } catch (error) {
 
+      res.status(500).json(error)
+    }
+  },
+
+  /* ------------------------------ view comments ----------------------------- */
+
+  viewComments: async (req, res) => {
+
+    try {
+
+      const postID = req.params.id
+      let response = await groupCommentSchemma.
+        find({ postId: postID }).
+        populate('userId')
+      res.status(200).json(response)
 
     } catch (error) {
 
-      console.log(error.message)
-
-
+      res.status(401).json(error)
 
     }
   },
-  viewComments: async (req, res) => {
-    console.log(req.params.id, "hiiiiiiiiiiiiiiiii")
-
-    const postID = req.params.id
-
-    await groupCommentSchemma.find({ postId: postID }).populate('userId').then((response) => {
-
-      console.log(response, "commentdetailssssssssssss")
-      res.status(200).json(response)
-    }).catch((error) => {
-
-      console.log(error.message)
-      res.status(401).json(error)
-    })
 
 
+  /* -------------------------- update group details -------------------------- */
 
-  },
+
   groupUpdate: async (req, res) => {
 
     try {
 
-      console.log(req.body, "update bodyyyyy")
       const { groupId } = req.body
-
-      let updateGroup = await GroupSchemma.updateOne({ _id: groupId }, {
-        $set: req.body
-      })
-
+      let updateGroup = await GroupSchemma
+        .updateOne({ _id: groupId }, {
+          $set: req.body
+        })
       res.status(200).json("updated")
 
     } catch (error) {
 
+      res.status(401).json(error)
 
-      console.log(error.message)
     }
 
 
 
   },
 
-  removeMember : async(req,res)=>{
+  /* ----------------------- remove group members admin ----------------------- */
 
-    console.log(req.params.id , req.body ,"ifrerwefwsdsfd")
+  removeMember: async (req, res) => {
 
+    try {
 
-   try{
+      let data = await GroupSchemma.
+        updateOne({ _id: req.body.groupId },
+          { $pull: { groupMembers: req.params.id } })
+      res.status(200).json(data)
 
-    
-    let data = await GroupSchemma.updateOne({_id : req.body.groupId},{$pull : {groupMembers : req.params.id}})
-       
+    } catch (error) {
 
-    res.status(200).json(data)
-   }catch(error){
+      res.status(200).json(error)
+    }
 
-    console.log(error ,"errrorrrrr")
-
-    res.status(200).json(error)
-
-
-
-
-   }
-    
   },
+  /* --------------------------- view group members --------------------------- */
 
-  groupMembers : async(req,res)=>{
-      
-    console.log(req.params.groupId , "groupppppppppppppidddddddddddddddd")
-    try{
+  groupMembers: async (req, res) => {
 
-         
-      let groupDet = await GroupSchemma.findOne({ _id: req.params.groupId }).populate('groupMembers')
-      
+    try {
 
-      console.log(groupDet , "grooupmemberssssssssssssssssssssssssidddddddddddddddddddddddddddddd")
+      let groupDet = await GroupSchemma.
+        findOne({ _id: req.params.groupId }).
+        populate('groupMembers')
       res.status(200).json(groupDet.groupMembers)
 
-    }catch(error){
+    } catch (error) {
 
       res.status(500).json(error)
 
@@ -287,85 +297,82 @@ const controller = {
 
   },
 
-  /* ------------------------------ report group ------------------------------ */
+  /* ---------------------------- report group post --------------------------- */
 
 
+  reportPost: async (req, res) => {
 
-  reportPost : async(req,res)=>{
 
-
-    console.log(req.body)
     let postId = req.params.postId
-    let {userId  ,groupId , reportValue} = req.body
+    let { userId, groupId, reportValue } = req.body
 
 
-    try{
-      let response = await postGroupSchemma.updateOne({_id: postId},{$addToSet :{ reports : userId }})
+    try {
+      await postGroupSchemma.
+        updateOne({ _id: postId },
+          { $addToSet: { reports: userId } })
 
-      let data = await groupPostReportModel.create({
-        userId : userId,
-        postId : postId,
-        groupId : groupId,
-        reason : reportValue
-      }) 
-
-      console.log(response , data )
+      await groupPostReportModel.create({
+        userId: userId,
+        postId: postId,
+        groupId: groupId,
+        reason: reportValue
+      })
       res.json(200).status("updated")
-}catch(error){
- 
 
-  console.log(error.message)
-  res.status(500).json(error)
+    } catch (error) {
 
+      res.status(500).json(error)
 
-}
+    }
   },
 
-  deletePost :async(req,res)=>{
-     
 
-    try{
-      console.log(req.params.id)
+  /* ------------------------------- delete post ------------------------------ */
+
+  deletePost: async (req, res) => {
+
+
+    try {
+
       const postId = req.params.id
-      let deletePost = await postGroupSchemma.deleteOne({_id : postId})
-      let comment = await groupCommentSchemma.deleteMany({postId : postId})
-      let saved = await userSchemma.updateMany({ $pull :{savedPost : postId}})
-  
-      console.log(deletePost , "saved");
-      console.log(comment , "saved");
-  
-      console.log(saved , "saved");
+      await postGroupSchemma.
+        deleteOne({ _id: postId })
+      await groupCommentSchemma.
+        deleteMany({ postId: postId })
+      await userSchemma.
+        updateMany({ $pull: { savedPost: postId } })
       res.status(200).json("deleted")
-    }catch(error){
+
+
+    } catch (error) {
+
       res.status(500).json("Notdeleted")
 
-      console.log(error.message , "delete error message")
     }
-   
+
   },
 
-  viewGroups :async(req,res)=>{
+  /* -------------------------- view groups in users -------------------------- */
 
-    console.log(req.params.userId ,"myname is sdafasdfsadfasdf")
-    try{
 
-      let data = await GroupSchemma.find({ $or: [ { admin: req.params.userId }, { groupMembers : {$in:[req.params.userId]} } ] })
-       
+  viewGroups: async (req, res) => {
 
-      console.log(data , "dataaaaaaaaaaaa")
+    try {
+
+      let data = await GroupSchemma.
+        find({
+          $or: [{ admin: req.params.userId },
+          { groupMembers: { $in: [req.params.userId] } }]
+        })
       res.status(200).json(data)
-    }catch(error){
-      
-      res.status(500).json(error.message)
-      console.log(error.message ,"messsssssssssssssssageeeeeeeeeeeeeeee")
 
+    } catch (error) {
+
+      res.status(500).json(error.message)
 
     }
   }
-
-
-
-
 
 }
 

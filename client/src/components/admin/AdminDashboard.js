@@ -4,20 +4,33 @@ import { useNavigate } from 'react-router-dom'
 
 function AdminDashboard() {
 
+
+
     const Navigate = useNavigate()
+
     useEffect(()=>{
 
-      axios.get("http://localhost:4000/admin/dashboard",{headers:{"x-access-token":localStorage.getItem("Admintoken")}}).then((response) => {
-        console.log(response , "hiiiiiiiiiiiiiii")
+      try{
        
-     }).catch((error)=>{
-      console.log(error)
+        let dashboard =async()=>{
+          await axios.get("http://localhost:4000/admin/dashboard",
+          {headers:{"x-access-token":localStorage.getItem("Admintoken")}}).then((response)=>{
 
-      Navigate('/admin/login')
+            Navigate('/admin/login')
+          })
 
+        }
+        
+        dashboard()
+      
+
+      }catch(error){
+
+
+      }
      })
 
-    })
+ 
   return (
     <div>AdminDashboard</div>
   )

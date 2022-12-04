@@ -2,33 +2,32 @@ import React, { useEffect, useState } from 'react'
 import { getUser } from '../../API/User';
 
 function Conversation({ data, currentUser, online }) {
-  console.log(data, 'qqqqqqqqqqqqqqqqqqqqqqqq');
 
   const [userData, SetUserData] = useState(null)
 
+  /* ------------------------------ GET USER DATA ----------------------------- */
 
-  console.log(currentUser, "usggggggggggggerid")
-  useEffect(() => {
+   useEffect(() => {
 
-    const userId = data.members.find((id)=>id!== currentUser)
-    console.log(userId , "useridhgdhkfgdhfsdkhfkhd");
-    const getUserData = async () => {
+    const userId = data.members.
+    find((id)=>id!== currentUser)
+    const getUserData = async (userId) => {
 
       try {
         const { data } = await getUser(userId)
         SetUserData(data)
-        console.log(data, "datafcfcgxdgxdxaaaaaaaaa")
 
       } catch (error) {
-        console.log("error catched ")
         console.log(error)
 
       }
 
     }
-    getUserData()
+    getUserData(userId)
 
   }, [])
+
+  
   return (
     <div>
   

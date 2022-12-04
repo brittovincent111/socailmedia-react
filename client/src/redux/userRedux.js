@@ -26,21 +26,19 @@ export const userSlice = createSlice({
          requestFrom,
          profilePicture
          
-
-
     }
 ,
 reducers :{
     update:(state,action )=>{
         state._id = action.payload._id
        state.username = action.payload.username
+       state.userfullname = action.payload.userfullname
+
        state.email = action.payload.email
        state.profilePicture = action.payload.profilePicture
        state.following = action.payload.following
        state.requestFrom = action.payload.requestFrom
        state.requestTo = action.payload.requestTo
-
-
 
     },
     remove:(state) => {state ={} }

@@ -3,11 +3,8 @@ import './Navbar.css'
 import { FaRegEnvelope, FaLock, FaSearch, FaHome } from 'react-icons/fa'
 import { SiMessenger } from 'react-icons/si'
 import { IoMdNotifications } from 'react-icons/io'
-import logo from '../../assets/images/logo.png'
-import { AiOutlineHeart, AiOutlinePlus } from 'react-icons/ai'
 import profile from '../../assets/images/profile.jpg'
-import { update } from '../../redux/userRedux'
-
+import avatar from '../../assets/images/avatar.jpg'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert'; // Import
@@ -29,7 +26,6 @@ export default function Navbar({ setStatus}) {
     const [updateDetails, SetUpdateDetails] = useState("Details")
     const [edit, SetEdit] = useState([])
     const [showMod, SetShowMod] = useState(false)
-    // const [file, SetFile] = useState("")
     const [updation, setUpdation] = useState(false)
     const [searchUser , setSearchUser] = useState([])
 
@@ -38,6 +34,8 @@ export default function Navbar({ setStatus}) {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
+    
+    /* ------------------------------ CREATE GROUP ------------------------------ */
 
     const handleEdit = async (e) => {
 
@@ -53,17 +51,17 @@ export default function Navbar({ setStatus}) {
             edit.groupProfile = fileName
             try {
                 await axios.post('http://localhost:4000/upload', datas)
-                console.log(datas, "data");
-
-                // window.location.reload()
-
+             
             } catch (error) {
                 console.log(error);
             }
         }
         try {
             console.log("suiiiiiiiii")
-            await axios.post('http://localhost:4000/group/create', { ...edit, admin: userDetails._id }).then((response) => {
+            await axios.
+            post('http://localhost:4000/group/create', 
+            { ...edit, admin: userDetails._id }).
+            then((response) => {
 
                 setUpdation(!updation)
                 SetShowMod(!showMod)
@@ -76,15 +74,13 @@ export default function Navbar({ setStatus}) {
             console.log(err);
         }
     }
-
+   /* ------------------------------ HANDLE CHANGE ----------------------------- */
     const handleChange = (e) => {
 
         SetEdit({ ...edit, [e.target.name]: e.target.value })
-
-
-
-
     }
+
+    /* --------------------------------- LOGOUT --------------------------------- */
 
     const logout = () => {
 
@@ -99,9 +95,6 @@ export default function Navbar({ setStatus}) {
                   <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
                   <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
                     onClick={() => {
-    
-    
-    
                       onClose();
                       // this.handleClickDelete();
                       localStorage.removeItem('userToken')
@@ -123,6 +116,8 @@ export default function Navbar({ setStatus}) {
         });
       }
 
+      /* ------------------------------ SEARCH USERS ------------------------------ */
+
     const handleSearch = async (e)=>{
 
         const val = e.target.value
@@ -132,10 +127,8 @@ export default function Navbar({ setStatus}) {
         }
 
         try {
-            console.log(val , "valllllllllllllll")
             const {data} = await findSearch(val)
             setSearchUser(data)
-            console.log(data , "searched user")
         }catch(error){
 
 
@@ -143,7 +136,6 @@ export default function Navbar({ setStatus}) {
     }
 
 
-    console.log(searchUser , "userdataaaaaaaaaaa")
 
     return (
 
@@ -204,7 +196,11 @@ export default function Navbar({ setStatus}) {
 
                         <div class="absolute right-0 z-20 w-56 py-2  overflow-hidden  rounded-md shadow-xl dark:bg-blue-200 mt-72 bg-sky-100  ">
                             <a href="#" class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                { userDetails?.profilePicture ? 
                                 <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
+                               : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} alt="jane avatar" />
+
+                            }
                                 <div class="mx-1 flex flex-col justify-center w-full">
                                     <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">{userDetails.userfullname}</h1>
                                     <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p>

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { AiOutlineHeart, AiOutlinePlus, AiFillHeart } from 'react-icons/ai'
-// import {FaRegComment} from 'react-icons/fa'
-import { FaRegComment } from 'react-icons/fa'
-
-import { FiSend } from 'react-icons/fi'
-import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
-
-import feedImage from '../../assets/images/messi.jpg'
-import ImageUpload from '../../assets/images/imageupload.png'
+import {MdOutlineFeed} from 'react-icons/md'
 import  Axios  from 'axios'
 import { Link ,useNavigate } from 'react-router-dom'
 import Post from './Post'
@@ -24,19 +16,15 @@ function Feed() {
   const userDetails = useSelector(state => state.user)
   const [reportChange , SetReportChange] = useState('')
 
-  // console.log(userDetails , "hhhhhhhhhhhhhhhhhhhhhhhhh")
 
 
   const navigate = useNavigate()
-
   const userId = userDetails._id
-// console.log(post , "postssssssssssssssssssssssssssssssss")
   
 
-
+  /* ------------------------------ HEADER TOKEN ------------------------------ */
   useEffect(()=>{
 
-    console.log("call reached")
     Axios.get('http://localhost:4000/' ,{headers:{"x-access-token":localStorage.getItem("userToken")}}).then((response)=>{
         
     
@@ -45,37 +33,36 @@ function Feed() {
     }).catch((error)=>{
       
       navigate('/login')
-      console.log(error)
       
     })
 
   },[])
 
-  
+  /* ------------------------------ TIMELINE POST ----------------------------- */
 
   useEffect (()=>{
     const fetchPost=async()=>{
+      try{
+
+      
       const res=await Axios.get(`http://localhost:4000/post/timeline/${userId}`)
-      console.log(res.data , "ggggggggggggg");
       
       setPosts(
         res.data.sort((p1,p2)=>{
         return new Date(p2.createdAt)-new Date(p1.createdAt)
       })
      )
+    }catch(error){
+
+      
+    }
     }
     fetchPost()
  },[reportChange])
 
-//  console.log(post , "postsssssss")
 
   return (
     <>
-
-
-
-      
-
 
 {
    post.length !=0 ? 
@@ -88,13 +75,10 @@ function Feed() {
    )) 
       
       : 
-        <div className='pl-5'>
+        <div className='flex flex-col w-full justify-center items-center h-screen bg-gray-200 '>
+          <MdOutlineFeed className='text-[150px]'/>
+          <div className='text-2xl'>No Posts</div>
 
-          <div className=' h-[300px] w-[600px] rounded-2xl bg-sky-800 mt-20 flex text-2xl justify-center items-center text-white '>No Post To Show
-        </div>
-
-     
-        
         </div>
 
                

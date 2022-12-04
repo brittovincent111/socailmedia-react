@@ -11,12 +11,10 @@ import moment from 'moment'
  export default function GroupPostReport() {
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
-
-
-
     const [postDetails, SetPostDetails] = useState([])
-    // const [reducerValue, forceUpdate] = useReducer(x => x + 1, 0);
     const [status, SetStatus] = useState(true)
+
+    /* ------------------------- view group post report ------------------------- */
 
     useEffect(() => {
 
@@ -29,12 +27,7 @@ import moment from 'moment'
         return () => { SetStatus(false) }
     }, [status])
 
-    // useEffect (()=>{
-
-    // })
-
-    
-   
+  /* ------------------------------- block post ------------------------------- */
     const postBlock = (id) => {
 
         confirmAlert({
@@ -42,7 +35,6 @@ import moment from 'moment'
               return (
                 <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
                   <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
-                  {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
                   <div className='flex space-x-2 p-2 '>
                   <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
                   <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
@@ -68,8 +60,9 @@ import moment from 'moment'
             }
           });
        
-
     }
+
+    /* ------------------------------ unblock post ------------------------------ */
 
     const postUnBlock = (id) => {
         confirmAlert({
@@ -116,7 +109,7 @@ import moment from 'moment'
             <div class="container mx-auto px-4 sm:px-8">
                 <div class="py-8">
                     <div>
-                        <h2 class="text-2xl font-semibold leading-tight"> APPROVED APPLICATIONS</h2>
+                        <h2 class="text-2xl font-semibold leading-tight">GROUP POST REPORT </h2>
                     </div>
                     <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">

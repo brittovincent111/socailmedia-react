@@ -1,31 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { AiOutlineHeart, AiOutlinePlus, AiFillHeart, AiOutlineFileSync } from 'react-icons/ai'
-// import {FaRegComment} from 'react-icons/fa'
 import { FaRegComment } from 'react-icons/fa'
-
 import { FiSend } from 'react-icons/fi'
 import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
 import { format } from 'timeago.js'
 import axios, { Axios } from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import e from 'cors'
+import avatar from '../../assets/images/avatar.jpg'
+
 
 
 function Post({ post, SetReportChange }) {
 
-    const PF = process.env.REACT_APP_PUBLIC_FOLDER
-
-
-
-
-
     const [user, setUser] = useState({})
-
-
-
     const [likes, SetLikes] = useState(post.likes.length)
     const [isLike, SetIsLike] = useState(false)
     const [comment, SetComment] = useState("")
@@ -39,39 +28,40 @@ function Post({ post, SetReportChange }) {
 
 
 
-
+    const PF = process.env.REACT_APP_PUBLIC_FOLDER
     const userDetails = useSelector(state => state.user)
-
     const userId = userDetails._id
 
-    // console.log(comment, "commmmmmmmmenttttt")
 
 
-
+    /* -------------------------------- SET LIKES ------------------------------- */
     useEffect(() => {
 
         SetIsLike(post.likes.includes(userId))
 
     }, [userId, post._id])
 
-
+    /* ------------------------------- FETCH USERS ------------------------------ */
     useEffect(() => {
         const fetchUser = async () => {
+            try {
+                const res = await axios.
+                    get(`http://localhost:4000/postdetails/users?userId=${post.userId}`);
+                setUser(res.data);
+            } catch (error) {
 
-            const res = await axios.get(`http://localhost:4000/postdetails/users?userId=${post.userId}`);
-            console.log(res, "rrrrrrtyghbh");
 
-            setUser(res.data);
+            }
+
         };
         fetchUser();
     }, [post.userId]);
 
 
     const onHandlerLike = async () => {
-        console.log(post._id, " postid")
-        console.log(userId)
 
-        let res = await axios.put(`http://localhost:4000/like/post/${post._id}`, { userId: userId })
+
+         await axios.put(`http://localhost:4000/like/post/${post._id}`, { userId: userId })
 
         SetLikes(isLike ? likes - 1 : likes + 1)
         SetIsLike(!isLike)
@@ -86,99 +76,97 @@ function Post({ post, SetReportChange }) {
             userId: userDetails._id,
             comment: comment
         }
+        try {
+             await axios.
+                put(`http://localhost:4000/comment/post/${post._id}`,
+                    { ...data })
+            SetComment("")
 
-        let res = await axios.put(`http://localhost:4000/comment/post/${post._id}`, { ...data })
+        } catch (error) {
 
-        SetComment("")
+        }
     }
 
-    // console.log(post, "userrrrrrrrrrrrreeeeeeeee")
-
+    /* ------------------------------ VIEW COMMENTS ----------------------------- */
     const onhandleViewComments = () => {
 
-        console.log(post._id, "postidddddddddddddddddddddddddd")
-        setviewCommet(!viewComment)
+        try {
 
-        // if(viewComment){
+            setviewCommet(!viewComment)
+            axios.get(`http://localhost:4000/viewcomment/post/${post._id}`).
+                then((response) => {
 
-        axios.get(`http://localhost:4000/viewcomment/post/${post._id}`).then((response) => {
+                    SetSeeeComments(response.data)
 
-            console.log("hiiiiiiiiiiiiiiiiii")
+                }).catch((error) => {
 
-            console.log(response.data, "dataaaaaaaaaa")
-            SetSeeeComments(response.data)
+                    console.log(error)
 
-        }).catch((error) => {
-
-            console.log(error)
-
-            console.log(error)
-        })
-        // }
+                })
+        } catch (error) {
 
 
-
-
+        }
     }
+
+    /* -------------------------------- SAVE POST ------------------------------- */
 
     const onhandleSavePost = async () => {
 
         const data = {
-
             userId: userDetails._id,
+        }
+       try{
+        await axios.
+        put(`http://localhost:4000/savepost/${post._id}`,
+         { ...data }).then((response) => {
+
+
+            if (response.data.message == "already added") {
+                const notify = () => toast("Already Added !");
+                notify()
+            } else {
+                const notify = () => toast("Added To Saved!");
+                notify()
+            }
+        })
+        
+       }catch(error){
+
+       }
+    }
+   
+
+    /* ------------------------------- REPORT POST ------------------------------ */
+    const handleReport = async(e) => {
+        try{
+            e.preventDefault()
+            console.log(post._id, "report")
+            close();
+            SetReportChange(new Date())
+    
+            await axios.
+            put(`http://localhost:4000/post/report/${post._id}`,
+             { userId, reportValue }).then((response) => {
+    
+                console.log(response.data)
+    
+                if (response.data.message == "already added") {
+                    const notify = () => toast("Already Added !");
+                    notify()
+                } else {
+                    const notify = () => toast("Added To Saved!");
+                    notify()
+    
+                }
+    
+            })
+
+        }catch(error){
+
 
         }
-
-        await axios.put(`http://localhost:4000/savepost/${post._id}`, { ...data }).then((response) => {
-
-            console.log(response.data)
-
-            if (response.data.message == "already added") {
-
-
-
-                const notify = () => toast("Already Added !");
-                notify()
-            } else {
-                const notify = () => toast("Added To Saved!");
-                notify()
-
-            }
-
-
-
-        })
-
-
-
-    }
-
-    const handleReport = (e) => {
-        e.preventDefault()
-        console.log(post._id, "report")
-        close();
-        SetReportChange(new Date())
-
-        axios.put(`http://localhost:4000/post/report/${post._id}`, { userId, reportValue }).then((response) => {
-
-            console.log(response.data)
-
-            if (response.data.message == "already added") {
-
-
-
-                const notify = () => toast("Already Added !");
-                notify()
-            } else {
-                const notify = () => toast("Added To Saved!");
-                notify()
-
-            }
-
-        })
-
-
-
+    
 
     }
 
@@ -191,20 +179,17 @@ function Post({ post, SetReportChange }) {
 
     /* ------------------------------- delete post ------------------------------ */
 
-    const postDelete = (id) => {
+    const postDelete = async(id) => {
+        try{
+            
+       await axios.
+       put(`http://localhost:4000/post/delete/${id}`)
+       SetReportChange(new Date())
 
-        axios.put(`http://localhost:4000/post/delete/${id}`).then((response) => {
-
-            console.log(response)
-            console.log("deletedeeeeeeeeeeee")
-            SetReportChange(new Date())
-
-        }).catch((error) => {
-
+        }catch(error){
 
             console.log(error)
-        })
-
+        }
 
     }
 
@@ -243,7 +228,12 @@ function Post({ post, SetReportChange }) {
                     <div className='w-full h-16  flex justify-between items-center pl-2 rounded-t-2xl '>
                         <div className='w-full h-14  flex justify-between items-center rounded-t-2xl ' >
                             <div className='h-full w-36 flex justify-start items-center'>
-                                <div className='rounded-full w-12 h-12 bg-black  '></div>
+                                {
+                                    user?.profilePicture ?
+                                        <img src={PF + user.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
+                                        : <img src={avatar} className='rounded-full w-12 h-12 bg-black  '></img>
+
+                                }
                                 <div className=' flex flex-col justify-start  ml-2'>
                                     <div className='text-sm font-medium flex justify-start'>{user.username}</div>
                                     <div className='text-xs flex justify-start relative'>{format(post.createdAt)}</div>
@@ -287,7 +277,7 @@ function Post({ post, SetReportChange }) {
                             <div className='w-28  flex justify-between items-center space-x-4 p-2'>
                                 <div className='text-3xl text-slate-900 hover:cursor-pointer ' onClick={onHandlerLike}>
                                     {
-                                        isLike ? <AiFillHeart className='text-red-600 ' /> : <AiOutlineHeart className=' hover: transition delay-150 duration-200 ease-in-out hover:text-4xl'/>
+                                        isLike ? <AiFillHeart className='text-red-600 ' /> : <AiOutlineHeart className=' hover: transition delay-150 duration-200 ease-in-out hover:text-4xl' />
                                     }
                                 </div>
                                 <div className='text-2xl' onClick={onhandleViewComments}><FaRegComment /> </div>
@@ -304,7 +294,7 @@ function Post({ post, SetReportChange }) {
                         </div>
 
                     </div>
-                    <div className='w-full h-14 bg-white border-slate-300  '>
+                    <div className='w-full h-8 bg-white border-slate-300  '>
                         <div className='w-full h-1/2  px-1 flex items-center '>
 
                             <p className=' text-lg font-medium pl-2 '>{user.username}</p>
@@ -315,30 +305,54 @@ function Post({ post, SetReportChange }) {
 
 
                     </div>
+                    <div onClick={onhandleViewComments} className='cursor-pointer'>
+                        view all comments
+                    </div>
                     {
                         viewComment ?
                             <div>
-                                <div className='text-lg font-medium '>comments</div>
-                                {
-                                    seeComments.map((obj) => {
-                                        return (
-                                            <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 pr-2 items-center '>
-
-                                                <div className='rounded-full w-12 h-12 bg-black  '></div>
-                                                <div className='ml-3 flex flex-col justify-start'>
-                                                    <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
-                                                    <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
-                                                </div>
-                                                <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
+                                <div className='overflow-y-scroll h-36 no-scrollbar'>
 
 
-                                                {/* <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal ' onClick={onhandlerCommemt}>Comment</div> */}
+                                    {/* <div className='text-lg font-medium '>comments</div> */}
+                                    {
+                                        seeComments.map((obj) => {
+                                            return (
+                                                <>
+                                                    <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 pr-2 items-center '>
+                                                        {
+                                                            obj.userId.profilePicture ?
+                                                                <img src={PF + obj.userId.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
+                                                                : <img src={avatar} className='rounded-full w-12 h-12 bg-black  '></img>
 
-                                            </div>
-                                        )
-                                    })
 
-                                }
+                                                        }
+                                                        <div className='ml-3 flex flex-col justify-start'>
+                                                            <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
+                                                            <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
+                                                        </div>
+                                                        <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
+
+
+                                                        {/* <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal ' onClick={onhandlerCommemt}>Comment</div> */}
+
+                                                    </div>
+                                                </>
+                                            )
+                                        })
+
+                                    }
+                                </div>
+
+                                <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 items-center border'>
+
+                                    <div className='h-full w-1/12 bg-gray text-2xl flex items-center'> <BsEmojiSmile /></div>
+                                    <textarea disable placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' value={comment} onChange={(e) => SetComment(e.target.value)}></textarea>
+
+
+                                    <div className=' disabled h-full w-2/12 items-center text-center text-sky-900 font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 flex px-2 justify-center text-base cursor-pointer ' onClick={onhandlerCommemt}>Comment</div>
+
+                                </div>
 
                             </div> :
 
@@ -348,68 +362,12 @@ function Post({ post, SetReportChange }) {
                                 <textarea placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' value={comment} onChange={(e) => SetComment(e.target.value)}></textarea>
 
 
-                                <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal cursor-pointer ' onClick={onhandlerCommemt}>Comment</div>
+                                <div className='h-full w-2/12 bg-sky-700 hover:bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center font-normal text-base cursor-pointer ' onClick={onhandlerCommemt}>Comment</div>
 
                             </div>
                     }
 
                 </div>
-
-
-
-                {/* { ? (
-                <>
-                    <div
-                        className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
-                    >
-                        <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={close}>
-                            <AiOutlineClose className='text-white text-2xl' />
-                        </div>
-                        <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300  shadow-xl border '>
-
-                            <div className='flex justify-center'>
-                                <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Add Post </div>
-
-                            </div>
-                            <form onSubmit={handleReport}>
-                                <div className='m-5'>
-                                    <div class="flex items-center mb-4">
-                                        <input onClick={(e)=>{setReportValue(e.target.value)}} id="default-radio-1" type="radio" value="violence" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                        <label for="default-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">violence </label>
-                                    </div>
-                                    <div class="flex items-center mb-4">
-                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-2" type="radio" value="harassment" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                        <label for="default-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">harassment </label>
-                                    </div>
-                                    <div class="flex items-center mb-4">
-                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-4" type="radio" value="terrorism" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                        <label for="default-radio-4" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">terrorism </label>
-                                    </div>
-                                    <div class="flex items-center mb-4">
-                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-5" type="radio" value="hate speech" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                        <label for="default-radio-5" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">hate speech</label>
-                                    </div>
-                                    <div class="flex items-center mb-4">
-                                        <input onClick={(e)=>{setReportValue(e.target.value)}} checked id="default-radio-6" type="radio" value="other" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                        <label for="default-radio-6" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">other</label>
-                                    </div>
-
-                                </div>
-                                <div className='flex justify-center p-2'>
-
-                                    <button type='submit' className='px-5 py-2 bg-sky-900 text-white h-max w-max flex justify-center'>
-                                        submit
-                                    </button>
-                                </div>
-                            </form>
-
-
-                        </div>
-                    </div>
-                    <div className="opacity-70 fixed inset-0 z-40 bg-black"></div>
-                </>
-            ) : null} */}
-
 
             </div>
             {
