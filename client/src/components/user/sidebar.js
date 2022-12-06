@@ -142,7 +142,7 @@ function Sidebar() {
     e.preventDefault()
     try {
       await Axios.
-        post(`http://localhost:4000/acceptRequest/${id}`,
+        put(`http://localhost:4000/acceptRequest/${id}`,
           { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
 
@@ -157,7 +157,7 @@ function Sidebar() {
 
     e.preventDefault()
     try {
-      await Axios.post(`http://localhost:4000/declineRequest/${id}`,
+      await Axios.put(`http://localhost:4000/declineRequest/${id}`,
         { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
 
@@ -370,23 +370,26 @@ function Sidebar() {
                         return (
                           <div className='flex  justify-evenly items-center w-full  space-x-2 ' >
                             <div className="flex   items-center w-full space-x-2">
-                              <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+                              { obj.profilePicture ?
+                              <img  src={PF + obj.profilePicture}className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '/>
+                            :   <img  src={avatar}className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '/>
 
-                                <HiUserAdd className='text-2xl text-white' />
-                              </div>
+                            }
+
+                               
                               <div className='flex justify-center item-center'>{obj.username}</div>
                             </div>
                             <div className='flex items-center space-x-2'>
-                              <div className='flex items-center rounded-xl bg-blue-700 p-1' onClick={(e) => { onHandleDec(obj._id, e) }}>
-                                <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+                              <div className='flex items-center rounded-xl bg-red-600 hover:bg-red-400 py-2 px-4' onClick={(e) => { onHandleDec(obj._id, e) }}>
+                                <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center  ' >
 
                                   <HiUserAdd className='text-xl text-white' />
                                 </div>
 
                                 <p className='text-sm text-white'>Decline</p>
                               </div>
-                              <div className='flex items-center rounded-xl bg-blue-700 p-1 cursor-pointer' onClick={(e) => { onHandleAcc(obj._id, e) }}>
-                                <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+                              <div className='flex items-center rounded-xl bg-blue-700 hover:bg-blue-500 py-2 px-4 cursor-pointer' onClick={(e) => { onHandleAcc(obj._id, e) }}>
+                                <div className='w-4 h-4 bg-blue rounded-full m-1 flex justify-center items-center  ' >
 
                                   <HiUserAdd className='text-xl text-white' />
                                 </div>

@@ -6,6 +6,7 @@ const commentScheema = require('../../schema/user/commentSchemma')
 const userSchemma = require('../../schema/user/signUp')
 const ReportModel = require('../../schema/user/ReportSchemma')
 const notificationSchemma = require('../../schema/user/NotificationSchema')
+const userReportModel = require('../../schema/user/userReport')
 
 
 
@@ -46,14 +47,17 @@ const controller = {
             email: req.body.email,
             password: password
           })
-          res.json({ success: "success" })
+
+          console.log(user , "user")
           await notificationSchemma.create({ userId: user._id })
+          res.json({ success: "success" })
 
         }
       }
 
     } catch (error) {
-
+      
+      console.log(error.message)
       res.status(500).send(error)
 
     }
@@ -272,11 +276,12 @@ const controller = {
 
       } else {
 
-        await post.
-          updateOne({ $push: { likes: req.body.userId } })
+        let push = await post.
+           updateOne({ $push: { likes: req.body.userId } })
         await notificationSchemma.
           updateOne({ userId: post.userId },
             { $push: { notification: details } })
+            console.log(push , "pushhhh")
         res.status(200).json("liked ")
 
       }
@@ -402,7 +407,7 @@ const controller = {
 
       const userId = req.params.id
       let response = await userSchemaa.
-        findOne({ _id: userId })
+        findOne({ _id: userId }).populate('following' , 'username , profilePicture')
 
       res.status(200).json(response)
 
@@ -718,6 +723,7 @@ const controller = {
 
     } catch (error) {
       
+      console.log(error.message , "message")
       res.status(500).json(error)
 
     }
@@ -737,11 +743,40 @@ const controller = {
 
 
     }catch(error){
-
+       
+      console.log(error.message , "message")
       res.status(500).json(error)
 
     }
 
+  },
+
+  /* ------------------------------- report user ------------------------------ */
+
+  reportUser : async(req,res)=>{
+
+    try{
+
+      let response = await userSchemaa.
+        updateOne({ _id: req.body.userID },
+          { $push: { reports: req.params.userId} })
+    
+
+      await userReportModel.create({
+        userId: req.body.userID,
+        reporterId : req.params.userId,
+        reason: req.body.reportValue
+      })
+
+      console.log("hiiii")
+
+
+
+    }catch(error){
+
+      console.log(error.message , "messageee")
+
+    }
   }
 
 }

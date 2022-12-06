@@ -9,6 +9,7 @@ import './LoginPage.css'
 import axios from 'axios'
 import { Link ,useNavigate } from 'react-router-dom'
 import { useSelector , useDispatch } from 'react-redux'
+import mainlogo from '../../assets/images/logomains.png'
 
 
 function LoginUser() {
@@ -85,22 +86,22 @@ function LoginUser() {
 
   return (
     <div className=' LoginMain h-screen flex flex-col items-center justify-center width-full flex-1 p-20 w-full  bg-blue-100 ' >
-      <div className='main bg-slate-50 rounded-2xl shadow-2xl flex lg:w-2/3  justify-center max-w-4xl '>
-        <div className='w-3/5 p-5'>
-          <div className='py-10'>
-
+      <div className='main bg-white rounded-2xl shadow-2xl flex lg:w-2/3  justify-center max-w-4xl '>
+        <div className='w-3/5 p-5 flex flex-col justify-center items-center'>
+          <div className='py-10 flex flex-col justify-center items-center'>
+            {/* <img src={mainlogo} className='h-24 w-44'/> */}
             <h2 className='text-blue-700 text-3xl mb-2 align-top'>LOGIN </h2>
             <div className='border w-44  border-blue-700 inline-block mb-6'></div>
             {errorMessage && <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">{errorMessage}</div>}
 
             <form onSubmit={OnLogin}>
               <div className='flex flex-col items-center '>
-                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10'>
+                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border-2 shadow-sm h-10'>
                   <FaRegEnvelope className='mr-2 mx-2' />
                   <input className=' bg-gray-100 outline-none  flex-1' type="email" placeholder='email' name='email' onChange={(e) => { onHandleChange(e) }} />
                 </div>
 
-                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10 '>
+                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl    border-2 h-10 '>
                   <FaLock className='mr-2 mx-2' />
                   <input className=' bg-gray-100 outline-none flex-1' type="password" placeholder='password' name='password' onChange={(e) => { onHandleChange(e) }} />
                 </div>
@@ -152,8 +153,8 @@ function LoginUser() {
           </div>
 
         </div>
-        <div hidden className='hero w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block    '  >
-          <div className='w-20 h-20   ml-20 mt-48 rounded-full bg-blue-600 hover:bg-gray-200  flex justify-center items-center'>
+        <div hidden className='hero relative w-2/5  bg-blue-600 rounded-tr-2xl rounded-br-2xl lg:block  '  >
+          <div className='w-20 h-20  absolute left-[40%]  bottom-28 rounded-full bg-blue-600 hover:bg-gray-200 flex justify-center items-center'>
             <Link to='/signup' className='text-xl text-white hover:text-blue-900 font-semibold '>SIGNUP</Link>
 
           </div>

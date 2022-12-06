@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar from '../../assets/images/avatar.jpg'
+import { Link } from 'react-router-dom'
 
 
 
@@ -236,12 +237,14 @@ function Post({ post, SetReportChange }) {
                     <div className='w-full h-16  flex justify-between items-center pl-2 rounded-t-2xl '>
                         <div className='w-full h-14  flex justify-between items-center rounded-t-2xl ' >
                             <div className='h-full w-36 flex justify-start items-center'>
+                                <Link to={`/profile/${user.username}`} state={{userID : user._id }}>
                                 {
                                     user?.profilePicture ?
-                                        <img src={PF + user.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
+                                        <img src={PF + user?.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
                                         : <img src={avatar} className='rounded-full w-12 h-12 bg-black  '></img>
 
                                 }
+                                </Link>
                                 <div className=' flex flex-col justify-start  ml-2'>
                                     <div className='text-sm font-medium flex justify-start'>{user.username}</div>
                                     <div className='text-xs flex justify-start relative'>{format(post.createdAt)}</div>
@@ -330,7 +333,7 @@ function Post({ post, SetReportChange }) {
                                                     <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 pr-2 items-center '>
                                                         {
                                                             obj.userId.profilePicture ?
-                                                                <img src={PF + obj.userId.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
+                                                                <img src={PF + obj.userId?.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
                                                                 : <img src={avatar} className='rounded-full w-12 h-12 bg-black  '></img>
 
 

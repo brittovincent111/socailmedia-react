@@ -6,6 +6,8 @@ import pro4 from '../../assets/images/pro4.jpg'
 import Axios from 'axios'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import avatar from '../../assets/images/avatar.jpg'
+
 
 
 
@@ -22,6 +24,8 @@ function RightSide() {
 
   const userDetails = useSelector(state => state.user)
   const userId = userDetails._id
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER
+
 
   
 
@@ -89,7 +93,7 @@ return (
 
 
           {
-            users.map((obj) => {
+            users?.map((obj) => {
 
               return (
                 <div className='w-full h-16  flex items-center justify-between rounded-2xl  hover:cursor-pointer'>
@@ -97,7 +101,11 @@ return (
 
 
                     <div className='w-max h-full flex rounded-2xl '>
-                      <img src={pro2} className='rounded-full  w-14 h-14 flex border  ' />
+                      { obj.profilePicture ?
+                      <img src={PF  + obj.profilePicture} className='rounded-full  w-14 h-14 flex border  ' />
+                    :  <img src={avatar} className='rounded-full  w-14 h-14 flex border  ' />
+
+                    }
 
                     </div>
                     <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.username}

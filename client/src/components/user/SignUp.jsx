@@ -100,8 +100,8 @@ function SignUp() {
 
                 </div> */}
 
-                <div hidden className='hero w-2/5 p-5 py-36 px-12 bg-blue-600 rounded-tl-2xl rounded-bl-2xl lg:block   '  >
-                    <div className='w-20 h-20   ml-20 mt-56 rounded-full bg-blue-600 hover:bg-gray-200 flex justify-center items-center'>
+                <div hidden className='hero relative w-2/5   bg-blue-600 rounded-tl-2xl rounded-bl-2xl lg:block   '  >
+                    <div className='w-20 h-20   absolute left-[40%] bottom-36 rounded-full bg-blue-600 hover:bg-gray-200 flex justify-center items-center'>
                         <Link to='/login' className='text-xl text-white hover:text-blue-900 font-semibold '>LOGIN</Link>
 
                     </div>
@@ -125,24 +125,24 @@ function SignUp() {
 
 
                             <div className='flex flex-col items-center '>
-                            <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10'>
+                            <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border-2 h-10'>
                                     <FaUserAlt className='mr-2 mx-2' />
                                     <input className=' bg-gray-100 outline-none  flex-1' type="name" placeholder='FullName' name='userfullname' onChange={(e) => { onHandleChange(e) }} />
                                 </div>
-                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10'>
+                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border-2 h-10'>
                                     <FaUserAlt className='mr-2 mx-2' />
                                     <input className=' bg-gray-100 outline-none  flex-1' type="name" placeholder='Username' name='username' onChange={(e) => { onHandleChange(e) }} />
                                 </div>
 
-                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10 '>
+                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border-2  h-10 '>
                                     <FaEnvelope className='mr-2 mx-2' />
                                     <input className=' bg-gray-100 outline-none flex-1' type="email" placeholder='email' name='email' onChange={(e) => { onHandleChange(e) }} />
                                 </div>
-                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10 '>
+                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border-2 h-10 '>
                                     <FaLock className='mr-2 mx-2' />
                                     <input className=' bg-gray-100 outline-none flex-1' type="password" placeholder='password' name='password' onChange={(e) => { onHandleChange(e) }} />
                                 </div>
-                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border border-black h-10 '>
+                                <div className='bg-gray-100 w-80 p-1 flex items-center mb-4 rounded-2xl border-2  h-10 '>
                                     <FaLock className='mr-2 mx-2' />
                                     <input className=' bg-gray-100 outline-none flex-1' type="password" placeholder='password' name='confirmpassword' onChange={(e) => { onHandleChange(e) }} />
                                 </div>

@@ -3,6 +3,8 @@ import Axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { Link } from 'react-router-dom'
+
 
 import moment from 'moment'
 
@@ -111,7 +113,7 @@ function UserManagment() {
             <div class="container mx-auto px-4 sm:px-8">
                 <div class="py-8">
                     <div>
-                        <h2 class="text-2xl font-semibold leading-tight"> APPROVED APPLICATIONS</h2>
+                        <h2 class="text-2xl font-semibold leading-tight">USER MANAGMENT</h2>
                     </div>
                     <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -136,7 +138,15 @@ function UserManagment() {
                                         </th>
                                         <th
                                             class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            NO OF REPORTS
+                                        </th>
+                                        <th
+                                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             STATUS
+                                        </th>
+                                        <th
+                                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            VIEW
                                         </th>
                                         <th
                                             class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -157,7 +167,14 @@ function UserManagment() {
                                                     <td className="text-center">{obj.username}</td>
                                                     <td className="text-center">{obj.email}</td>
                                                     <td className="text-center">{obj.date}</td>
+                                                    <td className="text-center">{obj.reports.length}</td>
                                                     <td className="text-center">{obj.status}</td>
+                                                    <Link to={`/admin/usermanagment/${obj._id}`}>
+                                                    <td className="text-center">view</td>
+                                                    </Link>
+                                                    
+
+
                                                     <td className="text-center p-4 ">
                                                         {
                                                             obj.status == "Active" ?

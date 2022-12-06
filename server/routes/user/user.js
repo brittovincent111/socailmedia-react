@@ -1,15 +1,32 @@
 const express = require('express')
 const router = express.Router()
-const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers, notificationShow, notificationRead} = require("../../Controller/user/userController")
+const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers, notificationShow, notificationRead, reportUser} = require("../../Controller/user/userController")
 const verifyJwtUser = require('../../MiddleWare/VerifyUser')
-const { imageUpload } = require('../../Controller/imageuplod/imageupload');
+const multer = require('multer');
 
+const storage = multer.diskStorage({
+    destination(req, file, callback) {
+        callback(null, './public/images');
+    },
+    filename(req, file, callback) {
+        callback(null,file.originalname);
+    },
+});
+
+const upload = multer({ storage:storage});
 
 
 /* ------------------------------ IMAGE UPLOAD ------------------------------ */
 
 
-router.post('/upload', imageUpload)
+router.post('/upload', upload.single('file'), (req, res) => {
+    console.log("hey reached");
+    try {
+        res.json("success")
+    } catch (error) {
+        res.json(error)
+    }
+})
 
 /* ---------------------------------- USER ---------------------------------- */
 
@@ -26,14 +43,15 @@ router.put('/notification/viewed/:userId' , notificationRead)
 
 /* ------------------------------ USER FRIENDS ------------------------------ */
 
-router.put('/follow/:id' , followUsers)
 router.get('/friendRequest/:id' ,friendRequest  )
+router.put('/follow/:id' , followUsers)
 router.put('/acceptRequest/:id' , acceptRequest  )
 router.put('/declineRequest/:id' , declineRequest  )
 router.put('/cancelRequest/:id' ,cancelRequest  )
 router.put('/unfollow/:id' , unfollow  )
 router.get('/userprofile/:id' , viewProfile )
 router.post('/update/:userId' , editProfile)
+router.post('/report/:userId' , reportUser)
 
 /* ---------------------------------- POSTS --------------------------------- */
 

@@ -21,6 +21,7 @@ import { useRef } from 'react'
 
 
 
+
 export default function Navbar({ setStatus }) {
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
@@ -32,7 +33,7 @@ export default function Navbar({ setStatus }) {
     const [searchUser, setSearchUser] = useState([])
     const [notificationData, setNotificationData] = useState([])
     const [openNot, setOpenNot] = useState(false)
-    const [counts , SetCounts] = useState('')
+    const [counts, SetCounts] = useState('')
 
     const userDetails = useSelector(state => state.user)
     const userId = userDetails._id
@@ -143,39 +144,41 @@ export default function Navbar({ setStatus }) {
     }
 
     /* ------------------------------- NOTIFCATION ------------------------------ */
-   useEffect(()=>{
+    useEffect(() => {
 
-    const notificationHandler = async () => {
+        const notificationHandler = async () => {
+            try {
+                const { data } = await notifiactionFind(userId)
+                setNotificationData(data.data.notification)
+                SetCounts(data.countLength)
+
+            } catch (error) {
+
+            }
+        }
+
+        notificationHandler()
+
+    }, [counts])
+
+    /* --------------------------- VIEWED NOTIFICATION -------------------------- */
+
+    const notificationHandle = async (e) => {
+        setOpenNot(!openNot)
         try {
-            const { data } = await notifiactionFind(userId)
-            setNotificationData(data.data.notification)
-            SetCounts(data.countLength)
+
+            const { data } = await notifiactionRead(userId)
+            SetCounts("0")
 
         } catch (error) {
+
 
         }
     }
 
-    notificationHandler()
 
-   },[counts])
+    console.log(counts, "countsssss")
 
-   /* --------------------------- VIEWED NOTIFICATION -------------------------- */
-
-   const notificationHandle= async(e)=>{
-    setOpenNot(!openNot)
-    try{
-
-        const { data } = await notifiactionRead(userId)
-        SetCounts("0")
-
-    }catch(error){
-
-
-    }
-   }
-
-   
 
 
     return (
@@ -223,10 +226,10 @@ export default function Navbar({ setStatus }) {
                             <SiMessenger className='md:text-2xl text-xl ' />
                         </Link>
                         <div className=''>
-                        <div onClick={(e) => { notificationHandle(e) }} className='relative flex items-center bg-white p-3  rounded-full md:hover:bg-gray-100 cursor-pointer '>
-                            <IoMdNotifications className='md:text-2xl text-xl ' />
-                            <span className='absolute top-1.5 right-2 h-4 w-4 flex items-center justify-center rounded-full p-1 bg-red-600 text-white text-sm font-semibold'>{counts}</span>
-                        </div>
+                            <div onClick={(e) => { notificationHandle(e) }} className='relative flex items-center bg-white p-3  rounded-full md:hover:bg-gray-100 cursor-pointer '>
+                                <IoMdNotifications className='md:text-2xl text-xl ' />
+                                <span className='absolute top-1.5 right-2 h-4 w-4 flex items-center justify-center rounded-full p-1 bg-red-600 text-white text-sm font-semibold'>{counts}</span>
+                            </div>
                         </div>
 
 
@@ -256,8 +259,11 @@ export default function Navbar({ setStatus }) {
                                     </div>
                                 </div>
                                 <a onClick={logout} class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                    <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
-                                    <div class="mx-1 flex flex-col justify-center w-full">
+                                    {userDetails?.profilePicture ?
+                                        <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
+                                        : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} alt="jane avatar" />
+
+                                    }                                    <div class="mx-1 flex flex-col justify-center w-full">
                                         <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">LogOut</h1>
                                         {/* <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p> */}
                                     </div>
@@ -280,7 +286,11 @@ export default function Navbar({ setStatus }) {
                                     return (
 
                                         <div class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                            <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + obj.user.profilePicture} />
+                                            {obj.user.profilePicture ?
+                                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + obj.user.profilePicture} />
+                                                : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} />
+
+                                            }
                                             <div class="mx-1 flex ">
                                                 <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 ">{obj.user.username}</h1>
                                                 <p class="text-sm font-semibold text-gray-700 dark:text-gray-900 pl-2">{obj.desc}</p>
@@ -375,7 +385,11 @@ export default function Navbar({ setStatus }) {
                             return (
                                 <Link to={`/profile/${obj.username}`} state={{ userID: obj._id }}>
                                     <div className='w-full h-14 flex p-2 justify-between items-center'>
-                                        <img className="h-10 rounded-full shadow-md w-10" src={PF + obj.profilePicture} />
+                                        {obj.profilePicture ?
+                                            <img className="h-10 rounded-full shadow-md w-10" src={PF + obj.profilePicture} />
+                                            : <img className="h-10 rounded-full shadow-md w-10" src={avatar} />
+
+                                        }
 
 
                                         <div className='font-normal'>

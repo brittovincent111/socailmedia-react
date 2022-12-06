@@ -15,7 +15,7 @@ import { deletePost, reportPost } from '../../../API/groupAxios'
 
 
 
-function GroupPost({ post, groupId , SetReportChange }) {
+function GroupPost({ post, groupId , SetReportChange , admin}) {
 
 
   const [likes, SetLikes] = useState(post.likes.length)
@@ -160,8 +160,7 @@ function GroupPost({ post, groupId , SetReportChange }) {
                 {blockModal ?
                   <div className='absolute top-8 right-1 cursor-pointer z-30 bg-white shadow-sm	 rounded-lg border  flex-col flex justify-end'>
                     <div className=''>
-                      {userDetails._id == post.userId._id ?
-                        <div className='text-base p-1 px-4'
+                      {userDetails._id == post.userId._id || userDetails._id ==   admin ?                        <div className='text-base p-1 px-4'
                           //  onClick={handleReport}
                           onClick={(e) => postDelete(post._id)}>Delete </div> :
                         <div className='text-base p-1 px-4'

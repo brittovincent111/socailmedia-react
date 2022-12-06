@@ -39,6 +39,10 @@ const UserSchema = new Schema({
        
 
      },
+     reports:{
+        type: Array ,
+        default :[]
+      },
 
     status: {
         type: String,

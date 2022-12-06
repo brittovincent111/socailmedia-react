@@ -220,12 +220,13 @@ export default function GroupFedd() {
 
 
   /* ---------------------------- REMOVE FROM GROUP --------------------------- */
+
   const onHandleRemove = async (userId) => {
 
 
     try {
       const { data } = await removeGroup(userId, groupId)
-      setReqMod(!reqMod)
+      // setReqMod(!reqMod)
       setRefresh(!refresh)
     } catch (error) {
 
@@ -237,15 +238,25 @@ export default function GroupFedd() {
 
 
   /* ------------------------------ VIEW MEMBERS ------------------------------ */
+   useEffect(()=>{
+    try{
 
-  const callMembers = async (e) => {
+      const callMembers = async (e) => {
 
-    setReqMod(!reqMod)
-    let { data } = await viewMembers(groupId)
+        let { data } = await viewMembers(groupId)
+    
+        setMembers(data)
+    
+      }
 
-    setMembers(data)
+      callMembers()
 
-  }
+    }catch(error){
+
+        
+    }
+   },[refresh])
+  
 
 
   /* ------------------------------- LEAVE GROUP ------------------------------ */
@@ -359,7 +370,7 @@ export default function GroupFedd() {
                         <div className=''>
 
                           <div className='text-base p-1 px-4'
-                            onClick={callMembers}
+                            onClick={(e)=>{setReqMod(!reqMod)} }
                           >Members</div>
                           <div className='text-base p-1 px-4'
                           //  onClick={handleReport}
@@ -394,12 +405,12 @@ export default function GroupFedd() {
           {
             (groupDetailss?.groupMembers.includes(userDetails._id)) || groupDetailss?.admin == userDetails._id ?
 
-              groupPost.map((post) => {
+              groupPost?.map((post) => {
                 return (
                   <>
 
 
-                    <GroupPost key={post.userId} post={post} groupId={groupId} SetReportChange={SetReportChange} />
+                    <GroupPost key={post.userId} post={post} groupId={groupId} SetReportChange={SetReportChange} admin={groupDetailss.admin}/>
 
                   </>
 

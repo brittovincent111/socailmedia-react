@@ -7,7 +7,6 @@ import MobileView from '../../components/user/MobileView'
 
 function FeedPage() {
 
-  const [status , setStatus] = useState(false)
   return (
     <div>
       <Navbar />

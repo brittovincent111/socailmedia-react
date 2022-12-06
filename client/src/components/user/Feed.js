@@ -48,7 +48,8 @@ function Feed() {
       try{
 
       
-      const res=await Axios.get(`http://localhost:4000/post/timeline/${userId}`)
+      const res=await Axios.
+      get(`http://localhost:4000/post/timeline/${userId}`)
       
       setPosts(
         res.data.sort((p1,p2)=>{
@@ -56,7 +57,8 @@ function Feed() {
       })
      )
     }catch(error){
-
+         
+      console.log(error)
       
     }
     }
@@ -68,9 +70,9 @@ function Feed() {
     <>
 
 {
-   post.length !=0 ? 
+   post?.length !=0 ? 
    
-   post.map((post)=>(
+   post?.map((post)=>(
 
          post?.reports.includes(userDetails._id) ? null :
           <Post key={post.userId} post={post} SetReportChange={SetReportChange}/>

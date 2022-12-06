@@ -24,6 +24,7 @@ import GroupPostReport from './components/admin/GroupPostReport';
 import GroupPostDetail from './components/admin/GroupPostDetail';
 import ViewGroupPage from './pages/userPages/ViewGroupPage';
 import Updation from './UpdationContext/UpdationContext';
+import UserReportDetailView from './components/admin/DetailsUserReport';
 
 
 
@@ -52,11 +53,13 @@ function App() {
           <Route path='/admin/login' element={<AdminLoginPage />}></Route>
           <Route path='/admin' element={<Structure />}>
             <Route path='/admin/dashboard' element={<AdminDashboard />}></Route>
+            <Route path='/admin/usermanagment/:userId' element={<UserReportDetailView />}></Route>
             <Route path='/admin/usermanagment' element={<UserManagment />}></Route>
             <Route path='/admin/report/postmanagment' element={<ReportedPosts />}></Route>
             <Route path='/admin/viewreport/postmanagment/:postId' element={<ReportDetailView />}></Route>
             <Route path='/admin/group/report/postmanagment' element={<GroupPostReport />}></Route>
             <Route path='/admin/group/viewreport/postmanagment/:postId' element={<GroupPostDetail />}></Route>
+
 
 
           </Route>

@@ -8,6 +8,7 @@ const postSchemma = require('../../schema/user/posts')
 const ReportModel = require('../../schema/user/ReportSchemma')
 const postGroupSchemma = require('../../schema/user/groupPostSchemma')
 const groupPostReportModel = require('../../schema/user/groupReportPost')
+const userReportModel = require('../../schema/user/userReport')
 
 const Controller = {
 
@@ -71,7 +72,7 @@ const Controller = {
   userManagment: async (req, res) => {
 
     try {
-      let user = await userSchemaa.find()
+      let user = await userSchemaa.find({reports : { $ne : []}})
       if (user) {
         res.status(200).json(user)
       }
@@ -79,6 +80,21 @@ const Controller = {
     } catch {
 
       res.status(401).json({message : "something went wrong "})
+
+    }
+  },
+
+
+  viewUserSingleReport: async(req,res)=>{
+
+    try{
+      console.log(req.params.userId , "userID")
+      let user = await userReportModel.find({userId : req.params.userId}).populate("reporterId")
+      res.status(200).json(user)
+
+    }catch(error){
+
+      console.log(error.message , "message   ")
 
     }
   },

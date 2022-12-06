@@ -8,7 +8,7 @@ function Structure() {
     <div>
       <div className='flex'>
         <AdminSideBar />
-        <div className='w-full pb-10'>
+        <div className='w-full '>
           <Header />
           <Outlet />
         </div>

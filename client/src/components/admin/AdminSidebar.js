@@ -8,6 +8,9 @@ import { useState } from 'react'
 // import { UserContext } from '../../../stores/UserContext'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import {MdFeed} from 'react-icons/md'
+import {AiFillDashboard} from 'react-icons/ai'
+import {HiUserGroup} from 'react-icons/hi'
 
 
 export default function AdminSideBar() {
@@ -55,10 +58,10 @@ export default function AdminSideBar() {
   /* -------------------------------- side bar -------------------------------- */
 
   const Menus = [
-    { name: "Dashboard", link: '/admin/dashboard', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
+    { name: "Dashboard", link: '/admin/dashboard', icons: <AiFillDashboard className='text-gray-400 h-10 w-6' /> },
     { name: "Users", link: '/admin/usermanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6 ' /> },
-    { name: "Reported Posts", link: '/admin/report/postmanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
-    { name: "Reported Group Posts", link: '/admin/group/report/postmanagment', icons: <FaUserAlt className='text-gray-400 h-10 w-6' /> },
+    { name: "Posts", link: '/admin/report/postmanagment', icons: <MdFeed className='text-gray-400 h-10 w-6' /> },
+    { name: "Group Posts", link: '/admin/group/report/postmanagment', icons: <HiUserGroup  className='text-gray-400 h-10 w-6' /> },
 
 
 
