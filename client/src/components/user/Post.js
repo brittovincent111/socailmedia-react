@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineHeart, AiOutlinePlus, AiFillHeart, AiOutlineFileSync } from 'react-icons/ai'
 import { FaRegComment } from 'react-icons/fa'
 import { FiSend } from 'react-icons/fi'
@@ -56,7 +56,9 @@ function Post({ post, SetReportChange }) {
         };
         fetchUser();
     }, [post.userId]);
+  
 
+    /* -------------------------------- LIKE POST ------------------------------- */
 
     const onHandlerLike = async () => {
 
@@ -69,12 +71,15 @@ function Post({ post, SetReportChange }) {
 
     }
 
+    /* ------------------------------ COMMENT POST ------------------------------ */
+
     const onhandlerCommemt = async () => {
 
         const data = {
 
             userId: userDetails._id,
-            comment: comment
+            comment: comment,
+            postUserId : post.userId
         }
         try {
              await axios.
@@ -93,7 +98,8 @@ function Post({ post, SetReportChange }) {
         try {
 
             setviewCommet(!viewComment)
-            axios.get(`http://localhost:4000/viewcomment/post/${post._id}`).
+            axios.
+            get(`http://localhost:4000/viewcomment/post/${post._id}`).
                 then((response) => {
 
                     SetSeeeComments(response.data)
@@ -176,6 +182,8 @@ function Post({ post, SetReportChange }) {
         setPostMod(false)
 
     }
+
+
 
     /* ------------------------------- delete post ------------------------------ */
 
@@ -374,9 +382,7 @@ function Post({ post, SetReportChange }) {
                 postMod ?
                     <>
 
-
-
-                        <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
                             <div className="relative w-auto my-6 mx-auto max-w-3xl">
                                 {/* {/content/} */}
                                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">

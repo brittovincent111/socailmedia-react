@@ -5,6 +5,7 @@ const postSchemma = require('../../schema/user/posts')
 const commentScheema = require('../../schema/user/commentSchemma')
 const userSchemma = require('../../schema/user/signUp')
 const ReportModel = require('../../schema/user/ReportSchemma')
+const notificationSchemma = require('../../schema/user/NotificationSchema')
 
 
 
@@ -39,13 +40,14 @@ const controller = {
 
           let password = await bcrypt.
             hash(req.body.password, 10)
-          await userSchemaa.create({
+          let user = await userSchemaa.create({
             userfullname: req.body.userfullname,
             username: req.body.username,
             email: req.body.email,
             password: password
           })
           res.json({ success: "success" })
+          await notificationSchemma.create({ userId: user._id })
 
         }
       }
@@ -147,7 +149,7 @@ const controller = {
 
   /* ----------------------------- follow request ----------------------------- */
   followUsers: async (req, res) => {
-     
+
     try {
 
       let user = await userSchemaa.
@@ -166,13 +168,13 @@ const controller = {
 
 
       } else {
-        
+
         await userSchemaa.
           updateOne({ _id: req.body.userId },
             { $push: { requestTo: req.params.id } })
-            await userSchemaa.
-            updateOne({ _id: req.params.id  },
-              { $push: { requestFrom: req.body.userId  } })
+        await userSchemaa.
+          updateOne({ _id: req.params.id },
+            { $push: { requestFrom: req.body.userId } })
 
         res.status(200).json("updated")
 
@@ -253,6 +255,11 @@ const controller = {
 
   likePost: async (req, res) => {
 
+    let details = {
+      user: req.body.userId,
+      desc: "liked your post"
+    }
+
     try {
       const post = await postSchemma.
         findById(req.params.id)
@@ -267,6 +274,9 @@ const controller = {
 
         await post.
           updateOne({ $push: { likes: req.body.userId } })
+        await notificationSchemma.
+          updateOne({ userId: post.userId },
+            { $push: { notification: details } })
         res.status(200).json("liked ")
 
       }
@@ -281,19 +291,28 @@ const controller = {
 
   commentPost: async (req, res) => {
 
+    let details = {
+      user: req.body.userId,
+      desc: "commented your post"
+    }
+
     try {
       const postId = req.params.id
-      const { userId, comment } = req.body
+      const { userId, comment , postUserId} = req.body
       await commentScheema.create({
         userId,
         comment,
         postId: postId
       })
+      await notificationSchemma.
+      updateOne({ userId: postUserId },
+        { $push: { notification: details } })
 
       res.status(200).json("updated")
 
     } catch (error) {
-
+      
+      console.log(error.message , "messageee");
       res.status(500).json(error)
 
     }
@@ -415,7 +434,7 @@ const controller = {
 
   /* ----------------------------- friendRequests ----------------------------- */
 
-  friendRequest: async(req, res) => {
+  friendRequest: async (req, res) => {
 
     try {
 
@@ -429,7 +448,7 @@ const controller = {
       res.status(200).json(response.requestFrom)
 
     } catch (error) {
-      
+
       res.status(500).json(error)
 
     }
@@ -619,19 +638,18 @@ const controller = {
 
   editProfile: async (req, res) => {
 
+    console.log(req.body , "bodyddydyyyd")
+
     try {
-
-
-
       await userSchemaa.
-        updateOne({ _id: userId }, {
+        updateOne({ _id: req.params.userId }, {
           $set: req.body
         })
 
       res.status(200).json("updated")
 
     } catch (error) {
-
+      console.log(error.message , "error message ");
       res.status(500).json(error)
     }
   },
@@ -675,6 +693,55 @@ const controller = {
       res.status(500).json(error)
 
     }
+  },
+
+  /* ------------------------------ NOTIFICATION ------------------------------ */
+
+  notificationShow: async(req, res) => {
+
+    try {
+      
+      let data = await notificationSchemma.
+      findOne({userId : req.params.userId}).
+      populate("notification.user" ,
+       "username profilePicture")
+      let count = data.notification.filter((obj)=>{
+        
+        if (obj.status == "true"){
+          return  obj
+    
+        }
+        
+      })
+      let countLength = count.length
+      res.status(200).json({data , countLength})
+
+    } catch (error) {
+      
+      res.status(500).json(error)
+
+    }
+  },
+
+/* -------------------------- readed notifications -------------------------- */
+
+  notificationRead:async(req,res)=>{
+
+
+    try{
+
+      let data = await notificationSchemma.
+      updateOne({userId : req.params.userId } ,
+        {$set : { "notification.$[].status" : "false" }} )
+              res.status(200).json("updated")
+
+
+    }catch(error){
+
+      res.status(500).json(error)
+
+    }
+
   }
 
 }

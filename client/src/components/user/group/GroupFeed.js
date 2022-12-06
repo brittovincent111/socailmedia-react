@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import Axios from 'axios'
 import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { deleteGroup, groupDetails, groupPosts, joinGroup, leaveGroup, removeGroup, viewMembers } from '../../../API/groupAxios'
 import ImageUpload from '../../../assets/images/uploadimage2.jpg'
@@ -13,6 +12,9 @@ import { BiEditAlt } from 'react-icons/bi'
 import { HiLockClosed } from 'react-icons/hi'
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import groupWall from '../../../assets/images/groupWall.jpg'
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import avatar from '../../../assets/images/avatar.jpg'
 
 
 
@@ -42,7 +44,7 @@ export default function GroupFedd() {
   const userDetails = useSelector(state => state.user)
 
 
-
+  const Navigate = useNavigate()
   const groupId = useParams().groupid
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
   const userID = userDetails._id
@@ -262,11 +264,38 @@ export default function GroupFedd() {
   }
 
   /* ------------------------------ DELETE GROUP ------------------------------ */
-  const handleDelete=()=>{
+  const handleDelete= async()=>{
     
     try{
 
-      const{data} = deleteGroup(groupId , userID)
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          return (
+            <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
+              <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
+              {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
+              <div className='flex space-x-2 p-2 '>
+                <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
+                <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
+                  onClick={async() => {
+                    onClose();
+                    const{data} = await deleteGroup(groupId , userID)
+                    Navigate('/view/groups')
+
+  
+  
+                  }}
+                >
+                  Delete
+                </button>
+  
+              </div>
+  
+            </div>
+          );
+        }
+      });
+     
     }catch(error){
 
       console.log(error)
@@ -528,7 +557,7 @@ export default function GroupFedd() {
             <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300 h-[400px]  shadow-xl border '>
 
               <div className='flex justify-center h-max'>
-                <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Follow Requests </div>
+                <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Group Members </div>
 
               </div>
 
@@ -536,17 +565,22 @@ export default function GroupFedd() {
                 <div className='m-6 h-full  '>
 
 
+                  <div className='grid-cols-1 gap-2 w-full h-full overflow-y-scroll no-scrollbar  ' >
                   {members.map((obj) => {
                     return (
-                      <div className='flex  justify-evenly w-full h-full overflow-y-scroll  space-x-2 ' >
                         <div className='flex w-full items-center h-max justify-evenly'>
                           <div className="flex  items-center  w-full space-x-2">
-                            <div className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
+                            { obj.profilePicture ?
+                            <img src={PF + obj.profilePicture} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
                             //  onClick={onHandleRequest}
-                            >
+                            />:
+                            <img src={avatar} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
+                            //  onClick={onHandleRequest}
+                            />
+                  }
 
                               <HiUserAdd className='text-2xl text-white' />
-                            </div>
+                       
                             <div className='flex justify-center item-center'>
                               {obj.username}
                             </div>
@@ -565,11 +599,11 @@ export default function GroupFedd() {
 
                           </div>
                         </div>
-                      </div>
                     )
                   })
-
-                  }
+                  
+                }
+                </div>
                 </div>
               </div>
             </div>

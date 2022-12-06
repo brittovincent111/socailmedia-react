@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {MdOutlineFeed} from 'react-icons/md'
 import  Axios  from 'axios'
 import { Link ,useNavigate } from 'react-router-dom'
 import Post from './Post'
 import { useSelector, useDispatch } from 'react-redux'
+import {UserUpdation} from '../../UpdationContext/UpdationContext'
 
 
 
@@ -15,6 +16,8 @@ function Feed() {
   const [post , setPosts] = useState([])
   const userDetails = useSelector(state => state.user)
   const [reportChange , SetReportChange] = useState('')
+  const{feedUpdate , setFeedUpdate} = useContext(UserUpdation)
+
 
 
 
@@ -58,7 +61,7 @@ function Feed() {
     }
     }
     fetchPost()
- },[reportChange])
+ },[reportChange , feedUpdate])
 
 
   return (

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers} = require("../../Controller/user/userController")
+const {userSignUp, userLogin, userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers, notificationShow, notificationRead} = require("../../Controller/user/userController")
 const verifyJwtUser = require('../../MiddleWare/VerifyUser')
 const { imageUpload } = require('../../Controller/imageuplod/imageupload');
 
@@ -19,6 +19,9 @@ router.get('/' ,  userFeed )
 router.get('/suggest/:id' , userDetails) 
 router.get('/:id' ,findUser )
 router.get('/find/user/:val' , searchUsers)
+router.get('/notification/:userId' , notificationShow)
+router.put('/notification/viewed/:userId' , notificationRead)
+
 
 
 /* ------------------------------ USER FRIENDS ------------------------------ */
@@ -30,7 +33,7 @@ router.put('/declineRequest/:id' , declineRequest  )
 router.put('/cancelRequest/:id' ,cancelRequest  )
 router.put('/unfollow/:id' , unfollow  )
 router.get('/userprofile/:id' , viewProfile )
-router.post('/update' , editProfile)
+router.post('/update/:userId' , editProfile)
 
 /* ---------------------------------- POSTS --------------------------------- */
 

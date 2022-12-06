@@ -124,8 +124,8 @@ function Profile() {
     try {
       console.log("suiiiiiiiii")
       await axios.
-      post('http://localhost:4000/update', 
-      { ...edit, userId: userDetail._id }).
+      post(`http://localhost:4000/update/${userDetail._id}`, 
+      { ...edit }).
       then((response) => {
 
         setUpdation(!updation)
@@ -157,7 +157,6 @@ function Profile() {
 
   const updateDesc =async(e,postId)=>{
     e.preventDefault(e)
-    
 
     try{
       const Desc = { desc : desc.desc , postId : desc.postId }
@@ -292,6 +291,7 @@ const unFollow = async (e) => {
 
   return (
     <div className='w-3/4 flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
+      
 
       <div className='md:w-11/12 w-full bg-white   h-full'>
         {/* profile details  */}
@@ -393,7 +393,7 @@ const unFollow = async (e) => {
           {
 
             (userDetail?._id == data?._id) || (userDetail?.following.includes(data?._id)) ?
-              <div className='grid grid-cols-3 w-full gap-6 justify-evenly'>
+              <div className='grid grid-cols-3 z-10 w-full gap-6 justify-evenly'>
 
                 {
                   posts.map((obj) => {
@@ -402,7 +402,7 @@ const unFollow = async (e) => {
 
                       <div className='group relative md:px-5 w-full md:h-[290px] shadow-lg sm:h-[260px] h-[200px]  items-center flex justify-center '>
 
-                        <img src={PF + obj.img} className='h-full w-full z-10 ' />
+                        <img src={PF + obj.img} className='h-full w-full ' />
                         <div className='absolute grid place-items-center bg-transparent duration-500  group-hover:bg-[#00000096] w-full h-full z-20'>
                           <div className='text-transparent group-hover:text-white flex text-lg   justify-center items-center'>
                             {(userDetail?._id == data?._id) ?
@@ -447,6 +447,7 @@ const unFollow = async (e) => {
         </div>
 
       </div>
+    
       {showMod ? (
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import { BsEmojiSmile } from 'react-icons/bs'
@@ -12,6 +12,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { remove } from '../../redux/userRedux'
 import avatar from '../../assets/images/avatar.jpg'
 import './sidebar.css'
+import {UserUpdation} from '../../UpdationContext/UpdationContext.js'
+
 
 
 function Sidebar() {
@@ -31,6 +33,8 @@ function Sidebar() {
   const [group, SetGroup] = useState([])
   const [postImage, setPostImage] = useState()
   const [showImage, setShowImage] = useState()
+  const{feedUpdate , setFeedUpdate} = useContext(UserUpdation)
+
 
   /* --------------------------- HANDLE UPLOAD IMAGE -------------------------- */
 
@@ -78,8 +82,8 @@ function Sidebar() {
 
         await Axios.
           post('http://localhost:4000/post', newPost)
-        window.location.reload()
-
+          setFeedUpdate(!feedUpdate)
+          setPostMod(!postMod)
       } catch (err) {
         console.log(err);
       }
@@ -218,7 +222,7 @@ function Sidebar() {
                 </div>
               </div>
             </NavLink>
-            <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(true) }}>
+            <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(!postMod)}}>
               <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
                 <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
 
@@ -295,7 +299,7 @@ function Sidebar() {
           <div
             className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
           >
-            <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={close}>
+            <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={(e)=>{setPostMod(!postMod)}}>
               <AiOutlineClose className='text-white text-2xl' />
             </div>
             <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300  shadow-xl border '>

@@ -45,5 +45,13 @@ io.on('connection',(socket)=>{
         activeUsers = activeUsers.filter((user)=> user.socketId != socket.id)
         console.log("user disconnected");
         io.emit('get-user' , activeUsers)
+    }) 
+})
+
+
+io.on("connection" , (socket)=>{
+    console.log("someone has connected")
+    socket.on("disconnected",()=>{
+        console.log("someone has left")
     })
 })
