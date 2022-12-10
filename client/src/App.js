@@ -25,6 +25,7 @@ import GroupPostDetail from './components/admin/GroupPostDetail';
 import ViewGroupPage from './pages/userPages/ViewGroupPage';
 import Updation from './UpdationContext/UpdationContext';
 import UserReportDetailView from './components/admin/DetailsUserReport';
+import { socket, SocketContext } from './UpdationContext/Socket';
 
 
 
@@ -34,20 +35,23 @@ function App() {
 
     <div className="App">
       <Router>
+        <SocketContext.Provider value={socket} >
           <Provider store={store}>
-        <Updation>
-            <Routes>
-              <Route path='/login' element={<LoginUser />}></Route>
-              <Route path='/signup' element={<SignUpPage />}></Route>
-              <Route path='/' element={<FeedPage />}></Route>
-              <Route path='/profile/:username' element={<ProfilePage />}></Route>
-              <Route path='/message' element={<MessagePage />}></Route>
-              <Route path='/savedPosts' element={<SavedPostPage />}></Route>
-              <Route path='/group/:groupid' element={<GroupPage />}></Route>
-              <Route path='/view/groups' element={<ViewGroupPage />}></Route>
-            </Routes>
-        </Updation>
+            <Updation>
+              <Routes>
+                <Route path='/login' element={<LoginUser />}></Route>
+                <Route path='/signup' element={<SignUpPage />}></Route>
+                <Route path='/' element={<FeedPage />}></Route>
+                <Route path='/profile/:username' element={<ProfilePage />}></Route>
+                <Route path='/message' element={<MessagePage />}></Route>
+                <Route path='/savedPosts' element={<SavedPostPage />}></Route>
+                <Route path='/group/:groupid' element={<GroupPage />}></Route>
+                <Route path='/view/groups' element={<ViewGroupPage />}></Route>
+              </Routes>
+            </Updation>
           </Provider>
+        </SocketContext.Provider>
+
 
         <Routes>
           <Route path='/admin/login' element={<AdminLoginPage />}></Route>

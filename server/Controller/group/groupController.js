@@ -71,7 +71,7 @@ const controller = {
   joinGroup: async (req, res) => {
 
 
-
+   console.log("dfsdfsdfsd");
     try {
 
       let join = await GroupSchemma.

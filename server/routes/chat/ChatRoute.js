@@ -6,6 +6,6 @@ const { createChat, findChat, userChats } = require('../../Controller/Chat/ChatC
 
 router.post("/", createChat )
 router.get("/:userId" , userChats)
-router.get("/find/:firstId/:secondId" , findChat)
+router.get("/find/:firstId/:secondId" , findChat)    
 
 module.exports = router;

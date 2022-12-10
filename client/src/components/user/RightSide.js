@@ -1,12 +1,11 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import pro1 from '../../assets/images/pro1.jpg'
 import pro2 from '../../assets/images/pro2.jpg'
 import pro4 from '../../assets/images/pro4.jpg'
-import Axios from 'axios'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import avatar from '../../assets/images/avatar.jpg'
+import userInstance from '../../API/userApi'
 
 
 
@@ -27,106 +26,115 @@ function RightSide() {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
 
 
-  
+
 
   /* ---------------------------- SUGGESTED FRIENDS --------------------------- */
 
   useEffect(() => {
-    try{
-    
-    const suggestFriends = async(userId)=>{
-      
-       let response = await Axios.get(`http://localhost:4000/suggest/${userId}`)
+    try {
+
+      const suggestFriends = async (userId) => {
+
+        let response = await userInstance.
+          get(`/suggest/${userId}`)
 
         SetUsers(response.data)
+        console.log(response.data , "dataaa")
+
+      }
+      suggestFriends(userId)
+
+    }catch(error) {
+
+      console.log(error , "error message")
 
     }
-    suggestFriends(userId)
 
-    }catch(error){
-
-    }
-
-}, [updation])
+  }, [updation])
 
 
 
-/* ------------------------------- FOLLOW USER ------------------------------ */
-const follow = (async (id, e) => {
+  /* ------------------------------- FOLLOW USER ------------------------------ */
+  const follow = (async (id, e) => {
 
 
-  try{
+    try {
 
-    e.preventDefault()
-    await Axios.
-    put(`http://localhost:4000/follow/${id}`,
-     { userId: userId })
-  
+      e.preventDefault()
+      await userInstance.
+        put(`/follow/${id}`,
+          { userId: userId })
+
       SetUpdation(!updation)
-  
-  }catch(error){
 
-  }
-
-})
+    } catch (error) {
+      console.log(error , "error message")
 
 
+    }
 
-
-
-
-return (
-  <div className=' w-full h-full border-slate-300 border overflow-hidden rounded-2xl z-0 '>
-    <div className=' w-full h-full  '>
-      <div className=' py-5 space-y-3 mt-4 p-3 rounded-2xl'>
-        <div className='w-2/3 h-10  flex items-center justify-start'>
-
-
-          <div className=' flex justify-center font-semibold  text-xl'>Suggusted
-
-          </div>
-
-
-        </div>
-        <div className='  space-y-2 w-full h-48'>
+  })
 
 
 
-          {
-            users?.map((obj) => {
-
-              return (
-                <div className='w-full h-16  flex items-center justify-between rounded-2xl  hover:cursor-pointer'>
-                  <Link to={`/profile/${obj.username}`} state={{userID : obj._id }}className='flex items-center'>
 
 
-                    <div className='w-max h-full flex rounded-2xl '>
-                      { obj.profilePicture ?
-                      <img src={PF  + obj.profilePicture} className='rounded-full  w-14 h-14 flex border  ' />
-                    :  <img src={avatar} className='rounded-full  w-14 h-14 flex border  ' />
 
-                    }
+  return (
+    <>
+      <div className=' w-full h-full  rounded-2xl  '>
+        <div className=' w-full h-full  '>
+          <div className=' py-5 space-y-3 mt-4 p-3  border-2 rounded-2xl'>
+            <div className='w-2/3 h-10  flex items-center justify-start'>
 
+
+              <div className=' flex justify-center font-semibold  text-xl'>Suggusted
+
+              </div>
+
+
+            </div>
+            <div className='  space-y-2 w-full h-48'>
+
+
+
+              {
+                users?.map((obj) => {
+
+                  return (
+                    <div className='w-full h-16  flex items-center justify-between rounded-2xl  hover:cursor-pointer'>
+                      <Link to={`/profile/${obj.username}`} state={{ userID: obj._id }} className='flex items-center'>
+
+
+                        <div className='w-max h-full flex rounded-2xl '>
+                          {obj.profilePicture ?
+                            <img src={PF + obj.profilePicture} className='rounded-full  w-14 h-14  ' />
+                            : <img src={avatar} className='rounded-full  w-14 h-14 flex   ' />
+
+                          }
+
+                        </div>
+                        <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.username}
+
+                        </p>
+                      </Link>
+                      <button className=' px-4 py-2 shadow-md '>
+
+                        <p onClick={(e) => { follow(obj._id, e) }}>FOLLOW</p>
+                      </button>
                     </div>
-                    <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.username}
-
-                    </p>
-                  </Link>
-
-                  <p className='items-center px-4 py-2 shadow-md hover:bg-slate-200 bg-slate-100' onClick={(e) => { follow(obj._id, e) }}>FOLLOW</p>
-                </div>
-              )
+                  )
 
 
-            }
-            )
+                }
+                )
 
-          }
+              }
 
 
 
 
-          {/* <div className='w-max h-16  flex items-center rounded-2xl  hover:cursor-pointer'>
+              {/* <div className='w-max h-16  flex items-center rounded-2xl  hover:cursor-pointer'>
 
               <div className='w-max h-full flex rounded-2xl '>
                 <img src={pro3} className='rounded-full bg-green-200 w-16 h-16 flex  border ' />
@@ -153,15 +161,15 @@ return (
             </div> */}
 
 
-        </div>
+            </div>
 
 
 
 
 
 
-      </div>
-      <div className='w-full border z-0'></div>
+          </div>
+          {/* <div className='w-full border z-0'></div>
       <div className=' py-5 space-y-3 mt-4 p-3 rounded-2xl'>
         <div className='w-2/3 h-10  flex items-center justify-start'>
 
@@ -243,14 +251,15 @@ return (
 
 
 
+      </div> */}
+
+
+        </div>
+
       </div>
+    </>
 
-
-    </div>
-
-  </div>
-
-)
+  )
 }
 
 export default RightSide

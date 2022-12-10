@@ -106,16 +106,8 @@ const Controller = {
     try {  
       const userid = req.params.id
       await userSchemaa.
-      findByIdAndUpdate(userid, { status: 'Blocked' },
-        function (err, docs) {
-          if (err) {
-            console.log(err)
-          }
-          else {
-            res.status(200).json({updated: "true"})
-            console.log("Updated User : ", docs);
-          }
-        });
+      findByIdAndUpdate(userid, { status: 'Blocked' });
+      res.status(200).json({updated: "true"})
 
     }catch(error){
 
@@ -130,15 +122,8 @@ const Controller = {
 
     try {
       const userid = req.params.id
-      await userSchemaa.findByIdAndUpdate(userid, { status: 'Active' },
-        function (err, docs) {
-          if (err) {
-            console.log(err)
-          }
-          else {
-            res.status(200).json({updated: "true"})
-          }
-        });
+      await userSchemaa.findByIdAndUpdate(userid, { status: 'Active' });
+    res.status(200).json({updated: "true"})
 
     }catch(error){
 
@@ -172,17 +157,14 @@ const Controller = {
 
     try {  
       const postid = req.params.id
-      await postSchemma.findByIdAndUpdate(postid, { status: 'Blocked' },
-        function (err, docs) {
-          if (err) {
-            console.log(err)
-          }
-          else {
+      await postSchemma.updateOne( {_id:postid}, { status: 'Blocked' })
+        
             res.status(200).json({updated: "true"})
-          }
-        });
+         
 
     }catch(error){
+
+      console.log(error.message , "errormessage ")
       res.status(500).json(error)
 
     }
@@ -197,15 +179,8 @@ const Controller = {
     try {
       const postid = req.params.id
       await postSchemma.
-      findByIdAndUpdate( postid, { status: 'Active' },
-        function (err, docs) {
-          if (err) {
-            console.log(err)
-          }
-          else {
-            res.status(200).json({updated: "true"})
-          }
-        });
+      findByIdAndUpdate( postid, { status: 'Active' });
+    res.status(200).json({updated: "true"})
 
     }catch(error){
       res.status(500).json(error)
@@ -266,6 +241,42 @@ const Controller = {
       res.status(500).json(error)
     }
   },
+
+  /* ---------------------------- group post report --------------------------- */
+  blockGroupPost : async(req,res)=>{
+
+    try {  
+      const postid = req.params.id
+      await postGroupSchemma.updateOne( {_id:postid}, { status: 'Blocked' })
+        
+            res.status(200).json({updated: "true"})
+         
+
+    }catch(error){
+
+      console.log(error.message , "errormessage ")
+      res.status(500).json(error)
+
+    }
+
+  },
+
+  /* --------------------------- unblock group post --------------------------- */
+  UnBlockGroupPost: async(req, res) => {
+
+
+    try {
+      const postid = req.params.id
+      await postGroupSchemma.
+      findByIdAndUpdate( postid, { status: 'Active' });
+    res.status(200).json({updated: "true"})
+
+    }catch(error){
+      res.status(500).json(error)
+
+    }
+  },
+
 }  
 
 

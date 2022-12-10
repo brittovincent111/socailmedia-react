@@ -8,6 +8,8 @@ import { FaRegComment } from 'react-icons/fa'
 import { FiSend } from 'react-icons/fi'
 import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
 import { deletePost, reportPost } from '../../../API/groupAxios'
+import userinstance from '../../../API/userApi'
+import avatar from '../../../assets/images/avatar.jpg'
 
 
 
@@ -15,7 +17,10 @@ import { deletePost, reportPost } from '../../../API/groupAxios'
 
 
 
-function GroupPost({ post, groupId , SetReportChange , admin}) {
+
+
+
+function GroupPost({ post, groupId, SetReportChange, admin }) {
 
 
   const [likes, SetLikes] = useState(post.likes.length)
@@ -34,27 +39,27 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
 
 
 
-/* -------------------------------- LIKE POST ------------------------------- */
+  /* -------------------------------- LIKE POST ------------------------------- */
 
   const onHandlerLike = async () => {
 
-  try {
+    try {
 
-    let res = await axios.
-    put(`http://localhost:4000/group/like/post/${post._id}`,
-     { userId: userID })
+      let res = await userinstance.
+        put(`/group/like/post/${post._id}`,
+          { userId: userID })
 
-    SetLikes(isLike ? likes - 1 : likes + 1)
-    SetIsLike(!isLike)
+      SetLikes(isLike ? likes - 1 : likes + 1)
+      SetIsLike(!isLike)
 
-  }catch(error){
+    } catch (error) {
+
+    }
 
   }
-  
-  }
 
 
-   /* -------------------------------- POST LIKE ------------------------------- */
+  /* -------------------------------- POST LIKE ------------------------------- */
   useEffect(() => {
 
     SetIsLike(post.likes.includes(userID))
@@ -72,9 +77,9 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
       comment: comment
     }
 
-    let res = await axios.
-    put(`http://localhost:4000/group/comment/post/${post._id}`,
-     { ...data })
+    let res = await userinstance.
+      put(`/group/comment/post/${post._id}`,
+        { ...data })
 
     SetComment("")
   }
@@ -82,23 +87,23 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
   /* ------------------------------ VIEW COMMENTS ----------------------------- */
 
 
-  const onhandleViewComments = async() => {
+  const onhandleViewComments = async () => {
 
     setviewCommet(!viewComment)
 
     // if(viewComment){
 
-    await axios.
-    get(`http://localhost:4000/group/viewcomment/post/${post._id}`).
-    then((response) => {
-      SetSeeeComments(response.data)
+    await userinstance.
+      get(`/group/viewcomment/post/${post._id}`).
+      then((response) => {
+        SetSeeeComments(response.data)
 
-    }).catch((error) => {
+      }).catch((error) => {
 
 
-      console.log(error)
-    })
-  
+        console.log(error)
+      })
+
   }
 
   const handleReport = async (e) => {
@@ -129,11 +134,11 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
   const postDelete = async (id) => {
 
 
-    try{
+    try {
 
       let data = await deletePost(id)
       SetReportChange(new Date())
-    }catch(error){
+    } catch (error) {
 
       console.log(error)
     }
@@ -160,9 +165,9 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
                 {blockModal ?
                   <div className='absolute top-8 right-1 cursor-pointer z-30 bg-white shadow-sm	 rounded-lg border  flex-col flex justify-end'>
                     <div className=''>
-                      {userDetails._id == post.userId._id || userDetails._id ==   admin ?                        <div className='text-base p-1 px-4'
-                          //  onClick={handleReport}
-                          onClick={(e) => postDelete(post._id)}>Delete </div> :
+                      {userDetails._id == post.userId._id || userDetails._id == admin ? <div className='text-base p-1 px-4'
+                        //  onClick={handleReport}
+                        onClick={(e) => postDelete(post._id)}>Delete </div> :
                         <div className='text-base p-1 px-4'
                           //  onClick={handleReport}
                           onClick={(e) => setPostMod(!postMod)}>report </div>
@@ -218,7 +223,7 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
             </div>
 
           </div>
-          <div className='w-full h-14 bg-white border-slate-300  '>
+          <div className='w-full h-10 bg-white border-slate-300  '>
             <div className='w-full h-1/2  px-1 flex items-center '>
 
               <p className=' text-lg font-medium pl-2 '>
@@ -235,30 +240,54 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
 
 
           </div>
+          <div onClick={onhandleViewComments} className='cursor-pointer'>
+            view all comments
+          </div>
           {
             viewComment ?
               <div>
-                <div className='text-lg font-medium '>comments</div>
-                {
-                  seeComments.map((obj) => {
-                    return (
-                      <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 pr-2 items-center '>
-
-                        <div className='rounded-full w-12 h-12 bg-black  '></div>
-                        <div className='ml-3 flex flex-col justify-start'>
-                          <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
-                          <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
-                        </div>
-                        <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
+                <div className='overflow-y-scroll max-h-32 no-scrollbar'>
 
 
-                        {/* <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal ' onClick={onhandlerCommemt}>Comment</div> */}
+                  {/* <div className='text-lg font-medium '>comments</div> */}
+                  {
+                    seeComments.map((obj) => {
+                      return (
+                        <>
+                          <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 pr-2 items-center '>
+                            {
+                              obj.userId.profilePicture ?
+                                <img src={PF + obj.userId?.profilePicture} className='rounded-full w-12 h-12 bg-black  '></img>
+                                : <img src={avatar} className='rounded-full w-12 h-12 bg-black  '></img>
 
-                      </div>
-                    )
-                  })
 
-                }
+                            }
+                            <div className='ml-3 flex flex-col justify-start'>
+                              <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
+                              <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
+                            </div>
+                            <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
+
+
+                            {/* <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal ' onClick={onhandlerCommemt}>Comment</div> */}
+
+                          </div>
+                        </>
+                      )
+                    })
+
+                  }
+                </div>
+
+                <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 items-center border'>
+
+                  <div className='h-full w-1/12 bg-gray text-2xl flex items-center'> <BsEmojiSmile /></div>
+                  <textarea disable placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' value={comment} onChange={(e) => SetComment(e.target.value)}></textarea>
+
+
+                  <div className=' disabled h-full w-2/12 items-center text-center text-sky-900 font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 flex px-2 justify-center text-base cursor-pointer ' onClick={onhandlerCommemt}>Comment</div>
+
+                </div>
 
               </div> :
 
@@ -268,7 +297,7 @@ function GroupPost({ post, groupId , SetReportChange , admin}) {
                 <textarea placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' value={comment} onChange={(e) => SetComment(e.target.value)}></textarea>
 
 
-                <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal cursor-pointer ' onClick={onhandlerCommemt}>Comment</div>
+                <div className='h-full w-2/12 bg-sky-700 hover:bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center font-normal text-base cursor-pointer ' >Comment</div>
 
               </div>
           }

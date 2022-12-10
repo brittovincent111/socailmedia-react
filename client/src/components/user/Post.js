@@ -2,14 +2,15 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineHeart, AiOutlinePlus, AiFillHeart, AiOutlineFileSync } from 'react-icons/ai'
 import { FaRegComment } from 'react-icons/fa'
 import { FiSend } from 'react-icons/fi'
-import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
+import { BsBookmark, BsEmojiSmile, BsThreeDots , BsFillBookmarkStarFill } from 'react-icons/bs'
 import { format } from 'timeago.js'
-import axios, { Axios } from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar from '../../assets/images/avatar.jpg'
 import { Link } from 'react-router-dom'
+import userInstance  from '../../API/userApi'
+import { SocketContext } from '../../UpdationContext/Socket'
 
 
 
@@ -25,6 +26,7 @@ function Post({ post, SetReportChange }) {
     const [postMod, setPostMod] = useState(false);
     const [reportValue, setReportValue] = useState("");
     const [refresh, SetRefresh] = useState(false)
+    const [ isSaved, SetIsSaved] = useState(false)
 
 
 
@@ -32,13 +34,17 @@ function Post({ post, SetReportChange }) {
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
     const userDetails = useSelector(state => state.user)
     const userId = userDetails._id
+    const socket = useContext(SocketContext)
 
 
 
+    
     /* -------------------------------- SET LIKES ------------------------------- */
     useEffect(() => {
 
         SetIsLike(post.likes.includes(userId))
+        SetIsSaved(post?.saved.includes(userId))
+
 
     }, [userId, post._id])
 
@@ -46,8 +52,8 @@ function Post({ post, SetReportChange }) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.
-                    get(`http://localhost:4000/postdetails/users?userId=${post.userId}`);
+                const res = await userInstance.
+                    get(`/postdetails/users?userId=${post.userId}`);
                 setUser(res.data);
             } catch (error) {
 
@@ -63,11 +69,24 @@ function Post({ post, SetReportChange }) {
 
     const onHandlerLike = async () => {
 
-
-         await axios.put(`http://localhost:4000/like/post/${post._id}`, { userId: userId })
+      try{
+        await userInstance.put(`/like/post/${post._id}`, { userId: userId })
 
         SetLikes(isLike ? likes - 1 : likes + 1)
         SetIsLike(!isLike)
+
+        if(post.userId !== userId){
+            socket.emit('send-notification',{
+               senderId:userId,
+               recieverId:post.userId,
+               desc:'liked your post'
+            })
+        }
+      }catch(error){
+
+
+      }
+       
 
 
     }
@@ -83,8 +102,8 @@ function Post({ post, SetReportChange }) {
             postUserId : post.userId
         }
         try {
-             await axios.
-                put(`http://localhost:4000/comment/post/${post._id}`,
+             await userInstance.
+                put(`/comment/post/${post._id}`,
                     { ...data })
             SetComment("")
 
@@ -99,8 +118,8 @@ function Post({ post, SetReportChange }) {
         try {
 
             setviewCommet(!viewComment)
-            axios.
-            get(`http://localhost:4000/viewcomment/post/${post._id}`).
+            userInstance.
+            get(`/viewcomment/post/${post._id}`).
                 then((response) => {
 
                     SetSeeeComments(response.data)
@@ -124,17 +143,21 @@ function Post({ post, SetReportChange }) {
             userId: userDetails._id,
         }
        try{
-        await axios.
-        put(`http://localhost:4000/savepost/${post._id}`,
+        await userInstance.
+        put(`/savepost/${post._id}`,
          { ...data }).then((response) => {
 
 
-            if (response.data.message == "already added") {
-                const notify = () => toast("Already Added !");
+            if (response.data.message == "updated") {
+                const notify = () => toast("Added To Saved");
                 notify()
+                SetIsSaved(!isSaved)
             } else {
-                const notify = () => toast("Added To Saved!");
+                const notify = () => toast("Removed From Saved!");
                 notify()
+                SetIsSaved(!isSaved)
+
+                
             }
         })
         
@@ -150,22 +173,13 @@ function Post({ post, SetReportChange }) {
             e.preventDefault()
             console.log(post._id, "report")
             close();
-            SetReportChange(new Date())
     
-            await axios.
-            put(`http://localhost:4000/post/report/${post._id}`,
+            await userInstance.
+            put(`/post/report/${post._id}`,
              { userId, reportValue }).then((response) => {
     
-                console.log(response.data)
-    
-                if (response.data.message == "already added") {
-                    const notify = () => toast("Already Added !");
-                    notify()
-                } else {
-                    const notify = () => toast("Added To Saved!");
-                    notify()
-    
-                }
+                SetReportChange(new Date())
+
     
             })
 
@@ -191,8 +205,8 @@ function Post({ post, SetReportChange }) {
     const postDelete = async(id) => {
         try{
             
-       await axios.
-       put(`http://localhost:4000/post/delete/${id}`)
+       await userInstance.
+       put(`/post/delete/${id}`)
        SetReportChange(new Date())
 
         }catch(error){
@@ -202,7 +216,7 @@ function Post({ post, SetReportChange }) {
 
     }
 
-
+  console.log(userDetails  , isSaved, "USERDETAILS")
 
     return (
 
@@ -247,7 +261,7 @@ function Post({ post, SetReportChange }) {
                                 </Link>
                                 <div className=' flex flex-col justify-start  ml-2'>
                                     <div className='text-sm font-medium flex justify-start'>{user.username}</div>
-                                    <div className='text-xs flex justify-start relative'>{format(post.createdAt)}</div>
+                                    <div className='text-xs flex justify-start '>{format(post.createdAt)}</div>
                                 </div>
                             </div>
                             <div className='text-2xl w-44 p-2  flex justify-end relative '><BsThreeDots className='flex justify-end' onClick={(e) => setBlockModal(!blockModal)} />
@@ -264,8 +278,7 @@ function Post({ post, SetReportChange }) {
 
 
                                             }
-                                            <hr className='w-full' />
-                                            <div className='text-base p-1 px-4' onClick={(e) => setBlockModal(!blockModal)} >Cancel</div>
+
 
                                         </div>
 
@@ -285,17 +298,24 @@ function Post({ post, SetReportChange }) {
                     </div>
                     <div className='w-full h-16  border-slate-300 '>
                         <div className='w-full  flex justify-between  h-3/5 items-center '>
-                            <div className='w-28  flex justify-between items-center space-x-4 p-2'>
+                            <div className='w-20  flex justify-between items-center space-x-4 p-2'>
                                 <div className='text-3xl text-slate-900 hover:cursor-pointer ' onClick={onHandlerLike}>
                                     {
                                         isLike ? <AiFillHeart className='text-red-600 ' /> : <AiOutlineHeart className=' hover: transition delay-150 duration-200 ease-in-out hover:text-4xl' />
                                     }
                                 </div>
                                 <div className='text-2xl' onClick={onhandleViewComments}><FaRegComment /> </div>
-                                <div className='text-2xl'><FiSend /> </div>
+                                {/* <div className='text-2xl'><FiSend /> </div> */}
 
                             </div>
-                            <div className='text-2xl p-1 ' onClick={onhandleSavePost}><BsBookmark /> </div>
+                            {
+                                isSaved ? 
+                                
+                                <div className='text-2xl p-1 text-blue-700 ' onClick={onhandleSavePost}><BsFillBookmarkStarFill /> </div>
+                                :  
+                                <div className='text-2xl p-1 ' onClick={onhandleSavePost}><BsBookmark /> </div>
+
+                            }
 
 
                         </div>
@@ -322,7 +342,7 @@ function Post({ post, SetReportChange }) {
                     {
                         viewComment ?
                             <div>
-                                <div className='overflow-y-scroll h-36 no-scrollbar'>
+                                <div className='overflow-y-scroll max-h-24 no-scrollbar'>
 
 
                                     {/* <div className='text-lg font-medium '>comments</div> */}
@@ -443,7 +463,7 @@ function Post({ post, SetReportChange }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="opacity-50 fixed inset-0 z-60 bg-black"></div>
+                        <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
 
                     </> : null}
         </>

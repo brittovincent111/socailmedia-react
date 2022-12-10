@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Navbar.css'
 import { FaRegEnvelope, FaLock, FaSearch, FaHome } from 'react-icons/fa'
 import { SiHomeassistantcommunitystore, SiMessenger } from 'react-icons/si'
@@ -15,6 +15,9 @@ import { findSearch, notifiactionFind, notifiactionRead } from '../../API/User'
 import vm from '../../assets/images/w.jpg'
 import { io } from 'socket.io-client'
 import { useRef } from 'react'
+import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
+import { SocketContext } from '../../UpdationContext/Socket'
+
 
 
 
@@ -34,14 +37,21 @@ export default function Navbar({ setStatus }) {
     const [notificationData, setNotificationData] = useState([])
     const [openNot, setOpenNot] = useState(false)
     const [counts, SetCounts] = useState('')
+    const [liked , SetLiked] = useState(false)
 
     const userDetails = useSelector(state => state.user)
     const userId = userDetails._id
     const [open, setOpen] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const socket = useRef()
+    const socket = useContext(SocketContext)
 
+    useEffect(() => {
+        if(userDetails){
+          socket.emit("new-user-add", userDetails._id)
+        }
+        // setNotifications(JSON.parse(localStorage.getItem('count')));
+      }, []);
 
     /* ------------------------------ CREATE GROUP ------------------------------ */
 
@@ -142,24 +152,53 @@ export default function Navbar({ setStatus }) {
 
         }
     }
+   
+    useEffect(() => {
+        if(userDetails){
+          socket.emit("new-user-add", userDetails._id)
+        }
+        // setNotifications(JSON.parse(localStorage.getItem('count')));
+      }, []);
+
+
+    useEffect(()=>{
+        try{
+            console.log('effect called');
+        socket.on("getNotification",data =>{
+            console.log('effect called  sdfgdfg');
+               
+                SetLiked(!liked)
+            })
+        }catch(error){
+            console.log(error);
+
+
+        }
+      
+     },[socket])
+
 
     /* ------------------------------- NOTIFCATION ------------------------------ */
-    useEffect(() => {
 
+
+    useEffect(() => {
+         console.log("hiiiii");
         const notificationHandler = async () => {
             try {
                 const { data } = await notifiactionFind(userId)
+                console.log(data , "dataaaaa");
+
                 setNotificationData(data.data.notification)
                 SetCounts(data.countLength)
 
             } catch (error) {
-
+                console.log(error , "error");
             }
         }
 
         notificationHandler()
 
-    }, [counts])
+    }, [counts , socket , liked])
 
     /* --------------------------- VIEWED NOTIFICATION -------------------------- */
 
@@ -177,14 +216,13 @@ export default function Navbar({ setStatus }) {
     }
 
 
-    console.log(counts, "countsssss")
 
-
+   console.log(liked , "likedddd")
 
     return (
 
         <>
-            <div className='flex items-center justify-between bg-sky-900 h-14 sm:h-16  sticky top-0 z-20'>
+            <div className='flex items-center justify-between bg-sky-900 h-14 sm:h-16  sticky top-0 z-40'>
                 {/* left  */}
                 <div className='md:pl-6  pl-2 flex justify-between '>
                     {/* <img src={logo} className="w-12 h-10"/> */}
@@ -234,23 +272,29 @@ export default function Navbar({ setStatus }) {
 
 
                         <div onClick={(e) => setOpen(!open)}>
-                            <img className='w-12 h-12 object-fit  rounded-full' src={profile} />
+                        {userDetails?.profilePicture ?
+                            <img className='w-12 h-12 object-fit  rounded-full' src={PF + userDetails?.profilePicture} />:
+                            <img className='w-12 h-12 object-fit  rounded-full' src={avatar} />
+
+                        }
                         </div>
                         {
                             open &&
 
-                            <div class="absolute right-0 z-20 w-56 py-2  overflow-hidden  rounded-md shadow-xl dark:bg-blue-200 mt-72 bg-sky-100  ">
-                                <a href="#" class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                    {userDetails?.profilePicture ?
-                                        <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
-                                        : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} alt="jane avatar" />
+                            <div class="absolute right-0 z-20 w-56 py-2  overflow-hidden  rounded-md shadow-xl dark:bg-blue-200 mt-64 bg-sky-100  ">
+                                <Link to={`/profile/${userDetails.username}`} state={{ userID: userDetails._id }} >
+                                    <a class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                        {userDetails?.profilePicture ?
+                                            <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} />
+                                            : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar}  />
 
-                                    }
-                                    <div class="mx-1 flex flex-col justify-center w-full">
-                                        <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">{userDetails.userfullname}</h1>
-                                        <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p>
-                                    </div>
-                                </a>
+                                        }
+                                        <div class="mx-1 flex flex-col justify-center w-full">
+                                            <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">{userDetails.userfullname}</h1>
+                                            <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p>
+                                        </div>
+                                    </a>
+                                </Link>
                                 <div onClick={(e) => SetShowMod(!showMod)} class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
                                     <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src="https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8d29tYW4lMjBibHVlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=face&w=500&q=200" alt="jane avatar" />
                                     <div class="mx-1 flex flex-col justify-start">
@@ -259,22 +303,13 @@ export default function Navbar({ setStatus }) {
                                     </div>
                                 </div>
                                 <a onClick={logout} class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                    {userDetails?.profilePicture ?
-                                        <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} alt="jane avatar" />
-                                        : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} alt="jane avatar" />
 
-                                    }                                    <div class="mx-1 flex flex-col justify-center w-full">
+                                    <AiOutlineLogout class="text-sm flex-shrink-0  mx-1 rounded-full w-10 h-10" />
+                                    <div class="mx-1 flex flex-col justify-center w-full">
                                         <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 flex justify-start">LogOut</h1>
                                         {/* <p class="text-sm text-gray-900 dark:text-gray-900 flex justify-start ">{userDetails.username}</p> */}
                                     </div>
                                 </a>
-
-                                <Link to={`/profile/${userDetails.username}`} state={{ userID: userDetails._id }} ><a href="" class="block px-4 py-3 text-sm text-gray-600 capitalize font-extrabold  transition-colors duration-200 transform dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                    view profile
-                                </a></Link>
-
-
-
                             </div>}
 
                         {
@@ -308,70 +343,72 @@ export default function Navbar({ setStatus }) {
                 </div>
                 {showMod ? (
                     <>
-                        <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
-                            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+                        <form onSubmit={handleEdit}>
+                            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                                <div className="relative w-auto my-6 mx-auto max-w-3xl">
 
-                                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                                    <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                                        <h3 className="text-3xl font-semibold">Edit your details</h3>
-                                        <button
-                                            className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                            onClick={() => SetShowMod(false)}
-                                        >
-                                            <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                                                ×
-                                            </span>
-                                        </button>
-                                    </div>
-                                    <div className="relative p-6 flex-col">
-                                        <input
-                                            type="text"
-                                            name="groupName"
-                                            placeholder="Enter the Group Name"
-                                            onChange={handleChange}
-                                        />
-                                        {/* <input className='ml-5'
+                                    <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                                        <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                                            <h3 className="text-3xl font-semibold">Create Group</h3>
+                                            <button
+                                                className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                                                onClick={() => SetShowMod(false)}
+                                            >
+                                                <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                                                    ×
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div className="relative p-6 flex-col">
+                                            <input
+                                                type="text"
+                                                name="groupName"
+                                                placeholder="Enter the Group Name"
+                                                onChange={handleChange}
+                                            required/>
+                                            {/* <input className='ml-5'
                                         type="file" name='file' id='file' onChange={(e) => {
                                             // setImage(URL.createObjectURL(e.target.files[0]))
                                             { setFile(e.target.files[0]) }
                                         }
 
                                         } /> */}
-                                        {/* <span className='text-sm'>Update your profile pic</span> */}
-                                        <br /> <br />
-                                        <input
-                                            type="text"
-                                            name="about"
-                                            placeholder="Enter the About"
-                                            onChange={handleChange}
-                                        />
-                                        {/* <input className='ml-5'
+                                            {/* <span className='text-sm'>Update your profile pic</span> */}
+                                            <br /> <br />
+                                            <input
+                                                type="text"
+                                                name="about"
+                                                placeholder="Enter the About"
+                                                onChange={handleChange}
+                                            required/>
+                                            {/* <input className='ml-5'
                                         type="password"
                                         name="password"
                                         placeholder="change password"
                                         onChange={handleChange}
                                     /> */}
-                                    </div>
+                                        </div>
 
-                                    <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
-                                        <button
-                                            className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                                            type="button"
-                                            onClick={() => SetShowMod(false)}
-                                        >
-                                            Close
-                                        </button>
-                                        <button
-                                            className="bg-blue-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                                            type="button"
-                                            onClick={handleEdit}
-                                        >
-                                            Save Changes
-                                        </button>
+                                        <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                                            <button
+                                                className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                                type="button"
+                                                onClick={() => SetShowMod(false)}
+                                            >
+                                                Close
+                                            </button>
+                                            <button
+                                                className="bg-blue-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                                type="submit"
+                                            
+                                            >
+                                                Save Changes
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                         <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
                     </>
                 ) : null}

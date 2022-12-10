@@ -5,6 +5,7 @@ import { Link ,useNavigate } from 'react-router-dom'
 import Post from './Post'
 import { useSelector, useDispatch } from 'react-redux'
 import {UserUpdation} from '../../UpdationContext/UpdationContext'
+import userInstance  from '../../API/userApi'
 
 
 
@@ -26,20 +27,18 @@ function Feed() {
   
 
   /* ------------------------------ HEADER TOKEN ------------------------------ */
-  useEffect(()=>{
+  // useEffect(()=>{
 
-    Axios.get('http://localhost:4000/' ,{headers:{"x-access-token":localStorage.getItem("userToken")}}).then((response)=>{
+  //   userInstance.get('/' ).then((response)=>{
         
-    
-     
-    navigate('/')
-    }).catch((error)=>{
+  //   navigate('/')
+  //   }).catch((error)=>{
       
-      navigate('/login')
+  //     navigate('/login')
       
-    })
+  //   })
 
-  },[])
+  // },[])
 
   /* ------------------------------ TIMELINE POST ----------------------------- */
 
@@ -48,8 +47,8 @@ function Feed() {
       try{
 
       
-      const res=await Axios.
-      get(`http://localhost:4000/post/timeline/${userId}`)
+      const res=await userInstance.
+      get(`/post/timeline/${userId}`)
       
       setPosts(
         res.data.sort((p1,p2)=>{

@@ -37,7 +37,7 @@ export default function ViewGroupPage() {
 
       </div>
       <div className='w-full h-16 fixed bottom-0 md:hidden'>
-        <MobileView />
+        {/* <MobileView /> */}
       </div>
 
 

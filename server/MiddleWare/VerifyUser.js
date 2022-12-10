@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 
 const verifyJwtUser = (req,res,next)=>{
     console.log('in verify');
-    const token = req.headers["x-access-token"];
+    const token = req.headers.accesstoken;
     console.log(token,'its token');
     if(!token){
         res.status(403).json("Account verification failed")

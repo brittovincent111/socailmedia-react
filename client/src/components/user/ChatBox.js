@@ -134,7 +134,7 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
                                     return (
                                         <div ref={scroll}>
                                             {
-                                                message.senderId === currentUser ?
+                                                message.senderId != currentUser ?
 
 
                                                     <li class='flex justify-start' key={message._id}>

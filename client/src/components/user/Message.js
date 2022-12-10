@@ -115,13 +115,6 @@ function Message() {
                                             </div>
 
                                      
-
-
-
-
-
-
-
                                     )
 
                                 })

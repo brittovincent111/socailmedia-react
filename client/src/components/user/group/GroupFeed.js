@@ -15,6 +15,7 @@ import groupWall from '../../../assets/images/groupWall.jpg'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import avatar from '../../../assets/images/avatar.jpg'
+import userinstance from '../../../API/userApi'
 
 
 
@@ -88,7 +89,7 @@ export default function GroupFedd() {
     }
   }
 
-/* ------------------------------- EDIT GROUP ------------------------------- */
+  /* ------------------------------- EDIT GROUP ------------------------------- */
 
   const handleEdit = async (e) => {
 
@@ -110,7 +111,7 @@ export default function GroupFedd() {
       }
     }
     try {
-      await Axios.post('http://localhost:4000/group/update', { ...edit, groupId: groupId }).then((response) => {
+      await userinstance.post('/group/update', { ...edit, groupId: groupId }).then((response) => {
 
         setUpdation(!updation)
         SetShowMod(!showMod)
@@ -148,7 +149,7 @@ export default function GroupFedd() {
       newPost.img = fileName
       try {
         await Axios.post('http://localhost:4000/upload', data)
-   
+
         close()
 
       } catch (error) {
@@ -156,7 +157,7 @@ export default function GroupFedd() {
       }
     }
     try {
-      await Axios.post('http://localhost:4000/group/post', newPost)
+      await userinstance.post('/group/post', newPost)
       setRefresh(!refresh)
     } catch (err) {
       console.log(err);
@@ -164,7 +165,7 @@ export default function GroupFedd() {
 
   }
 
-/* ----------------------------- ADD POST MODAL ----------------------------- */
+  /* ----------------------------- ADD POST MODAL ----------------------------- */
   const addPost = () => {
     setPostMod(true)
   }
@@ -193,7 +194,7 @@ export default function GroupFedd() {
   }
 
 
-/* ------------------------------- IMAGE STATE ------------------------------ */
+  /* ------------------------------- IMAGE STATE ------------------------------ */
   const handleImage = (e) => {
     setShowImage(URL.createObjectURL(e.target.files[0]))
     SetFile(e.target.files[0])
@@ -208,11 +209,11 @@ export default function GroupFedd() {
       const { data } = await groupPosts(groupId)
 
       setGroupPost(
-        data.sort((p1,p2)=>{
-          return new Date(p2.createdAt)-new Date(p1.createdAt)
+        data.sort((p1, p2) => {
+          return new Date(p2.createdAt) - new Date(p1.createdAt)
         })
       )
-   }
+    }
 
     postView(groupId)
 
@@ -238,46 +239,46 @@ export default function GroupFedd() {
 
 
   /* ------------------------------ VIEW MEMBERS ------------------------------ */
-   useEffect(()=>{
-    try{
+  useEffect(() => {
+    try {
 
       const callMembers = async (e) => {
 
         let { data } = await viewMembers(groupId)
-    
+
         setMembers(data)
-    
+
       }
 
       callMembers()
 
-    }catch(error){
+    } catch (error) {
 
-        
+
     }
-   },[refresh])
-  
+  }, [refresh])
+
 
 
   /* ------------------------------- LEAVE GROUP ------------------------------ */
-  const handleLeave=async()=>{
-   try{
+  const handleLeave = async () => {
+    try {
 
-     let {data} = await leaveGroup(userID,groupId)
-     setRefresh(!refresh)
+      let { data } = await leaveGroup(userID, groupId)
+      setRefresh(!refresh)
 
 
-   }catch(error){
+    } catch (error) {
 
-    console.log(error)
-   }
+      console.log(error)
+    }
 
   }
 
   /* ------------------------------ DELETE GROUP ------------------------------ */
-  const handleDelete= async()=>{
-    
-    try{
+  const handleDelete = async () => {
+
+    try {
 
       confirmAlert({
         customUI: ({ onClose }) => {
@@ -288,26 +289,26 @@ export default function GroupFedd() {
               <div className='flex space-x-2 p-2 '>
                 <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
                 <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
-                  onClick={async() => {
+                  onClick={async () => {
                     onClose();
-                    const{data} = await deleteGroup(groupId , userID)
+                    const { data } = await deleteGroup(groupId, userID)
                     Navigate('/view/groups')
 
-  
-  
+
+
                   }}
                 >
                   Delete
                 </button>
-  
+
               </div>
-  
+
             </div>
           );
         }
       });
-     
-    }catch(error){
+
+    } catch (error) {
 
       console.log(error)
     }
@@ -317,127 +318,128 @@ export default function GroupFedd() {
 
   return (
 
-
-    <div className='md:w-3/4 w-full flex justify-center p-1 bg-gray-100  overflow-y-auto no-scrollbar'>
-      <div className='md:w-11/12 w-full bg-white   h-full'>
-        <div className='w-full h-[400px]'>
-          <div className='w-full rounded-2xl  bg-white'>
-            <div className='w-full  h-[300px] rounded-2xl bg-blue-100 relative'>
-              {
-                groupDetailss?.groupProfile ?
-                  <img className='h-full w-full rounded-2xl' src={PF + groupDetailss?.groupProfile} /> :
-                  <img className='h-full w-full rounded-2xl' src={groupWall} />
-              }
-              {
-                groupDetailss?.admin == userDetails._id ?
-                  <div className='absolute bottom-5 right-5 p-4 rounded-full bg-white text-2xl' onClick={(e) => { SetShowMod(!showMod) }}><BiEditAlt /></div> : null
-              }
+    <>
+      <div className='md:w-3/4 w-full flex justify-center p-1 bg-gray-100  overflow-y-auto no-scrollbar'>
+        <div className='md:w-11/12 w-full bg-white   h-full'>
+          <div className='w-full h-[400px]'>
+            <div className='w-full rounded-2xl  bg-white'>
+              <div className='w-full  h-[300px] rounded-2xl bg-blue-100 relative'>
+                {
+                  groupDetailss?.groupProfile ?
+                    <img className='h-full w-full rounded-2xl' src={PF + groupDetailss?.groupProfile} /> :
+                    <img className='h-full w-full rounded-2xl' src={groupWall} />
+                }
+                {
+                  groupDetailss?.admin == userDetails._id ?
+                    <div className='absolute bottom-5 right-5 p-4 rounded-full bg-white text-2xl' onClick={(e) => { SetShowMod(!showMod) }}><BiEditAlt /></div> : null
+                }
+              </div>
             </div>
-          </div>
-          <div className='flex justify-between items-center h-[100px]'>
-            <div>
-              <div className='flex md:px-10 px-1 text-2xl font-semibold'>{groupDetailss?.groupName}</div>
+            <div className='flex justify-between items-center h-[100px]'>
+              <div>
+                <div className='flex md:px-10 px-1 text-2xl font-semibold'>{groupDetailss?.groupName}</div>
 
-              <div className='md:flex px-10 hidden  text-normal font-semibold'>{groupDetailss?.about}</div>
-            </div>
-            {
-              groupDetailss?.groupMembers.includes(userDetails._id) || groupDetailss?.admin == userDetails._id ?
-
-
-                <div className=' p-5 rounded-full bg-sky-400 text-white text-lg' onClick={(e) => { setPostMod(!postMod) }}><AiOutlinePlus /></div>
-                : null}
-            <div className='flex md:px-10 md:space-x-3 px-2 space-x-1'>
+                <div className='md:flex px-10 hidden  text-normal font-semibold'>{groupDetailss?.about}</div>
+              </div>
               {
-                groupDetailss?.admin == userDetails._id ?
-                  <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white text-base ' onClick={handleDelete}>DELETE</div>
-                  :
+                groupDetailss?.groupMembers.includes(userDetails._id) || groupDetailss?.admin == userDetails._id ?
 
-                  groupDetailss?.groupMembers.includes(userDetails._id) ?
-                    <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleLeave}>LEAVE</div>
-                    : <div>
 
-                      <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleJoin}>JOIN</div>
+                  <div className=' p-5 rounded-full bg-sky-400 text-white text-lg' onClick={(e) => { setPostMod(!postMod) }}><AiOutlinePlus /></div>
+                  : null}
+              <div className='flex md:px-10 md:space-x-3 px-2 space-x-1'>
+                {
+                  groupDetailss?.admin == userDetails._id ?
+                    <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white text-base ' onClick={handleDelete}>DELETE</div>
+                    :
+
+                    groupDetailss?.groupMembers.includes(userDetails._id) ?
+                      <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleLeave}>LEAVE</div>
+                      : <div>
+
+                        <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleJoin}>JOIN</div>
+                      </div>
+
+
+                }
+                {/* <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white'>INVITE</div> */}
+                {
+                  groupDetailss?.admin == userDetails._id ?
+                    <div className='py-2 rounded-2xl relative ' onClick={(e) => { setBlockModal(!blockModal) }}><BsThreeDots className='text-2xl' />
+                      {blockModal ?
+                        <div className='absolute top-10 right-0 cursor-pointer z-30 bg-white shadow-sm	 rounded-lg border  flex-col flex justify-end'>
+                          <div className=''>
+
+                            <div className='text-base p-1 px-4'
+                              onClick={(e) => { setReqMod(!reqMod) }}
+                            >Members</div>
+                            <div className='text-base p-1 px-4'
+                            //  onClick={handleReport}
+                            >report </div>
+
+
+
+                            <hr className='w-full' />
+                            <div className='text-base p-1 px-4' onClick={(e) => setBlockModal(!blockModal)} >Cancel</div>
+
+                          </div>
+
+                        </div> : null}
+
+
                     </div>
 
 
-              }
-              {/* <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white'>INVITE</div> */}
-              {
-                groupDetailss?.admin == userDetails._id ?
-                  <div className='py-2 rounded-2xl relative ' onClick={(e) => { setBlockModal(!blockModal) }}><BsThreeDots className='text-2xl' />
-                    {blockModal ?
-                      <div className='absolute top-10 right-0 cursor-pointer z-30 bg-white shadow-sm	 rounded-lg border  flex-col flex justify-end'>
-                        <div className=''>
 
-                          <div className='text-base p-1 px-4'
-                            onClick={(e)=>{setReqMod(!reqMod)} }
-                          >Members</div>
-                          <div className='text-base p-1 px-4'
-                          //  onClick={handleReport}
-                          >report </div>
+                    : null
 
-
-
-                          <hr className='w-full' />
-                          <div className='text-base p-1 px-4' onClick={(e) => setBlockModal(!blockModal)} >Cancel</div>
-
-                        </div>
-
-                      </div> : null}
-
-
-                  </div>
-
-
-
-                  : null
-
-              }
-
-            </div>
-
-
-          </div>
-        </div>
-
-        <div className=' h-max  w-full bg-slate-200 flex-col flex  items-center  pt-5   '>
-
-          {
-            (groupDetailss?.groupMembers.includes(userDetails._id)) || groupDetailss?.admin == userDetails._id ?
-
-              groupPost?.map((post) => {
-                return (
-                  <>
-
-
-                    <GroupPost key={post.userId} post={post} groupId={groupId} SetReportChange={SetReportChange} admin={groupDetailss.admin}/>
-
-                  </>
-
-
-                )
-              })
-
-              : <div className='flex justify-center w-full h-[200px] bg-gray-200 m-5'>
-                <div className='flex items-center'>
-                  <div className='rounded-full bg-white'>
-
-                    <HiLockClosed className='m-5 text-2xl' />
-                  </div>
-                  <p className='m-5 text-lg'>This Account Is Locked</p>
-
-                </div>
-
+                }
 
               </div>
-          }
+
+
+            </div>
+          </div>
+
+          <div className=' h-max  w-full bg-slate-200 flex-col flex  items-center  pt-5   '>
+
+            {
+              (groupDetailss?.groupMembers.includes(userDetails._id)) || groupDetailss?.admin == userDetails._id ?
+
+                groupPost?.map((post) => {
+                  return (
+                    <>
+
+
+                      <GroupPost key={post.userId} post={post} groupId={groupId} SetReportChange={SetReportChange} admin={groupDetailss.admin} />
+
+                    </>
+
+
+                  )
+                })
+
+                : <div className='flex justify-center w-full h-[200px] bg-gray-200 m-5'>
+                  <div className='flex items-center'>
+                    <div className='rounded-full bg-white'>
+
+                      <HiLockClosed className='m-5 text-2xl' />
+                    </div>
+                    <p className='m-5 text-lg'>This Account Is Locked</p>
+
+                  </div>
+
+
+                </div>
+            }
+
+          </div>
+
+
+
 
         </div>
-
-
-
-
-      </div>
+      </div >
 
       {postMod ? (
         <>
@@ -577,21 +579,21 @@ export default function GroupFedd() {
 
 
                   <div className='grid-cols-1 gap-2 w-full h-full overflow-y-scroll no-scrollbar  ' >
-                  {members.map((obj) => {
-                    return (
+                    {members.map((obj) => {
+                      return (
                         <div className='flex w-full items-center h-max justify-evenly'>
                           <div className="flex  items-center  w-full space-x-2">
-                            { obj.profilePicture ?
-                            <img src={PF + obj.profilePicture} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
-                            //  onClick={onHandleRequest}
-                            />:
-                            <img src={avatar} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
-                            //  onClick={onHandleRequest}
-                            />
-                  }
+                            {obj.profilePicture ?
+                              <img src={PF + obj.profilePicture} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
+                              //  onClick={onHandleRequest}
+                              /> :
+                              <img src={avatar} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '
+                              //  onClick={onHandleRequest}
+                              />
+                            }
 
-                              <HiUserAdd className='text-2xl text-white' />
-                       
+                            <HiUserAdd className='text-2xl text-white' />
+
                             <div className='flex justify-center item-center'>
                               {obj.username}
                             </div>
@@ -610,11 +612,11 @@ export default function GroupFedd() {
 
                           </div>
                         </div>
-                    )
-                  })
-                  
-                }
-                </div>
+                      )
+                    })
+
+                    }
+                  </div>
                 </div>
               </div>
             </div>
@@ -623,7 +625,8 @@ export default function GroupFedd() {
         </>
       ) : null}
 
-    </div >
+
+    </>
 
   )
 }

@@ -40,6 +40,18 @@ io.on('connection',(socket)=>{
         }
     })
 
+     // SEND NOTIFICATION 
+     socket.on("send-notification",(data)=>{
+        console.log(data,'hii');
+        const {recieverId,senderId,desc} = data
+        const reciever = activeUsers.find((user)=>user.userId === recieverId)
+        console.log(reciever,'noti reciever'); 
+        io.to(reciever?.socketId).emit("getNotification",{ 
+            senderId,
+            desc,
+        }) 
+    })
+
     socket.on("disconnect" , ()=>{
 
         activeUsers = activeUsers.filter((user)=> user.socketId != socket.id)
@@ -48,10 +60,3 @@ io.on('connection',(socket)=>{
     }) 
 })
 
-
-io.on("connection" , (socket)=>{
-    console.log("someone has connected")
-    socket.on("disconnected",()=>{
-        console.log("someone has left")
-    })
-})

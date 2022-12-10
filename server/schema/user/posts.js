@@ -30,6 +30,10 @@ const postSchemmas  = new Schema({
       type: Array ,
       default :[]
     },
+    saved:{
+      type: Array ,
+      default :[]
+    },
 
     status : {
         type  :  String ,

@@ -41,7 +41,7 @@ import moment from 'moment'
                     onClick={() => {
                         // this.handleClickDelete();
                       onClose();
-                      Axios.put("http://localhost:4000/admin/post/block/" + id).then((result => {
+                      Axios.put("http://localhost:4000/admin/group/post/block/" + id).then((result => {
                         console.log(result.status);
                         // forceUpdate()
                         SetStatus(!status)
@@ -77,7 +77,7 @@ import moment from 'moment'
                     onClick={() => {
                         // this.handleClickDelete();
                       onClose();
-                      Axios.put("http://localhost:4000/admin/post/unblock/" + id).then((result => {
+                      Axios.put("http://localhost:4000/admin/group/post/unblock/" + id).then((result => {
                         console.log(result.status);
                         // forceUpdate()
                         SetStatus(!status)

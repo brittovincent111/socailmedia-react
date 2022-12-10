@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect, useContext } from 'react'
 import { HiOutlineUserGroup, HiUserAdd } from 'react-icons/hi'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import { BsEmojiSmile } from 'react-icons/bs'
+import { MdOutlineFeed } from 'react-icons/md'
+
 import { BsFillBookmarkFill } from 'react-icons/bs'
-import Axios from 'axios'
+import axios from 'axios'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import ImageUpload from '../../assets/images/uploadimage2.jpg'
@@ -12,7 +14,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { remove } from '../../redux/userRedux'
 import avatar from '../../assets/images/avatar.jpg'
 import './sidebar.css'
-import {UserUpdation} from '../../UpdationContext/UpdationContext.js'
+import { UserUpdation } from '../../UpdationContext/UpdationContext.js'
+import userInstance from '../../API/userApi'
 
 
 
@@ -33,7 +36,7 @@ function Sidebar() {
   const [group, SetGroup] = useState([])
   const [postImage, setPostImage] = useState()
   const [showImage, setShowImage] = useState()
-  const{feedUpdate , setFeedUpdate} = useContext(UserUpdation)
+  const { feedUpdate, setFeedUpdate } = useContext(UserUpdation)
 
 
   /* --------------------------- HANDLE UPLOAD IMAGE -------------------------- */
@@ -77,13 +80,13 @@ function Sidebar() {
       data.append("name", fileName)
       newPost.img = fileName
       try {
-        await Axios.
+        await axios.
           post('http://localhost:4000/upload', data)
 
-        await Axios.
+        await axios.
           post('http://localhost:4000/post', newPost)
-          setFeedUpdate(!feedUpdate)
-          setPostMod(!postMod)
+        setFeedUpdate(!feedUpdate)
+        setPostMod(!postMod)
       } catch (err) {
         console.log(err);
       }
@@ -99,8 +102,8 @@ function Sidebar() {
 
       try {
 
-        let response = await Axios.
-          get(`http://localhost:4000/friendRequest/${userId}`)
+        let response = await userInstance.
+          get(`/friendRequest/${userId}`)
         setRequest(response.data)
       } catch (error) {
 
@@ -119,8 +122,8 @@ function Sidebar() {
     const suggetGroup = async () => {
       try {
 
-        let response = await Axios.
-          get('http://localhost:4000/group/suggestions')
+        let response = await userInstance.
+          get('/group/suggestions')
         SetGroup(response.data)
 
       } catch (error) {
@@ -141,8 +144,8 @@ function Sidebar() {
 
     e.preventDefault()
     try {
-      await Axios.
-        put(`http://localhost:4000/acceptRequest/${id}`,
+      await userInstance.
+        put(`/acceptRequest/${id}`,
           { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
 
@@ -157,7 +160,7 @@ function Sidebar() {
 
     e.preventDefault()
     try {
-      await Axios.put(`http://localhost:4000/declineRequest/${id}`,
+      await userInstance.put(`/declineRequest/${id}`,
         { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
 
@@ -169,142 +172,144 @@ function Sidebar() {
 
 
   return (
-    <div className='hidden md:block z-10'>
-      <div className=' w-full h-full   overflow-hidden rounded-2xl '>
-        <div className=' w-full h-full  '>
-          <div className=' py-5 gap-y-2 grid p-3 w-full rounded-2xl '>
-            <NavLink to='/savedPosts' className='w-full  h-max'>
-              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
+    <>
+      <div className='hidden md:block '>
+        <div className=' w-full h-full   overflow-hidden rounded-2xl '>
+          <div className=' w-full h-full  '>
+            <div className=' py-5 gap-y-2 grid p-3 w-full rounded-2xl '>
+              <NavLink to='/savedPosts' className='w-full  h-max'>
+                <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
 
-                <div className='w-max h-full flex items-center justify-center rounded-2xl  hover:cursor-pointer '>
-                  <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+                  <div className='w-max h-full flex items-center justify-center rounded-2xl  hover:cursor-pointer '>
+                    <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
 
-                    <BsFillBookmarkFill className='text-xl text-white ' />
-                  </div>
-                  <p className='hidden  lg:block   font-medium p-2 text-xl block:sm '>Saved
-
-                  </p>
-
-
-                </div>
-              </div>
-            </NavLink>
-
-            <div className='w-full  h-max hover:bg-gray-300' onClick={(e) => { setReqMod(!reqMod) }}>
-              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded  hover:cursor-pointer' >
-                <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer'>
-
-                  <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
-
-                    <HiUserAdd className='text-2xl text-white' />
-                  </div>
-                  <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Follow Request
-
-                  </p>
-
-
-                </div>
-              </div>
-            </div>
-            <NavLink to='/view/groups' className='w-full  h-max'>
-              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
-                <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
-
-
-                  <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
-
-                    <HiOutlineUserGroup className='text-2xl text-white ' />
-                  </div>
-                  <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Groups
-
-                  </p>
-
-                </div>
-              </div>
-            </NavLink>
-            <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(!postMod)}}>
-              <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
-                <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
-
-
-                  <div className='w-14 h-14 bg-sky-900  rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
-
-                    <AiOutlinePlus className='text-lg text-white z-10' />
-                  </div>
-                  <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Posts
-
-                  </p>
-
-                </div>
-              </div>
-            </Link>
-          </div>
-          <div className='w-full border '></div>
-          <div className=' py-5 space-y-3 mt-1 p-3 rounded-2xl'>
-            <div className='w-max h-10  flex items-center justify-center'>
-
-
-              <div className=' flex justify-start font-medium  text-xl'>Groups
-
-              </div>
-
-
-            </div>
-            <div className=' overflow-y-scroll space-y-2 w-full h-32 no-scrollbar'>
-
-              {group.map((obj) => {
-
-                return (
-
-                  <Link to={`/group/${obj._id}`} className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
-
-                    <div className='w-max h-full flex rounded-2xl '>
-                      {obj.groupProfile ?
-                        <img src={PF + obj.groupProfile} className='rounded-full bg-green-200 w-14 h-14 flex z-10' />
-                        :
-
-                        <img src={avatar} className='rounded-full bg-green-200 w-14 h-14 flex z-10' />
-
-
-                      }
-
+                      <BsFillBookmarkFill className='text-xl text-white ' />
                     </div>
-                    <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.groupName}
+                    <p className='hidden  lg:block   font-medium p-2 text-xl block:sm '>Saved
 
                     </p>
 
 
-                  </Link>
-                )
+                  </div>
+                </div>
+              </NavLink>
 
-              })}
+              <div className='w-full  h-max hover:bg-gray-300' onClick={(e) => { setReqMod(!reqMod) }}>
+                <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded  hover:cursor-pointer' >
+                  <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer'>
+
+                    <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+
+                      <HiUserAdd className='text-2xl text-white ' />
+                    </div>
+                    <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Follow Request
+
+                    </p>
+
+
+                  </div>
+                </div>
+              </div>
+              <NavLink to='/view/groups' className='w-full  h-max'>
+                <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
+                  <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
+
+
+                    <div className='w-14 h-14 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' >
+
+                      <HiOutlineUserGroup className='text-2xl text-white ' />
+                    </div>
+                    <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Groups
+
+                    </p>
+
+                  </div>
+                </div>
+              </NavLink>
+              <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(!postMod) }}>
+                <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
+                  <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
+
+
+                    <div className='w-14 h-14 bg-sky-900  rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '>
+
+                      <AiOutlinePlus className='text-lg text-white ' />
+                    </div>
+                    <p className='hidden  lg:block   font-medium p-2 text-xl block:md '>Posts
+
+                    </p>
+
+                  </div>
+                </div>
+              </Link>
+            </div>
+            <div className='w-full border '></div>
+            <div className=' py-5 space-y-3 mt-1 p-3 rounded-2xl'>
+              <div className='w-max h-10  flex items-center justify-center'>
+
+
+                <div className=' flex justify-start font-medium  text-xl'>Groups
+
+                </div>
+
+
+              </div>
+              <div className=' overflow-y-scroll space-y-2 w-full h-32 no-scrollbar'>
+
+                {group.map((obj) => {
+
+                  return (
+
+                    <Link to={`/group/${obj._id}`} className='w-max h-16  flex items-center rounded-2xl hover:cursor-pointer'>
+
+                      <div className='w-max h-full flex rounded-2xl '>
+                        {obj.groupProfile ?
+                          <img src={PF + obj.groupProfile} className='rounded-full bg-green-200 w-14 h-14 flex ' />
+                          :
+
+                          <img src={avatar} className='rounded-full bg-green-200 w-14 h-14 flex ' />
+
+
+                        }
+
+                      </div>
+                      <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.groupName}
+
+                      </p>
+
+
+                    </Link>
+                  )
+
+                })}
+
+
+
+              </div>
+
+
+
 
 
 
             </div>
-
-
-
-
 
 
           </div>
 
-
         </div>
-
       </div>
       {postMod ? (
         <>
+
           <div
-            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
-          >
-            <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={(e)=>{setPostMod(!postMod)}}>
-              <AiOutlineClose className='text-white text-2xl' />
-            </div>
+            className="justify-center  items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
+
+          >               
+           <AiOutlineClose className='text-white text-2xl fixed right-5 top-5' onClick={(e) => { setPostMod(!postMod) }} />
             <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300  shadow-xl border '>
 
-              <div className='flex justify-center'>
+              <div className='flex justify-center pr-5 items-center'>
                 <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Add Post </div>
 
               </div>
@@ -322,13 +327,13 @@ function Sidebar() {
                         </label>
                       </div>
                     }
-                    <input hidden id='fileupload' type='file' name='file' onChange={handleImage} />
+                    <input hidden id='fileupload' type='file' name='file' onChange={handleImage} required />
                   </div>
                 </div>
                 <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 items-center border'>
 
                   <div className='h-full w-1/12 bg-gray text-2xl flex items-center'> <BsEmojiSmile /></div>
-                  <textarea placeholder='Write a caption' name='description' className='h-full w-9/12 bg-white text-area flex items-center p-1' onChange={(e) => { SetDesc(e.target.value) }}></textarea>
+                  <textarea placeholder='Write a caption' name='description' className='h-full w-9/12 bg-white text-area flex items-center p-1' onChange={(e) => { SetDesc(e.target.value) }} required />
 
 
                   <button type='submit' className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal '>POST</button>
@@ -338,6 +343,7 @@ function Sidebar() {
 
             </div>
           </div>
+
           <div className="opacity-70 fixed inset-0 z-40 bg-black"></div>
         </>
       ) : null}
@@ -370,13 +376,13 @@ function Sidebar() {
                         return (
                           <div className='flex  justify-evenly items-center w-full  space-x-2 ' >
                             <div className="flex   items-center w-full space-x-2">
-                              { obj.profilePicture ?
-                              <img  src={PF + obj.profilePicture}className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '/>
-                            :   <img  src={avatar}className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 '/>
+                              {obj.profilePicture ?
+                                <img src={PF + obj.profilePicture} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' />
+                                : <img src={avatar} className='w-16 h-16 bg-sky-900 rounded-full m-1 flex justify-center items-center hover:bg-blue-600 ' />
 
-                            }
+                              }
 
-                               
+
                               <div className='flex justify-center item-center'>{obj.username}</div>
                             </div>
                             <div className='flex items-center space-x-2'>
@@ -419,7 +425,9 @@ function Sidebar() {
         </>
       ) : null}
 
-    </div>
+
+
+    </>
 
 
   )
