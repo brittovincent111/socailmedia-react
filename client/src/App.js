@@ -26,6 +26,7 @@ import ViewGroupPage from './pages/userPages/ViewGroupPage';
 import Updation from './UpdationContext/UpdationContext';
 import UserReportDetailView from './components/admin/DetailsUserReport';
 import { socket, SocketContext } from './UpdationContext/Socket';
+import ForgetPasswordPage from './pages/userPages/ForgetPasswordPage';
 
 
 
@@ -41,6 +42,7 @@ function App() {
               <Routes>
                 <Route path='/login' element={<LoginUser />}></Route>
                 <Route path='/signup' element={<SignUpPage />}></Route>
+                <Route path='/forgotPassword/:email/:otp' element={<ForgetPasswordPage />}></Route>
                 <Route path='/' element={<FeedPage />}></Route>
                 <Route path='/profile/:username' element={<ProfilePage />}></Route>
                 <Route path='/message' element={<MessagePage />}></Route>

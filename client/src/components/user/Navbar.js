@@ -12,7 +12,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import { useSelector, useDispatch } from 'react-redux'
 import { remove } from '../../redux/userRedux'
 import { findSearch, notifiactionFind, notifiactionRead } from '../../API/User'
-import vm from '../../assets/images/w.jpg'
+import vm from '../../assets/images/wemeet.png'
 import { io } from 'socket.io-client'
 import { useRef } from 'react'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
@@ -37,7 +37,7 @@ export default function Navbar({ setStatus }) {
     const [notificationData, setNotificationData] = useState([])
     const [openNot, setOpenNot] = useState(false)
     const [counts, SetCounts] = useState('')
-    const [liked , SetLiked] = useState(false)
+    const [liked , SetLiked] = useState()
 
     const userDetails = useSelector(state => state.user)
     const userId = userDetails._id
@@ -167,7 +167,7 @@ export default function Navbar({ setStatus }) {
         socket.on("getNotification",data =>{
             console.log('effect called  sdfgdfg');
                
-                SetLiked(!liked)
+                SetLiked(new Date())
             })
         }catch(error){
             console.log(error);
@@ -226,7 +226,7 @@ export default function Navbar({ setStatus }) {
                 {/* left  */}
                 <div className='md:pl-6  pl-2 flex justify-between '>
                     {/* <img src={logo} className="w-12 h-10"/> */}
-                    <img src={vm} className=' md:w-12 p-1 md:h-12 rounded-full bg-slate-50 text-black flex justify-center items-center text-center'>
+                    <img src={vm} className='w-16 md:w-16 h-14 p-1 md:h-12 rounded-full  text-black flex justify-center items-center text-center'>
 
 
 
@@ -266,7 +266,11 @@ export default function Navbar({ setStatus }) {
                         <div className=''>
                             <div onClick={(e) => { notificationHandle(e) }} className='relative flex items-center bg-white p-3  rounded-full md:hover:bg-gray-100 cursor-pointer '>
                                 <IoMdNotifications className='md:text-2xl text-xl ' />
-                                <span className='absolute top-1.5 right-2 h-4 w-4 flex items-center justify-center rounded-full p-1 bg-red-600 text-white text-sm font-semibold'>{counts}</span>
+                                {
+                                    counts != 0 ?
+                                    <span className='absolute top-1.5 right-2 h-4 w-4 flex items-center justify-center rounded-full p-1 bg-red-600 text-white text-sm font-semibold'>{counts}</span>
+                                     :null
+                                }
                             </div>
                         </div>
 

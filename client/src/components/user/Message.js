@@ -1,14 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { userChats } from '../../API/chatRequest'
 import Conversation from './Conversation'
 import ChatBox from './ChatBox'
-import { io } from 'socket.io-client'
+// import { io } from 'socket.io-client'
+import { SocketContext } from '../../UpdationContext/Socket'
 
 function Message() {
 
-    const socket = useRef()
+    // const socket = useRef()
+    const socket =useContext(SocketContext)
 
     const userDetails = useSelector(state => state.user)
     const [chats, setChats] = useState([])
@@ -22,7 +24,7 @@ function Message() {
 
     useEffect(() => {
         if (sendMessage !== null) {
-            socket.current.emit('send-message', sendMessage)
+            socket.emit('send-message', sendMessage)
         }
     }, [sendMessage])
 
@@ -30,9 +32,9 @@ function Message() {
     /* -------------------------------- GET USER -------------------------------- */
 
     useEffect(() => {
-        socket.current = io('http://localhost:8800')
-        socket.current.emit("new-user-add", userDetails._id)
-        socket.current.on('get-user', (users) => {
+        // socket.current = io('http://localhost:8800')
+        // socket.emit("new-user-add", userDetails._id)
+        socket.on('get-user', (users) => {
             setOnlineUsers(users)
             // console.log(onlineUsers(users))
         })
@@ -42,7 +44,7 @@ function Message() {
            /* ----------------------- RECIEVED MESAGE FROM SOCKET ---------------------- */
 
     useEffect(() => {
-        socket.current.on("receieve-message", (data) => {
+        socket.on("receieve-message", (data) => {
             setReciveMessage(data)
         })
     }, [])
@@ -71,9 +73,11 @@ function Message() {
     const checkOnlineUsers = (chat)=>{
 
    
-        const chatMembers = chat.members.find((member)=> member!== userDetails._id)
+        const chatMembers = chat.members.
+        find((member)=> member!== userDetails._id)
     
-       const online = onlineUsers.find((user)=>user.userId === chatMembers)
+       const online = onlineUsers.
+       find((user)=>user.userId === chatMembers)
         
         return online ? true : false  
    

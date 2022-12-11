@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {userSignUp, userLogin,resendOtp , userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers, notificationShow, notificationRead, reportUser, userOtpLogin, verifyOtp} = require("../../Controller/user/userController")
+const {userSignUp, userLogin,resendOtp , userFeed, userDetails, followUsers, AdduserPost, timeLinePosts, postDetails, likePost, commentPost, viewComments, viewProfile, friendRequest, acceptRequest,  declineRequest,  unfollow, cancelRequest, viewProfilePosts, savePost, savedPost, findUser, reportPost, deletePost, editProfile, editPost, searchUsers, notificationShow, notificationRead, reportUser, userOtpLogin, verifyOtp, forgetPassword, submitForgetPassword} = require("../../Controller/user/userController")
 const verifyJwtUser = require('../../MiddleWare/VerifyUser')
 const multer = require('multer');
 
@@ -35,6 +35,8 @@ router.post('/login'  , userLogin)
 router.post('/login/otp/:email'  , userOtpLogin)
 router.post('/verify/otp'  , verifyOtp)
 router.post('/resend/otp/:email' , resendOtp)
+router.post('/forgetPassword/:email' , forgetPassword)
+router.put('/forgetPassword/submit' , submitForgetPassword)
 
 
 router.get('/' ,verifyJwtUser,  userFeed )

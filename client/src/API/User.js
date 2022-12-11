@@ -12,3 +12,5 @@ export const userReportModel=(userId , userID ,  reportValue ) => userInstance.p
 export const sendOtp=(email , data)=> userInstance.post(`/login/otp/${email}` , data )
 export const reSendOtp=(email )=> userInstance.post(`/resend/otp/${email}`)
 export const verifyOtpLogin=(otp,email) =>  userInstance.post(`/verify/otp` , {otp,email})
+export const forgetPassword = (email)=> userInstance.post(`/forgetPassword/${email}`)
+export const submitForgetPassword = (password ,otp , email) => userInstance.put(`/forgetPassword/submit`, {email , otp , password} )
