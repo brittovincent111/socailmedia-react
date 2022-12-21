@@ -73,25 +73,29 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
 
 
   /* ------------------------------ COMMENT POST ------------------------------ */
-  const onhandlerCommemt = async () => {
-  
+  const onhandlerCommemt = async (e) => {
+    e.preventDefault()
 
-    try{
+    console.log("callreacheddd")
+
+    try {
+
+      console.log("call")
       const data = {
 
         groupId: groupId,
         userId: userDetails._id,
         comment: comment
       }
-  
+
       let res = await userinstance.
         put(`/group/comment/post/${post._id}`,
           { ...data })
-  
-      SetComment("")
-    
 
-    }catch(error){
+      SetComment("")
+
+
+    } catch (error) {
       Navigate('/errorPage')
 
     }
@@ -277,13 +281,17 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
 
 
                             }
-                            <div className='ml-3 flex flex-col justify-start'>
-                              <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
-                              <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
+                            <div>
+                              <div className='flex justify-start'>
+                                <div className='ml-1 flex justify-start items-center'>
+                                  <div className='h-full  bg-gray flex items-center text-sm font-medium justify-start'> {obj.userId.username}</div>
+                                  <p className='h-full w-8/12 bg-white text-area flex  pl-5' >{obj.comment}</p>
+
+                                </div>
+                              </div>
+                              <div className=' ml-1 text-xs flex justify-start'>{format(obj.createdAt)}</div>
+
                             </div>
-                            <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
-
-
                             {/* <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal ' onClick={onhandlerCommemt}>Comment</div> */}
 
                           </div>
@@ -297,10 +305,10 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
                 <div className='w-full h-14 bg-white rounded-b-2xl flex p-2 items-center border'>
 
                   <div className='h-full w-1/12 bg-gray text-2xl flex items-center'> <BsEmojiSmile /></div>
-                  <textarea disable placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' value={comment} onChange={(e) => SetComment(e.target.value)}></textarea>
+                  <textarea disable placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' ></textarea>
 
 
-                  <div className=' disabled h-full w-2/12 items-center text-center text-sky-900 font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 flex px-2 justify-center text-base cursor-pointer ' onClick={onhandlerCommemt}>Comment</div>
+                  <div className=' disabled h-full w-2/12 items-center text-center text-sky-900 font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 flex px-2 justify-center text-base cursor-pointer ' >Comment</div>
 
                 </div>
 
@@ -312,7 +320,7 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
                 <textarea placeholder='Add Comment' className='h-full w-9/12 bg-white text-area flex items-center p-1' value={comment} onChange={(e) => SetComment(e.target.value)}></textarea>
 
 
-                <div className='h-full w-2/12 bg-sky-700 hover:bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center font-normal text-base cursor-pointer ' >Comment</div>
+                <div className='h-full w-2/12 bg-sky-700 hover:bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center font-normal text-base cursor-pointer ' onClick={onhandlerCommemt} >Comment</div>
 
               </div>
           }
@@ -382,7 +390,7 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
                     </div>
                   </div>
                 </div>
-                <div className="opacity-50 fixed inset-0 z-60 bg-black"></div>
+                <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
 
               </> : null}
 

@@ -72,8 +72,10 @@ function SavedPost() {
           post.map((post) => {
 
             return (
+              <div className=' h-max  shadow-md w-full bg-slate-200 justify-center flex pt-5   '>
 
               <Post key={post.userId} post={post} />
+              </div>
             )
           })
 

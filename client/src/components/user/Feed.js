@@ -59,8 +59,13 @@ function Feed() {
     fetchPost()
     }catch(error){
          
-      console.log(error)
-      Navigate('/errorPage')
+      if (error?.response?.status === 403) {
+        localStorage.removeItem('userToken')
+        localStorage.removeItem('user')
+        Navigate("/login")
+     }else{
+       Navigate('/errorPage')
+     }
 
       
     }

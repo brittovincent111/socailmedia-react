@@ -17,7 +17,7 @@ export default function UserReportDetailView() {
     useEffect(()=>{
 
 
-        Axios.get(`http://localhost:4000/admin/usermanagment/${userId}`, { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
+        Axios.get(`http://wemeetsocial.ml/admin/usermanagment/${userId}`, { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
 
             console.log(response , "mmmammamsmd")
             setUserDetails(response.data)

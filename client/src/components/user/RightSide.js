@@ -44,13 +44,17 @@ function RightSide() {
       }
       suggestFriends(userId)
 
-    }catch(error) {
+    }catch(error){
+         
+      if (error?.response?.status === 403) {
+        localStorage.removeItem('userToken')
+        localStorage.removeItem('user')
+        Navigate("/login")
+     }else{
+       Navigate('/errorPage')
+     }
 
-      Navigate('/errorPage')
-      console.log(error , "error message")
-      console.log("error message")
-
-
+      
     }
 
   }, [updation])
@@ -70,10 +74,17 @@ function RightSide() {
 
       SetUpdation(!updation)
 
-    } catch (error) {
-      console.log(error , "error message")
+    }catch(error){
+         
+      if (error?.response?.status === 403) {
+        localStorage.removeItem('userToken')
+        localStorage.removeItem('user')
+        Navigate("/login")
+     }else{
+       Navigate('/errorPage')
+     }
 
-
+      
     }
 
   })
@@ -117,13 +128,13 @@ function RightSide() {
                           }
 
                         </div>
-                        <p className='hidden  lg:block   font-medium p-2 text-lg block:md '>{obj.username}
+                        <p className='hidden  lg:block   font-medium p-2 text-normal block:md '>{obj.userfullname}
 
                         </p>
                       </Link>
-                      <button className=' px-4 py-2 shadow-md '>
+                      <button className=' px-4 py-2 shadow-md bg-sky-900  '>
 
-                        <p onClick={(e) => { follow(obj._id, e) }}>FOLLOW</p>
+                        <p className='text-white' onClick={(e) => { follow(obj._id, e) }}>FOLLOW</p>
                       </button>
                     </div>
                   )

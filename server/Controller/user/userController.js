@@ -76,7 +76,7 @@ let otpConfig = async (email, res , forget) => {
       let info = await transporter.sendMail({
         from: process.env.NODEMAILER, // sender address
         to: email, // list of receivers
-        subject: "One Time Password for TalentF", // Subject line
+        subject: "One Time Password for WeMeet", // Subject line
         text: `Hello User Your six digit OTP for authentication is ${OTP} `, // plain text body
         html: `<p>Hello User Your six digit OTP for authentication is <b>${OTP}</b></p>`, // html body
       })
@@ -270,7 +270,8 @@ const controller = {
         if (validOtp) {
           let password = await bcrypt.
           hash(req.body.password, 10)
-          let data = await userSchemaa.updateOne({email : req.body.email} ,
+          let data = await userSchemaa.
+          updateOne({email : req.body.email} ,
             {$set:{password : password}})
   
             console.log(data , "dataaa")
@@ -945,7 +946,14 @@ const controller = {
             $options: "i"
           }
         })
-      res.status(200).json(users)
+        if(users){
+
+          res.status(200).json(users)
+        }else{
+           
+          res.status(200).json({message : "no users"})
+
+        }
 
     } catch (error) {
 
@@ -961,18 +969,19 @@ const controller = {
     try {
 
       let data = await notificationSchemma.
-        findOne({ userId: req.params.userId }).sort({_id:-1}).
+        findOne({ userId: req.params.userId }).
         populate("notification.user",
           "username profilePicture")
           if(data){
             let count = data?.notification.filter((obj) => {
 
               if (obj.status == "true") {
-                return obj
-      
-              }
-      
+                return obj      
+              }      
             })
+            
+           data = data.notification.reverse()
+            console.log(data , "dataaa")
             let countLength = count.length
             res.status(200).json({ data, countLength })
 

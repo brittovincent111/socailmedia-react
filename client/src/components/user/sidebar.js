@@ -113,11 +113,17 @@ function Sidebar() {
         let response = await userInstance.
           get(`/friendRequest/${userId}`)
         setRequest(response.data)
-      } catch (error) {
-
-        Navigate('/errorPage')
-
-
+      } catch(error){
+         
+        if (error?.response?.status === 403) {
+          localStorage.removeItem('userToken')
+          localStorage.removeItem('user')
+          Navigate("/login")
+       }else{
+         Navigate('/errorPage')
+       }
+  
+        
       }
 
     }
@@ -136,10 +142,17 @@ function Sidebar() {
           get('/group/suggestions')
         SetGroup(response.data)
 
-      } catch (error) {
-      console.log(error , "error")
-        Navigate('/errorPage')
-
+      } catch(error){
+         
+        if (error?.response?.status === 403) {
+          localStorage.removeItem('userToken')
+          localStorage.removeItem('user')
+          Navigate("/login")
+       }else{
+         Navigate('/errorPage')
+       }
+  
+        
       }
     }
 
@@ -159,10 +172,17 @@ function Sidebar() {
           { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
 
-    } catch (error) {
-      Navigate('/errorPage')
+    }catch(error){
+         
+      if (error?.response?.status === 403) {
+        localStorage.removeItem('userToken')
+        localStorage.removeItem('user')
+        Navigate("/login")
+     }else{
+       Navigate('/errorPage')
+     }
 
-
+      
     }
   }
 
@@ -176,11 +196,17 @@ function Sidebar() {
         { userID: userDetails._id })
       setRequestUpdate(!requestUpdate)
 
-    } catch (error) {
-  
-      Navigate('/errorPage')
+    } catch(error){
+         
+      if (error?.response?.status === 403) {
+        localStorage.removeItem('userToken')
+        localStorage.removeItem('user')
+        Navigate("/login")
+     }else{
+       Navigate('/errorPage')
+     }
 
-
+      
     }
   }
 

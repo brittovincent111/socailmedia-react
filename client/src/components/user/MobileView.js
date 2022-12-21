@@ -96,7 +96,7 @@ import avatar from '../../assets/images/avatar.jpg'
           setFeedUpdate(!feedUpdate)
           setPostMod(!postMod)
         } catch (err) {
-          Navigate('/errorPage')
+          // Navigate('/errorPage')
         }
       }
     }
@@ -113,9 +113,17 @@ import avatar from '../../assets/images/avatar.jpg'
           let response = await userInstance.
             get(`/friendRequest/${userId}`)
           setRequest(response.data)
-        } catch (error) {
-  
-          Navigate('/errorPage')
+        }catch(error){
+         
+          if (error?.response?.status === 403) {
+            localStorage.removeItem('userToken')
+            localStorage.removeItem('user')
+            Navigate("/login")
+         }else{
+           Navigate('/errorPage')
+         }
+    
+          
         }
   
       }
@@ -138,10 +146,17 @@ import avatar from '../../assets/images/avatar.jpg'
   
         suggetGroup()
   
-        } catch (error) {
-  
-          Navigate('/errorPage')
-  
+        } catch(error){
+         
+          if (error?.response?.status === 403) {
+            localStorage.removeItem('userToken')
+            localStorage.removeItem('user')
+            Navigate("/login")
+         }else{
+           Navigate('/errorPage')
+         }
+    
+          
         }
       
   
@@ -159,10 +174,17 @@ import avatar from '../../assets/images/avatar.jpg'
             { userID: userDetails._id })
         setRequestUpdate(!requestUpdate)
   
-      } catch (error) {
+      } catch(error){
+         
+        if (error?.response?.status === 403) {
+          localStorage.removeItem('userToken')
+          localStorage.removeItem('user')
+          Navigate("/login")
+       }else{
+         Navigate('/errorPage')
+       }
+  
         
-        Navigate('/errorPage')
-
       }
     }
   
@@ -176,10 +198,17 @@ import avatar from '../../assets/images/avatar.jpg'
           { userID: userDetails._id })
         setRequestUpdate(!requestUpdate)
   
-      } catch (error) {
+      } catch(error){
+         
+        if (error?.response?.status === 403) {
+          localStorage.removeItem('userToken')
+          localStorage.removeItem('user')
+          Navigate("/login")
+       }else{
+         Navigate('/errorPage')
+       }
   
-        Navigate('/errorPage')
-
+        
       }
     }
 

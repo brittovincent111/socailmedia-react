@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux'
 import { viewGroupDet } from '../../../API/groupAxios'
 import groupWall from '../../../assets/images/groupWall.jpg'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { MdOutlineFeed } from 'react-icons/md'
+
 
 
 
@@ -37,8 +39,8 @@ function ViewGroups() {
 
     return (
         <>
-
-
+          {  
+             details.length != 0  ? 
             <div className=' h-screen  w-full bg-slate-200 justify-center p-5   '>
                 <div className='grid xl:grid-cols-3 grid-cols-2 gap-5  '>
                     {details?.map((det) => {
@@ -67,7 +69,13 @@ function ViewGroups() {
 
 
                 </div>
-            </div>
+            </div>:
+            <div className='flex flex-col w-full justify-center items-center h-screen bg-gray-200 '>
+            <MdOutlineFeed className='text-[150px]' />
+            <div className='text-2xl'>No Groups</div>
+
+          </div>
+          }
         </>
     )
 }

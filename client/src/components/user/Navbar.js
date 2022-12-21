@@ -27,19 +27,22 @@ import { SocketContext } from '../../UpdationContext/Socket'
 
 
 
-export default function Navbar({ setStatus }) {
+export default function Navbar() {
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
     const [file, setFile] = useState("")
     const [updateDetails, SetUpdateDetails] = useState("Details")
-    const [edit, SetEdit] = useState([])
+    const [edit, SetEdit] = useState({
+        groupName: "",
+        about: ""
+    })
     const [showMod, SetShowMod] = useState(false)
     const [updation, setUpdation] = useState(false)
     const [searchUser, setSearchUser] = useState([])
     const [notificationData, setNotificationData] = useState([])
     const [openNot, setOpenNot] = useState(false)
     const [counts, SetCounts] = useState('')
-    const [liked , SetLiked] = useState()
+    const [liked, SetLiked] = useState()
 
     const userDetails = useSelector(state => state.user)
     const userId = userDetails._id
@@ -49,11 +52,11 @@ export default function Navbar({ setStatus }) {
     const socket = useContext(SocketContext)
 
     useEffect(() => {
-        if(userDetails){
-          socket.emit("new-user-add", userDetails._id)
+        if (userDetails) {
+            socket.emit("new-user-add", userDetails._id)
         }
         // setNotifications(JSON.parse(localStorage.getItem('count')));
-      }, []);
+    }, []);
 
     /* ------------------------------ CREATE GROUP ------------------------------ */
 
@@ -63,36 +66,44 @@ export default function Navbar({ setStatus }) {
         const newEdit = {
             ...edit
         }
-       
+
         try {
-            if (file) {
-                const datas = new FormData();
-                const fileName = file.name
-                datas.append("file", file)
-                datas.append("name", fileName)
-                edit.groupProfile = fileName
-            
-                    await axios.post('http://localhost:4000/upload', datas)
-    
-              
-            }
-            // console.log("suiiiiiiiii")
-            
+            // if (file) {
+            //     const datas = new FormData();
+            //     const fileName = file.name
+            //     datas.append("file", file)
+            //     datas.append("name", fileName)
+            //     edit.groupProfile = fileName
+
+            //         await axios.post('http://localhost:4000/upload', datas)
+
+
+            // }
+            // // console.log("suiiiiiiiii")
+
             await axios.
                 post('http://localhost:4000/group/create',
-                    { ...edit, admin: userDetails._id }).
-                then((response) => {
+                    { ...edit, admin: userDetails._id })
 
-                    setUpdation(!updation)
-                    SetShowMod(!showMod)
-                    setStatus(new Date())
-                })
+
+            setUpdation(!updation)
+            SetShowMod(!showMod)
 
 
 
-        } catch (err) {
-            Navigate('/errorPage')
-        }
+
+        } catch(error){
+         
+            if (error?.response?.status === 403) {
+              localStorage.removeItem('userToken')
+              localStorage.removeItem('user')
+              Navigate("/login")
+           }else{
+             Navigate('/errorPage')
+           }
+      
+            
+          }
     }
     /* ------------------------------ HANDLE CHANGE ----------------------------- */
     const handleChange = (e) => {
@@ -151,49 +162,49 @@ export default function Navbar({ setStatus }) {
             setSearchUser(data)
         } catch (error) {
 
-            Navigate('/errorPage')
+            // Navigate('/errorPage')
 
 
         }
     }
-   
+
     useEffect(() => {
-        if(userDetails){
-          socket.emit("new-user-add", userDetails._id)
+        if (userDetails) {
+            socket.emit("new-user-add", userDetails._id)
         }
         // setNotifications(JSON.parse(localStorage.getItem('count')));
-      }, []);
+    }, []);
 
 
-    useEffect(()=>{
-        try{
+    useEffect(() => {
+        try {
             console.log('effect called');
-        socket.on("getNotification",data =>{
-            console.log('effect called  sdfgdfg');
-               
+            socket.on("getNotification", data => {
+                console.log('effect called  sdfgdfg');
+
                 SetLiked(new Date())
             })
-        }catch(error){
+        } catch (error) {
 
             Navigate('/errorPage')
 
 
         }
-      
-     },[socket])
+
+    }, [socket])
 
 
     /* ------------------------------- NOTIFCATION ------------------------------ */
 
 
     useEffect(() => {
-         console.log("hiiiii");
+        console.log("hiiiii");
         const notificationHandler = async () => {
             try {
                 const { data } = await notifiactionFind(userId)
-                console.log(data , "dataaaaa");
+                console.log(data.data, "dataaaaa");
 
-                setNotificationData(data.data.notification)
+                setNotificationData(data.data)
                 SetCounts(data.countLength)
 
             } catch (error) {
@@ -203,7 +214,7 @@ export default function Navbar({ setStatus }) {
 
         notificationHandler()
 
-    }, [counts , socket , liked])
+    }, [counts, socket, liked])
 
     /* --------------------------- VIEWED NOTIFICATION -------------------------- */
 
@@ -215,7 +226,7 @@ export default function Navbar({ setStatus }) {
             SetCounts("0")
 
         } catch (error) {
-    
+
             Navigate('/errorPage')
 
 
@@ -224,7 +235,7 @@ export default function Navbar({ setStatus }) {
 
 
 
-   console.log(liked , "likedddd")
+    console.log(liked, "likedddd")
 
     return (
 
@@ -275,19 +286,19 @@ export default function Navbar({ setStatus }) {
                                 <IoMdNotifications className='md:text-2xl text-xl ' />
                                 {
                                     counts != 0 ?
-                                    <span className='absolute top-1.5 right-2 h-4 w-4 flex items-center justify-center rounded-full p-1 bg-red-600 text-white text-sm font-semibold'>{counts}</span>
-                                     :null
+                                        <span className='absolute top-1.5 right-2 h-4 w-4 flex items-center justify-center rounded-full p-1 bg-red-600 text-white text-sm font-semibold'>{counts}</span>
+                                        : null
                                 }
                             </div>
                         </div>
 
 
                         <div onClick={(e) => setOpen(!open)}>
-                        {userDetails?.profilePicture ?
-                            <img className='w-12 h-12 object-fit  rounded-full' src={PF + userDetails?.profilePicture} />:
-                            <img className='w-12 h-12 object-fit  rounded-full' src={avatar} />
+                            {userDetails?.profilePicture ?
+                                <img className='w-12 h-12 object-fit  rounded-full' src={PF + userDetails?.profilePicture} /> :
+                                <img className='w-12 h-12 object-fit  rounded-full' src={avatar} />
 
-                        }
+                            }
                         </div>
                         {
                             open &&
@@ -297,7 +308,7 @@ export default function Navbar({ setStatus }) {
                                     <a class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
                                         {userDetails?.profilePicture ?
                                             <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + userDetails?.profilePicture} />
-                                            : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar}  />
+                                            : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} />
 
                                         }
                                         <div class="mx-1 flex flex-col justify-center w-full">
@@ -326,26 +337,31 @@ export default function Navbar({ setStatus }) {
                         {
                             openNot &&
 
-                            <div class="absolute right-20 max-h-48 z-20 w-60 py-2  overflow-y-scroll no-scrollbar  rounded-md shadow-xl dark:bg-blue-200 top-16 bg-sky-100  ">
+                            <div class="absolute right-20 max-h-48 z-20 w-72 py-2  overflow-y-scroll no-scrollbar  rounded-md shadow-xl dark:bg-blue-200 top-16 bg-sky-100  ">
                                 {notificationData.map((obj) => {
 
                                     return (
+                                        <div>
+                                            <div class="flex items-center py-2 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                                {obj.user.profilePicture ?
+                                                    <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + obj.user.profilePicture} />
+                                                    : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} />
 
-                                        <div class="flex items-center py-2 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-                                            {obj.user.profilePicture ?
-                                                <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + obj.user.profilePicture} />
-                                                : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} />
+                                                }
+                                                <div class="m-2   ">
+                                                    <div className='flex items-center justify-between'>
+                                                        <h1 class="text-md font-semibold text-gray-700 dark:text-gray-900 ">{obj.user.username}</h1>
 
-                                            }
-                                            <div class="mx-1 flex justify-center items-center  ">
-                                                <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 ">{obj.user.username}</h1>
-                                              <div className='flex-col'>
-                                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-900 pl-2">{obj.desc}</p>
+                                                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-900 pl-2">{obj.desc}</p>
+                                                    </div>
 
-                                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-900 pl-2">{format(obj.time)}</p>
+                                                   <div className='flex justify-start'>
+
+                                                    <p class="text-sm flex justify-start font-semibold text-gray-700 dark:text-gray-900 ">{format(obj.time)}</p>
+                                                   </div>
+
+
                                                 </div>
-                                            
-
 
                                             </div>
                                         </div>
@@ -382,7 +398,7 @@ export default function Navbar({ setStatus }) {
                                                 name="groupName"
                                                 placeholder="Enter the Group Name"
                                                 onChange={handleChange}
-                                            required/>
+                                                required />
                                             {/* <input className='ml-5'
                                         type="file" name='file' id='file' onChange={(e) => {
                                             // setImage(URL.createObjectURL(e.target.files[0]))
@@ -397,7 +413,7 @@ export default function Navbar({ setStatus }) {
                                                 name="about"
                                                 placeholder="Enter the About"
                                                 onChange={handleChange}
-                                            required/>
+                                                required />
                                             {/* <input className='ml-5'
                                         type="password"
                                         name="password"
@@ -417,7 +433,7 @@ export default function Navbar({ setStatus }) {
                                             <button
                                                 className="bg-blue-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                                                 type="submit"
-                                            
+
                                             >
                                                 Save Changes
                                             </button>

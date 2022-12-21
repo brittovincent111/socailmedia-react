@@ -5,6 +5,9 @@ import { format } from 'timeago.js'
 import InputEmoji from 'react-input-emoji'
 import { io } from 'socket.io-client'
 import { useSelector, useDispatch } from 'react-redux'
+import avatar from '../../assets/images/avatar.jpg'
+
+
 
 
 function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
@@ -15,9 +18,12 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
     const [messages, SetMessages] = useState([])
     const [newMessage, SetNewMessages] = useState("")
 
+    const PF = process.env.REACT_APP_PUBLIC_FOLDER
+
+
     const scroll = useRef()
 
-/* ------------------------------- SET MESSAGE ------------------------------ */
+    /* ------------------------------- SET MESSAGE ------------------------------ */
 
     useEffect(() => {
         if (reciveMessage !== null && reciveMessage.chatId == chat._id)
@@ -49,7 +55,7 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
 
     }, [chat, currentUser])
 
-     
+
 
     /* ------------------------------ FETCH MESSAGE ----------------------------- */
 
@@ -72,14 +78,14 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
 
     }, [chat])
 
-    
+
 
     const handleEmojiChange = (newMessage) => {
         SetNewMessages(newMessage)
 
 
     }
-  
+
 
     /* ------------------------------ SEND MESSAGE ------------------------------ */
 
@@ -107,7 +113,7 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
     }
 
     /* ------------------------------- SET SCROLL ------------------------------- */
-    
+
     useEffect(() => {
 
         scroll.current?.scrollIntoView({ behavior: "smooth" })
@@ -120,8 +126,12 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
             {chat ?
                 <div className="w-full">
                     <div className="relative flex items-center p-3 border-b border-gray-300">
-                        <img className="object-cover w-10 h-10 rounded-full"
-                            src="https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083383__340.jpg" alt="username" />
+                        {
+                            userData?.profilePicture ?
+                                <img className="object-cover w-10 h-10 rounded-full" src={PF + userData?.profilePicture} />
+                                : <img className="object-cover w-10 h-10 rounded-full" src={avatar} />
+
+                        }
                         <span className="block ml-2 font-bold text-gray-600">{userData?.username}</span>
                         <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3">
                         </span>
@@ -136,20 +146,38 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
                                             {
                                                 message.senderId != currentUser ?
 
+                                                    <div className='flex flex-col justify-start pt-2'>
+                                                        <li class='flex justify-start' key={message._id}>
+                                                            {
+                                                                userData?.profilePicture ?
+                                                                    <img className="object-cover w-10 h-10 rounded-full " src={PF + userData?.profilePicture} />
+                                                                    : <img className="object-cover w-10 h-10 rounded-full" src={avatar} />
 
-                                                    <li class='flex justify-start' key={message._id}>
-                                                        <div class='relative max-w-xl px-4 py-2 bg-cyan-100 rounded shadow'>
-                                                            <span class='block'>{message.text}</span>
-                                                            <span className="text-xs">{format(message.createdAt)}</span>
-                                                        </div>
-                                                    </li>
+                                                            }
+                                                            <div class='relative max-w-xl px-4 py-2 bg-cyan-100 rounded shadow ml-1'>
+                                                                <span class='block'>{message.text}</span>
+                                                        <span className="text-xs flex justify-start">{format(message.createdAt)}</span>
+                                                            </div>
+                                                        </li>
+                                                    </div>
                                                     :
+                                                    <div className='flex flex-col justify-end pt-2'>
+
                                                     <li class="flex justify-end" key={message._id}>
-                                                        <div class="relative max-w-xl px-4 py-2 text-gray-700 bg-blue-200 rounded shadow">
+                                                        
+                                                        <div class="relative max-w-xl px-4 py-2 text-gray-700 bg-blue-200 rounded shadow mr-1">
                                                             <span class="block">{message.text}</span>
                                                             <span className="text-xs">{format(message.createdAt)}</span>
                                                         </div>
+                                                        {
+                                                                userDetails?.profilePicture ?
+                                                                    <img className="object-cover w-10 h-10 rounded-full" src={PF + userData?.profilePicture} />
+                                                                    : <img className="object-cover w-10 h-10 rounded-full" src={avatar} />
+
+                                                            }
                                                     </li>
+                                                    {/* <span className="text-xs flex justify-end">{format(message.createdAt)}</span> */}
+                                                    </div>
 
                                             }
 
