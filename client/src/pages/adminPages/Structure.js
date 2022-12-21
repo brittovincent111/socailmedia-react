@@ -12,7 +12,6 @@ function Structure() {
           <Header />
           <Outlet />
         </div>
-
       </div>
     </div>
   )

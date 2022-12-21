@@ -10,6 +10,7 @@ import { BsBookmark, BsEmojiSmile, BsThreeDots } from 'react-icons/bs'
 import { deletePost, reportPost } from '../../../API/groupAxios'
 import userinstance from '../../../API/userApi'
 import avatar from '../../../assets/images/avatar.jpg'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -31,6 +32,7 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
   const [blockModal, setBlockModal] = useState(false)
   const [postMod, setPostMod] = useState(false);
   const [reportValue, setReportValue] = useState("");
+  const Navigate = useNavigate()
 
 
   const userDetails = useSelector(state => state.user)
@@ -54,6 +56,9 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
 
     } catch (error) {
 
+      Navigate('/errorPage')
+
+
     }
 
   }
@@ -69,19 +74,27 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
 
   /* ------------------------------ COMMENT POST ------------------------------ */
   const onhandlerCommemt = async () => {
+  
 
-    const data = {
+    try{
+      const data = {
 
-      groupId: groupId,
-      userId: userDetails._id,
-      comment: comment
+        groupId: groupId,
+        userId: userDetails._id,
+        comment: comment
+      }
+  
+      let res = await userinstance.
+        put(`/group/comment/post/${post._id}`,
+          { ...data })
+  
+      SetComment("")
+    
+
+    }catch(error){
+      Navigate('/errorPage')
+
     }
-
-    let res = await userinstance.
-      put(`/group/comment/post/${post._id}`,
-        { ...data })
-
-    SetComment("")
   }
 
   /* ------------------------------ VIEW COMMENTS ----------------------------- */
@@ -213,7 +226,9 @@ function GroupPost({ post, groupId, SetReportChange, admin }) {
               </div>
               <div className='text-2xl p-1 '
               //  onClick={onhandleSavePost}
-              ><BsBookmark /> </div>
+              >
+                {/* <BsBookmark />  */}
+              </div>
 
 
             </div>

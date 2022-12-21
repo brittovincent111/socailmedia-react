@@ -3,7 +3,7 @@ import pro1 from '../../assets/images/pro1.jpg'
 import pro2 from '../../assets/images/pro2.jpg'
 import pro4 from '../../assets/images/pro4.jpg'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import avatar from '../../assets/images/avatar.jpg'
 import userInstance from '../../API/userApi'
 
@@ -20,7 +20,7 @@ function RightSide() {
   const [updation, SetUpdation] = useState(false)
 
 
-
+  const Navigate = useNavigate()
   const userDetails = useSelector(state => state.user)
   const userId = userDetails._id
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
@@ -46,7 +46,10 @@ function RightSide() {
 
     }catch(error) {
 
+      Navigate('/errorPage')
       console.log(error , "error message")
+      console.log("error message")
+
 
     }
 

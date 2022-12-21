@@ -27,7 +27,7 @@ function SavedPost() {
 
 
 
-  const navigate = useNavigate()
+  const Navigate = useNavigate()
   const userId = userDetails._id
 
 
@@ -36,17 +36,25 @@ function SavedPost() {
   /* ------------------------------- SAVED POST ------------------------------- */
 
   useEffect(() => {
-    const fetchPost = async () => {
-      const res = await userInterface.get(`/savedpost/${userId}`)
-      console.log(res.data, "ggggggggggggg");
+    try{
 
-      setPosts(
-        res.data.sort((p1, p2) => {
-          return new Date(p2.createdAt) - new Date(p1.createdAt)
-        })
-      )
+      const fetchPost = async () => {
+        const res = await userInterface.get(`/savedpost/${userId}`)
+        console.log(res.data, "ggggggggggggg");
+  
+        setPosts(
+          res.data.sort((p1, p2) => {
+            return new Date(p2.createdAt) - new Date(p1.createdAt)
+          })
+        )
+      }
+      fetchPost()
+
+    }catch(error){
+      Navigate('/errorPage')
+
     }
-    fetchPost()
+  
   }, [])
 
 

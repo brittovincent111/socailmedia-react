@@ -8,13 +8,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar from '../../assets/images/avatar.jpg'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import userInstance  from '../../API/userApi'
 import { SocketContext } from '../../UpdationContext/Socket'
 
 
 
-function Post({ post, SetReportChange }) {
+function Post({ post, SetReportChange , back }) {
 
     const [user, setUser] = useState({})
     const [likes, SetLikes] = useState(post.likes.length)
@@ -30,7 +30,7 @@ function Post({ post, SetReportChange }) {
 
 
 
-
+    const Navigate = useNavigate()
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
     const userDetails = useSelector(state => state.user)
     const userId = userDetails._id
@@ -57,6 +57,7 @@ function Post({ post, SetReportChange }) {
                 setUser(res.data);
             } catch (error) {
 
+                Navigate('/errorPage')
 
             }
 
@@ -70,7 +71,9 @@ function Post({ post, SetReportChange }) {
     const onHandlerLike = async () => {
 
       try{
-        await userInstance.put(`/like/post/${post._id}`, { userId: userId })
+        await userInstance.
+        put(`/like/post/${post._id}`,
+         { userId: userId })
 
         SetLikes(isLike ? likes - 1 : likes + 1)
         SetIsLike(!isLike)
@@ -83,12 +86,11 @@ function Post({ post, SetReportChange }) {
             })
         }
       }catch(error){
+   
+        Navigate('/errorPage')
 
 
       }
-       
-
-
     }
 
     /* ------------------------------ COMMENT POST ------------------------------ */
@@ -109,6 +111,9 @@ function Post({ post, SetReportChange }) {
 
         } catch (error) {
 
+            Navigate('/errorPage')
+
+
         }
     }
 
@@ -126,10 +131,13 @@ function Post({ post, SetReportChange }) {
 
                 }).catch((error) => {
 
-                    console.log(error)
+                    Navigate('/errorPage')
 
                 })
         } catch (error) {
+
+            Navigate('/errorPage')
+
 
 
         }
@@ -163,6 +171,9 @@ function Post({ post, SetReportChange }) {
         
        }catch(error){
 
+        Navigate('/errorPage')
+
+
        }
     }
    
@@ -185,6 +196,7 @@ function Post({ post, SetReportChange }) {
 
         }catch(error){
 
+            Navigate('/errorPage')
 
         }
     
@@ -211,7 +223,7 @@ function Post({ post, SetReportChange }) {
 
         }catch(error){
 
-            console.log(error)
+            Navigate('/errorPage')
         }
 
     }
@@ -221,7 +233,6 @@ function Post({ post, SetReportChange }) {
     return (
 
         <>
-            <div className=' h-max  shadow-md w-full bg-slate-200 justify-center flex pt-5   '>
                 <ToastContainer
                     position="top-right"
                     autoClose={1000}
@@ -294,7 +305,7 @@ function Post({ post, SetReportChange }) {
                         </div>
                     </div>
                     <div className='  border-slate-300 border-y  flex justify-center'>
-                        <img className="h-[400px] w-[400]" src={PF + post.img} />
+                        <img className="h-[350px] w-[400]" src={PF + post.img} />
                     </div>
                     <div className='w-full h-16  border-slate-300 '>
                         <div className='w-full  flex justify-between  h-3/5 items-center '>
@@ -304,14 +315,14 @@ function Post({ post, SetReportChange }) {
                                         isLike ? <AiFillHeart className='text-red-600 ' /> : <AiOutlineHeart className=' hover: transition delay-150 duration-200 ease-in-out hover:text-4xl' />
                                     }
                                 </div>
-                                <div className='text-2xl' onClick={onhandleViewComments}><FaRegComment /> </div>
+                                <div className='text-2xl hover:cursor-pointer' onClick={onhandleViewComments}><FaRegComment className='hover: transition delay-150 duration-200 ease-in-out hover:text-3xl' /> </div>
                                 {/* <div className='text-2xl'><FiSend /> </div> */}
 
                             </div>
                             {
                                 isSaved ? 
                                 
-                                <div className='text-2xl p-1 text-blue-700 ' onClick={onhandleSavePost}><BsFillBookmarkStarFill /> </div>
+                                <div className='text-2xl p-1 text-sky-900 ' onClick={onhandleSavePost}><BsFillBookmarkStarFill /> </div>
                                 :  
                                 <div className='text-2xl p-1 ' onClick={onhandleSavePost}><BsBookmark /> </div>
 
@@ -328,7 +339,7 @@ function Post({ post, SetReportChange }) {
                     <div className='w-full h-8 bg-white border-slate-300  '>
                         <div className='w-full h-1/2  px-1 flex items-center '>
 
-                            <p className=' text-lg font-medium pl-2 '>{user.username}</p>
+                            <p className=' text-base font-medium pl-2 '>{user.username}</p>
 
 
                             <p className=' text-base font-normal pl-2'>{post.desc}</p>
@@ -358,11 +369,11 @@ function Post({ post, SetReportChange }) {
 
 
                                                         }
-                                                        <div className='ml-3 flex flex-col justify-start'>
-                                                            <div className='h-full w-2/12 bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
+                                                        <div className='ml-3 flex flex-col justify-start items-center'>
+                                                            <div className='h-full  bg-gray flex items-center text-sm font-medium pl-2 justify-start'> {obj.userId.username}</div>
                                                             <div className='text-xs flex justify-start'>{format(obj.createdAt)}</div>
                                                         </div>
-                                                        <p className='h-full w-8/12 bg-white text-area flex items-center pl-5' >{obj.comment}</p>
+                                                        <p className='h-full w-8/12 bg-white text-area flex  pl-5' >{obj.comment}</p>
 
 
                                                         {/* <div className='h-full w-2/12 bg-sky-900 items-center text-center text-white rounded-lg  flex mx-1 justify-center text-lg font-normal ' onClick={onhandlerCommemt}>Comment</div> */}
@@ -400,7 +411,7 @@ function Post({ post, SetReportChange }) {
 
                 </div>
 
-            </div>
+        
             {
                 postMod ?
                     <>

@@ -4,14 +4,26 @@ const {userSignUp, userLogin,resendOtp , userFeed, userDetails, followUsers, Add
 const verifyJwtUser = require('../../MiddleWare/VerifyUser')
 const multer = require('multer');
 
+
 const storage = multer.diskStorage({
-    destination(req, file, callback) {
-        callback(null, './public/images');
-    },
-    filename(req, file, callback) {
-        callback(null,file.originalname);
-    },
-});
+        destination(req, file, callback) {
+            callback(null, './public/images');
+        },
+        filename(req, file, callback) {
+        
+                if(!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) {
+                    return callback(new Error('Please upload a valid image file'))
+                }else{
+                callback(null,file.originalname);
+                }
+                
+          
+       
+        },
+    });
+
+
+
 
 const upload = multer({ storage:storage});
 
@@ -24,6 +36,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
     try {
         res.json("success")
     } catch (error) {
+        console.log(error , "errroroororor")
         res.json(error)
     }
 })

@@ -63,7 +63,7 @@ export default function GroupFedd() {
         console.log(data, "detailssssssssss");
       } catch (error) {
 
-        console.log(error, "error")
+        Navigate('/errorPage')
 
       }
     }
@@ -85,6 +85,7 @@ export default function GroupFedd() {
       setRefresh(!refresh)
     } catch (error) {
 
+      Navigate('/errorPage')
 
     }
   }
@@ -120,7 +121,7 @@ export default function GroupFedd() {
 
 
     } catch (err) {
-      console.log(err);
+      Navigate('/errorPage')
     }
   }
 
@@ -153,14 +154,14 @@ export default function GroupFedd() {
         close()
 
       } catch (error) {
-        console.log(error);
+        Navigate('/errorPage')
       }
     }
     try {
       await userinstance.post('/group/post', newPost)
       setRefresh(!refresh)
     } catch (err) {
-      console.log(err);
+      Navigate('/errorPage')
     }
 
   }
@@ -185,7 +186,7 @@ export default function GroupFedd() {
   }, [file, showImage])
 
 
-  /* ------------------------ IMSGE DELETEFROM PREVIEW ------------------------ */
+  /* ------------------------ IMAJJJJGE DELETEFROM PREVIEW ------------------------ */
   const imageClose = () => {
 
     setShowImage()
@@ -231,7 +232,7 @@ export default function GroupFedd() {
       setRefresh(!refresh)
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
 
 
@@ -254,6 +255,7 @@ export default function GroupFedd() {
 
     } catch (error) {
 
+      Navigate('/errorPage')
 
     }
   }, [refresh])
@@ -263,14 +265,40 @@ export default function GroupFedd() {
   /* ------------------------------- LEAVE GROUP ------------------------------ */
   const handleLeave = async () => {
     try {
+     
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          return (
+            <div className='custom-ui flex flex-col justify-center w-[400px] h-[350px] bg-slate-200 items-center rounded-2xl '>
+              <h1 className='flex justify-center p-2 text-xl font-semibold'>Are you sure?</h1>
+              {/* <p className='flex justify-center p-2 text-xl font-semibold'>You want to delete this file?</p> */}
+              <div className='flex space-x-2 p-2 '>
+                <button className='bg-white w-max h-max p-3 rounded-xl font-medium text-lg' onClick={onClose}>No</button>
+                <button className='bg-red-500 w-max h-max p-3 rounded-xl font-medium text-lg text-white'
+                  onClick={async () => {
+                    onClose();
+                    let { data } = await leaveGroup(userID, groupId)
+                    setRefresh(!refresh)
 
-      let { data } = await leaveGroup(userID, groupId)
-      setRefresh(!refresh)
+
+
+                  }}
+                >
+                  Leave
+                </button>
+
+              </div>
+
+            </div>
+          );
+        }
+      });
+      
 
 
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
 
   }
@@ -345,19 +373,19 @@ export default function GroupFedd() {
                 groupDetailss?.groupMembers.includes(userDetails._id) || groupDetailss?.admin == userDetails._id ?
 
 
-                  <div className=' p-5 rounded-full bg-sky-400 text-white text-lg' onClick={(e) => { setPostMod(!postMod) }}><AiOutlinePlus /></div>
+                  <div className=' p-5 rounded-full bg-sky-400 text-white text-lg cursor-pointer' onClick={(e) => { setPostMod(!postMod) }}><AiOutlinePlus /></div>
                   : null}
               <div className='flex md:px-10 md:space-x-3 px-2 space-x-1'>
                 {
                   groupDetailss?.admin == userDetails._id ?
-                    <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white text-base ' onClick={handleDelete}>DELETE</div>
+                    <div className='px-5 p-2 rounded-2xl bg-sky-900 hover:text-sky-900 hover:bg-white shadow-sm text-gray-200 text-base cursor-pointer' onClick={handleDelete}>DELETE</div>
                     :
 
                     groupDetailss?.groupMembers.includes(userDetails._id) ?
-                      <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleLeave}>LEAVE</div>
+                      <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white cursor-pointer hover:text-sky-900 hover:bg-gray-200 shadow-sm' onClick={handleLeave}>LEAVE</div>
                       : <div>
 
-                        <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white' onClick={handleJoin}>JOIN</div>
+                        <div className='px-5 p-2 rounded-2xl bg-sky-900 text-white cursor-pointer hover:text-sky-900 hover:bg-gray-200 shadow-sm' onClick={handleJoin}>JOIN</div>
                       </div>
 
 

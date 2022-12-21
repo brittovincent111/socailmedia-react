@@ -1,19 +1,8 @@
 .hero {
 
-    background-image: url('../../assets/images/img7.jpg');
-    background-size:cover;
+    background-image: url('../../assets/images/qwer.png');
+    background-size:contain;
    background-position:center;
     background-repeat: no-repeat;
 }
 
-.mainbg {
-    background-image: url('../../assets/images/BG4.png');
-    background-size:cover;
-   /* background-position:center; */
-    background-repeat: no-repeat;
-
-
-    
-
-
-}

@@ -27,6 +27,7 @@ import Updation from './UpdationContext/UpdationContext';
 import UserReportDetailView from './components/admin/DetailsUserReport';
 import { socket, SocketContext } from './UpdationContext/Socket';
 import ForgetPasswordPage from './pages/userPages/ForgetPasswordPage';
+import Error from './components/user/Error';
 
 
 
@@ -49,6 +50,9 @@ function App() {
                 <Route path='/savedPosts' element={<SavedPostPage />}></Route>
                 <Route path='/group/:groupid' element={<GroupPage />}></Route>
                 <Route path='/view/groups' element={<ViewGroupPage />}></Route>
+                <Route path='/errorPage' element={<Error />}></Route>
+
+                
               </Routes>
             </Updation>
           </Provider>

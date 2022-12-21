@@ -14,6 +14,7 @@ function ViewGroups() {
     const [details, setDetails] = useState([])
     const userDetails = useSelector(state => state.user)
 
+    const Navigate = useNavigate()
 
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
 
@@ -28,7 +29,7 @@ function ViewGroups() {
                 setDetails(viewGroups.data)
             } catch (error) {
 
-                console.log(error)
+                Navigate('/errorPage')
             }
         }
         view()

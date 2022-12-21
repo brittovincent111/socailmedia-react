@@ -18,6 +18,9 @@ const NotificationModel = new Schema({
         desc : {
             type:String
         },
+        time:{
+            type:Date,
+        },
         status:{
             type:String,
             default: "true"

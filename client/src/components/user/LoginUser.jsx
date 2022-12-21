@@ -82,7 +82,8 @@ function LoginUser() {
 
       }
     } catch (error) {
-      console.log("HHHHHHHH");
+      Navigate('/errorPage')
+
     }
 
 
@@ -113,7 +114,7 @@ function LoginUser() {
         <div className='main bg-white rounded-2xl shadow-2xl flex lg:w-2/3  justify-center max-w-4xl '>
           <div className='w-3/5 p-5 flex flex-col justify-center items-center'>
             <div className='py-10 flex flex-col justify-center items-center'>
-              <img src={mainlogo} className='h-24 w-44 mb-2'/>
+              <img src={mainlogo} className='h-24 w-44 mb-2' />
               <h2 className='text-sky-600 font-semibold text-3xl mb-2 align-top'>LOGIN </h2>
               <div className='border w-44  border-sky-600 inline-block mb-6'></div>
               {errorMessage && <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">{errorMessage}</div>}
@@ -131,23 +132,26 @@ function LoginUser() {
                   </div>
 
 
-                  <button type='submit' className='border-2 bg-sky-600 rounded full px-12 py-2 font-semibold text-white hover:bg-white hover:text-sky-600 hover:border-sky-400'>LOGIN</button>
+                  <button type='submit' className='border-2  p-2 bg-sky-600 rounded full px-12 py-2 font-semibold text-white hover:bg-white hover:text-sky-600 hover:border-sky-400'>LOGIN</button>
 
                 </div>
               </form>
-              <p className='p-5'>Or Signin With</p>
-              <div className='flex justify-center  ' onClick={(e) => setResendOtpModal(!resendOtpModal)}>
+
+              <div className='flex justify-center p-2 ' onClick={(e) => setResendOtpModal(!resendOtpModal)}>
 
                 forgot password
               </div>
+              <Link to='/signup' className='text-md text-sky-900 font-semibold '>SignUp ?</Link>
+
+
             </div>
 
           </div>
-          <div hidden className='hero relative w-2/5  bg-sky-900 rounded-tr-2xl rounded-br-2xl lg:block  '  >
-            <div className='w-20 h-20  absolute left-[40%]  bottom-32 rounded-full bg-blue-600 hover:bg-gray-200 flex justify-center items-center'>
+          <div hidden className='hero relative w-2/5  bg-sky-600 rounded-tr-2xl rounded-br-2xl lg:block  '  >
+            {/* <div className='w-20 h-20  absolute left-[40%]  bottom-16 rounded-full bg-white hover:bg-gray-200 flex justify-center items-center'>
               <Link to='/signup' className='text-xl text-white hover:text-sky-900 font-semibold '>SIGNUP</Link>
 
-            </div>
+            </div> */}
             {/* <h2 className='text-2xl font-bold mb-2 text-white'>Hello , freinds</h2>
           <div className='border-2 w-10  border-white inline-block mb-2'></div>
           <p className='mb-10  text-white'>Fill Up Personal Information </p>

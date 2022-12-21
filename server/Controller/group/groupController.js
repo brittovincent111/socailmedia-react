@@ -264,16 +264,20 @@ const controller = {
 
   removeMember: async (req, res) => {
 
+    console.log( req.body.groupId ,req.params.id , "jjjjjjjjj" )
+
     try {
 
       let data = await GroupSchemma.
         updateOne({ _id: req.body.groupId },
           { $pull: { groupMembers: req.params.id } })
+
+      console.log(data , "dattaaa")
       res.status(200).json(data)
 
     } catch (error) {
 
-      res.status(200).json(error)
+      res.json(error)
     }
 
   },

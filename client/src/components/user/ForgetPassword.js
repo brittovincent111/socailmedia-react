@@ -16,7 +16,7 @@ export default  function ForgetPassword() {
 const [errorMessage, setErrorMessage] = useState("")
 const email = useParams().email
 const otp = useParams().otp
-const navigate = useNavigate()
+const Navigate = useNavigate()
 
 
 
@@ -56,7 +56,7 @@ const onHandleChange =(e)=>{
   setTimeout(()=>{
     if(data){
    
-      navigate('/login')
+      Navigate('/login')
     }
 
   },2000)
@@ -70,6 +70,7 @@ const onHandleChange =(e)=>{
 
 console.log(error);
 
+Navigate('/errorPage')
 
   }
 

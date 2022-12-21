@@ -22,7 +22,7 @@ function Feed() {
 
 
 
-  const navigate = useNavigate()
+  const Navigate = useNavigate()
   const userId = userDetails._id
   
 
@@ -43,10 +43,10 @@ function Feed() {
   /* ------------------------------ TIMELINE POST ----------------------------- */
 
   useEffect (()=>{
-    const fetchPost=async()=>{
+    
       try{
 
-      
+        const fetchPost=async()=>{ 
       const res=await userInstance.
       get(`/post/timeline/${userId}`)
       
@@ -55,13 +55,16 @@ function Feed() {
         return new Date(p2.createdAt)-new Date(p1.createdAt)
       })
      )
+    }
+    fetchPost()
     }catch(error){
          
       console.log(error)
+      Navigate('/errorPage')
+
       
     }
-    }
-    fetchPost()
+
  },[reportChange , feedUpdate])
 
 
@@ -74,7 +77,10 @@ function Feed() {
    post?.map((post)=>(
 
          post?.reports.includes(userDetails._id) ? null :
-          <Post key={post.userId} post={post} SetReportChange={SetReportChange}/>
+         <div className=' h-max  shadow-md w-full bg-slate-200 justify-center flex pt-5   '>
+
+          <Post key={post.userId} post={post} SetReportChange={SetReportChange} back={false}/>
+          </div>
        
    )) 
       

@@ -19,8 +19,9 @@ import userInstance from '../../API/userApi'
 
 
 
+
 function Sidebar() {
-  const navigate = useNavigate()
+  const Navigate = useNavigate()
   const dispatch = useDispatch()
   const imageRef = useRef(null);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER
@@ -37,6 +38,8 @@ function Sidebar() {
   const [postImage, setPostImage] = useState()
   const [showImage, setShowImage] = useState()
   const { feedUpdate, setFeedUpdate } = useContext(UserUpdation)
+  const [errorMessage, setErrorMessage] = useState("")
+
 
 
   /* --------------------------- HANDLE UPLOAD IMAGE -------------------------- */
@@ -87,8 +90,13 @@ function Sidebar() {
           post('http://localhost:4000/post', newPost)
         setFeedUpdate(!feedUpdate)
         setPostMod(!postMod)
+        setShowImage()
+        SetFile()
       } catch (err) {
-        console.log(err);
+        console.log(err)
+        setErrorMessage("Post only image");
+
+
       }
     }
   }
@@ -107,7 +115,9 @@ function Sidebar() {
         setRequest(response.data)
       } catch (error) {
 
-        console.log(error, "what is error")
+        Navigate('/errorPage')
+
+
       }
 
     }
@@ -127,8 +137,8 @@ function Sidebar() {
         SetGroup(response.data)
 
       } catch (error) {
-
-        console.log(error)
+      console.log(error , "error")
+        Navigate('/errorPage')
 
       }
     }
@@ -150,6 +160,8 @@ function Sidebar() {
       setRequestUpdate(!requestUpdate)
 
     } catch (error) {
+      Navigate('/errorPage')
+
 
     }
   }
@@ -165,6 +177,8 @@ function Sidebar() {
       setRequestUpdate(!requestUpdate)
 
     } catch (error) {
+  
+      Navigate('/errorPage')
 
 
     }
@@ -226,7 +240,7 @@ function Sidebar() {
                   </div>
                 </div>
               </NavLink>
-              <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(!postMod) }}>
+              <Link to='/' className='w-full  h-max ' onClick={(e) => { setPostMod(!postMod) ; setErrorMessage("") }}>
                 <div className='w-[66px] md:w-full bg-inherit shadow-inherit  h-[66px]  flex items-center justify-center lg:justify-start rounded hover:bg-gray-300 hover:cursor-pointer'>
                   <div className='w-max h-16  flex items-center rounded-2xl justify-center hover:cursor-pointer' >
 
@@ -306,10 +320,12 @@ function Sidebar() {
             className="justify-center  items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-transparent"
 
           >               
-           <AiOutlineClose className='text-white text-2xl fixed right-5 top-5' onClick={(e) => { setPostMod(!postMod) }} />
+           <AiOutlineClose className=' text-2xl text-white fixed right-5 top-16' onClick={(e) => { setPostMod(!postMod) }} />
+
             <div className='md:w-4/6 lg:w-2/6 bg-white md:m-5 sm:w-5/6 w-full mt-5 rounded-2xl m-2 border-slate-300  shadow-xl border '>
 
               <div className='flex justify-center pr-5 items-center'>
+
                 <div className='items-center flex justify-center border-b-0 p-5 font-medium text-xl'>Add Post </div>
 
               </div>
@@ -317,11 +333,13 @@ function Sidebar() {
                 <div className='w-full h-max bg-white py-2  border-t-2 border-black'>
                   <div className='w-full h-1/2  px-1 flex items-center flex-col justify-center py-3'>
                     {/* <div className='text-sm font-medium'>Add Images</div> */}
+                    {errorMessage && <div className="p-4  text-sm text-red-900 bg-red-100 rounded-lg dark:bg-red-400 dark:text-red-800" role="alert">{errorMessage}</div>}
+
                     {showImage ? <span >
                       <div onClick={imageClose}>     <AiOutlineClose className='text-black text-2xl' /></div>
-                      <img src={showImage} alt="" className='h-[200px] w-[200px] ' />
+                      <img src={showImage} alt="" className='h-[260px] w-full ' />
                     </span> :
-                      <div className='h-[290] w-[290] '>
+                      <div className='h-[260] w-[290] '>
                         <label name='image' htmlFor='fileupload' >
                           <img src={ImageUpload} className="h-52 w-52" />
                         </label>

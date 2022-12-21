@@ -7,6 +7,8 @@ import profile from '../../assets/images/profile.jpg'
 import avatar from '../../assets/images/avatar.jpg'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { format } from 'timeago.js'
+
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { useSelector, useDispatch } from 'react-redux'
@@ -43,7 +45,7 @@ export default function Navbar({ setStatus }) {
     const userId = userDetails._id
     const [open, setOpen] = useState(false)
     const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const Navigate = useNavigate()
     const socket = useContext(SocketContext)
 
     useEffect(() => {
@@ -61,21 +63,21 @@ export default function Navbar({ setStatus }) {
         const newEdit = {
             ...edit
         }
-        if (file) {
-            const datas = new FormData();
-            const fileName = file.name
-            datas.append("file", file)
-            datas.append("name", fileName)
-            edit.groupProfile = fileName
-            try {
-                await axios.post('http://localhost:4000/upload', datas)
-
-            } catch (error) {
-                console.log(error);
-            }
-        }
+       
         try {
-            console.log("suiiiiiiiii")
+            if (file) {
+                const datas = new FormData();
+                const fileName = file.name
+                datas.append("file", file)
+                datas.append("name", fileName)
+                edit.groupProfile = fileName
+            
+                    await axios.post('http://localhost:4000/upload', datas)
+    
+              
+            }
+            // console.log("suiiiiiiiii")
+            
             await axios.
                 post('http://localhost:4000/group/create',
                     { ...edit, admin: userDetails._id }).
@@ -89,7 +91,7 @@ export default function Navbar({ setStatus }) {
 
 
         } catch (err) {
-            console.log(err);
+            Navigate('/errorPage')
         }
     }
     /* ------------------------------ HANDLE CHANGE ----------------------------- */
@@ -117,7 +119,7 @@ export default function Navbar({ setStatus }) {
                                     // this.handleClickDelete();
                                     localStorage.removeItem('userToken')
                                     localStorage.removeItem('user')
-                                    navigate('/login')
+                                    Navigate('/login')
                                     dispatch(remove())
 
 
@@ -149,6 +151,8 @@ export default function Navbar({ setStatus }) {
             setSearchUser(data)
         } catch (error) {
 
+            Navigate('/errorPage')
+
 
         }
     }
@@ -170,7 +174,8 @@ export default function Navbar({ setStatus }) {
                 SetLiked(new Date())
             })
         }catch(error){
-            console.log(error);
+
+            Navigate('/errorPage')
 
 
         }
@@ -192,7 +197,7 @@ export default function Navbar({ setStatus }) {
                 SetCounts(data.countLength)
 
             } catch (error) {
-                console.log(error , "error");
+                Navigate('/errorPage')
             }
         }
 
@@ -210,6 +215,8 @@ export default function Navbar({ setStatus }) {
             SetCounts("0")
 
         } catch (error) {
+    
+            Navigate('/errorPage')
 
 
         }
@@ -324,15 +331,21 @@ export default function Navbar({ setStatus }) {
 
                                     return (
 
-                                        <div class="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                        <div class="flex items-center py-2 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
                                             {obj.user.profilePicture ?
                                                 <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={PF + obj.user.profilePicture} />
                                                 : <img class="flex-shrink-0 object-cover mx-1 rounded-full w-10 h-10" src={avatar} />
 
                                             }
-                                            <div class="mx-1 flex ">
+                                            <div class="mx-1 flex justify-center items-center  ">
                                                 <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-900 ">{obj.user.username}</h1>
+                                              <div className='flex-col'>
                                                 <p class="text-sm font-semibold text-gray-700 dark:text-gray-900 pl-2">{obj.desc}</p>
+
+                                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-900 pl-2">{format(obj.time)}</p>
+                                                </div>
+                                            
+
 
                                             </div>
                                         </div>

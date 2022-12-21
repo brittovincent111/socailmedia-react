@@ -18,6 +18,8 @@ import { update } from '../../redux/userRedux'
 import { MdVisibility } from 'react-icons/md'
 import userInstance from '../../API/userApi'
 import { SiHomeassistantcommunitystore, SiMessenger } from 'react-icons/si'
+import e from 'cors'
+import Post from './Post'
 
 
 
@@ -47,6 +49,10 @@ function Profile() {
   const [reportValue, setReportValue] = useState("");
   const [reqMod, setReqMod] = useState(false);
   const dispatch = useDispatch()
+  const [viewPost, setViewPost] = useState(false)
+  const [post, setPost] = useState()
+  const [errorMessage, setErrorMessage] = useState("")
+
 
 
 
@@ -57,20 +63,23 @@ function Profile() {
 
   useEffect(() => {
 
-    const getUserData = async () => {
+    
 
       try {
+        const getUserData = async () => {
         const { data } = await getUser(userDetails._id)
         SetUserDetails(data)
 
+      }
+      getUserData()
+
       } catch (error) {
 
-        console.log(error)
+        Navigate('/errorPage')
 
       }
 
-    }
-    getUserData()
+
 
 
   }, [updation])
@@ -86,7 +95,6 @@ function Profile() {
         get(`/userprofile/${userID}`).
         then((response) => {
           SetData(response.data)
-          console.log(response.data, "dattattatattata");
 
 
         }).then((data) => {
@@ -100,11 +108,13 @@ function Profile() {
 
             }).catch((error) => {
 
-              console.log(error)
+              Navigate('/errorPage')
+
+
             })
         }).catch((error) => {
 
-          console.log(error)
+          Navigate('/errorPage')
         })
 
     }
@@ -145,12 +155,17 @@ function Profile() {
           dispatch(update({ ...data, ...edit }))
           setUpdation(!updation)
           SetShowMod(!showMod)
+          setErrorMessage("");
+
         })
 
 
 
     } catch (err) {
-      console.log(err);
+
+      setErrorMessage(err.response.data.message);
+
+
     }
   }
 
@@ -186,7 +201,7 @@ function Profile() {
 
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
 
     }
 
@@ -210,7 +225,7 @@ function Profile() {
     }
     catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
 
 
@@ -229,7 +244,7 @@ function Profile() {
 
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
   }
 
@@ -245,7 +260,7 @@ function Profile() {
     }
     catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
   }
 
@@ -262,7 +277,7 @@ function Profile() {
 
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
 
 
@@ -282,7 +297,7 @@ function Profile() {
 
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
   }
 
@@ -300,7 +315,7 @@ function Profile() {
       Navigate('/message')
     } catch (error) {
 
-      console.log(error)
+      Navigate('/errorPage')
     }
   }
 
@@ -314,6 +329,7 @@ function Profile() {
 
     } catch (error) {
 
+      Navigate('/errorPage')
 
     }
 
@@ -327,8 +343,15 @@ function Profile() {
 
   }
 
-  console.log(data, edit, "dattaaaadsasdas")
+/* ---------------------------- VIEW SINGLE POSTS --------------------------- */
 
+
+  const viewPosts = (post, e) => {
+
+    e.preventDefault()
+    setViewPost(!viewPost)
+    setPost(post)
+  }
 
   return (
     <div className='md:w-3/4 w-full flex justify-center bg-gray-100  overflow-y-auto no-scrollbar'>
@@ -459,7 +482,7 @@ function Profile() {
                               <div className='absolute top-2 right-2 text-xl' onClick={(e) => { editPost(obj?.desc, obj.img, obj._id, e) }}><BsThreeDots /></div> : null
                             }
                             <div>
-                              <div className='text-3xl flex justify-center items-center'><AiFillHeart /></div>
+                              <div className='text-3xl flex justify-center items-center ' onClick={(e) => viewPosts(obj,e)}><AiFillHeart /></div>
                               <div className='text-normal  justify-center items-center' >{obj.likes.length}</div>
                             </div>
                             {/* <div>
@@ -503,7 +526,9 @@ function Profile() {
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
 
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                <div className="flex item-center justify-center p-5 border-b border-solid border-slate-200 rounded-t">
+                <div className="flex flex-col item-center justify-center p-5 border-b border-solid border-slate-200 rounded-t">
+                {errorMessage && <div className="p-4 my-4 text-sm text-red-900 bg-red-100 rounded-lg dark:bg-red-400 dark:text-red-800" role="alert">{errorMessage}</div>}
+
                   <h3 className="text-3xl font-semibold">Edit Profile</h3>
 
                 </div>
@@ -584,7 +609,8 @@ function Profile() {
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => SetShowMod(false)}
+                    onClick={() => {SetShowMod(false); setErrorMessage("");
+                  }}
                   >
                     Close
                   </button>
@@ -692,7 +718,7 @@ function Profile() {
                 </div>
               </div>
             </div>
-            <div className="opacity-50 fixed inset-0 z-60 bg-black"></div>
+            <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
 
           </> : null}
       {reqMod ? (
@@ -765,7 +791,32 @@ function Profile() {
           <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
         </>
       ) : null}
+      {
+        viewPost ?
+          <>
+            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto p-2 fixed inset-0 z-50 outline-none focus:outline-none  ">
+            <div className='items-center p-5  fixed top-5 right-5 mt-10' onClick={(e) => { setViewPost(!viewPost) }}>
+              <AiOutlineClose className='text-white text-2xl' />
+            </div>
+            <div className='w-2/4 h-full  overflow-y-hidden'>
+
+            <Post key={post.userId} post={post} back={true} />
+            </div>
+
+             
+            </div>
+            <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
+
+          </>
+          :
+          null
+      }
     </div>
+
+
+
+
+
 
   )
 }

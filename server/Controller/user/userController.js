@@ -92,6 +92,8 @@ let otpConfig = async (email, res , forget) => {
   
 
   } catch (error) {
+     
+    res.status(500).send(error)
 
     console.log(error.message, "error")
 
@@ -126,8 +128,8 @@ const controller = {
         })
 
       console.log(user, "user")
-      await notificationSchemma.
-        create({ userId: user._id })
+      // await notificationSchemma.
+      //   create({ userId: user._id })
       res.json({ success: "success" })
 
 
@@ -135,7 +137,7 @@ const controller = {
     } catch (error) {
 
       console.log(error.message)
-      res.status(500).send(error)
+      res.send(error)
 
     }
   },
@@ -175,6 +177,9 @@ const controller = {
       }
     } catch (error) {
 
+
+       
+      res.send(error)
       console.log(error.message, "messageee")
 
 
@@ -191,6 +196,8 @@ const controller = {
 
 
     } catch (error) {
+       
+      res.send(error)
 
       console.log(error.message, "error")
     }
@@ -218,7 +225,7 @@ const controller = {
       }
     } catch (error) {
       console.log(error, 'verify otp error');
-      res.status(500).json(error)
+      res.send(error)
     }
   },
     
@@ -235,12 +242,17 @@ const controller = {
 
 
   } catch (error) {
+     
+    res.send(error)
 
     console.log(error.message, "error")
 
   }
 
   },
+
+
+  /* ------------------------- forget password update ------------------------- */
 
 
   submitForgetPassword : async(req,res)=>{
@@ -270,6 +282,7 @@ const controller = {
     
     }catch(error){
 
+      res.send(error)
 
     }
 
@@ -310,7 +323,7 @@ const controller = {
       }
 
     } catch (e) {
-      res.status(500).
+      res.
         json({ error: "server error" })
 
     }
@@ -358,7 +371,7 @@ const controller = {
       res.status(200).json(sliced)
 
     } catch (error) {
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -399,7 +412,7 @@ const controller = {
       }
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -475,7 +488,8 @@ const controller = {
 
     let details = {
       user: req.body.userId,
-      desc: "liked your post"
+      desc: "liked your post",
+      time:Date.now()
     }
 
     try {
@@ -494,7 +508,7 @@ const controller = {
           updateOne({ $push: { likes: req.body.userId } })
         await notificationSchemma.
           updateOne({ userId: post.userId },
-            { $push: { notification: details } })
+            { $push: { notification: details } },{upsert:true})
         console.log(push, "pushhhh")
         res.status(200).json("liked ")
 
@@ -512,7 +526,9 @@ const controller = {
 
     let details = {
       user: req.body.userId,
-      desc: "commented your post"
+      desc: "commented your post",
+      time:Date.now()
+
     }
 
     try {
@@ -613,7 +629,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(401).json(error)
+      res.send(error)
 
     }
   },
@@ -634,7 +650,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
     }
   },
 
@@ -653,7 +669,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -675,7 +691,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -708,7 +724,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -733,7 +749,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
 
@@ -760,7 +776,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
 
@@ -785,7 +801,7 @@ const controller = {
 
 
     } catch (error) {
-      res.status(500).json(error)
+      res.send(error)
 
 
     }
@@ -803,7 +819,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -831,7 +847,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
 
@@ -854,7 +870,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json("Notdeleted")
+      res.send(error)
 
     }
 
@@ -879,7 +895,7 @@ const controller = {
           res.status(200).json("updated")
         } else {
 
-          res.status(401).json({ message: "already exists" })
+          res.status(401).json({ message: "Username already exists" })
 
         }
 
@@ -893,7 +909,7 @@ const controller = {
       }
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
     }
   },
 
@@ -933,7 +949,7 @@ const controller = {
 
     } catch (error) {
 
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -945,24 +961,28 @@ const controller = {
     try {
 
       let data = await notificationSchemma.
-        findOne({ userId: req.params.userId }).
+        findOne({ userId: req.params.userId }).sort({_id:-1}).
         populate("notification.user",
           "username profilePicture")
-      let count = data.notification.filter((obj) => {
+          if(data){
+            let count = data?.notification.filter((obj) => {
 
-        if (obj.status == "true") {
-          return obj
+              if (obj.status == "true") {
+                return obj
+      
+              }
+      
+            })
+            let countLength = count.length
+            res.status(200).json({ data, countLength })
 
-        }
+          }
 
-      })
-      let countLength = count.length
-      res.status(200).json({ data, countLength })
 
     } catch (error) {
 
       console.log(error.message, "message")
-      res.status(500).json(error)
+      res.send(error)
 
     }
   },
@@ -983,7 +1003,7 @@ const controller = {
     } catch (error) {
 
       console.log(error.message, "message")
-      res.status(500).json(error)
+      res.send(error)
 
     }
 
@@ -1006,6 +1026,9 @@ const controller = {
         reason: req.body.reportValue
       })
 
+      res.status(200).json("reported")
+
+
       console.log("hiiii")
 
 
@@ -1013,6 +1036,8 @@ const controller = {
     } catch (error) {
 
       console.log(error.message, "messageee")
+
+      res.send(error)
 
     }
   }
