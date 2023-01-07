@@ -79,7 +79,7 @@ const Controller = {
 
     } catch {
 
-      res.status(401).json({message : "something went wrong "})
+      res.status(500).json({message : "something went wrong "})
 
     }
   },

@@ -20,6 +20,8 @@ import userInstance from '../../API/userApi'
 import { SiHomeassistantcommunitystore, SiMessenger } from 'react-icons/si'
 import e from 'cors'
 import Post from './Post'
+import { addMessage } from '../../redux/StoreAnother'
+
 
 
 
@@ -48,10 +50,11 @@ function Profile() {
   const [postMod, setPostMod] = useState(false);
   const [reportValue, setReportValue] = useState("");
   const [reqMod, setReqMod] = useState(false);
-  const dispatch = useDispatch()
   const [viewPost, setViewPost] = useState(false)
   const [post, setPost] = useState()
   const [errorMessage, setErrorMessage] = useState("")
+  const dispatch = useDispatch()
+
 
 
 
@@ -312,6 +315,7 @@ function Profile() {
     try {
 
       const { data } = await newUserChat(users)
+      dispatch(addMessage(userID))
       Navigate('/message')
     } catch (error) {
 

@@ -178,7 +178,7 @@ import moment from 'moment'
 
                                                     <td className="text-center">{obj.reports.length}</td>
                                                     <td className="text-center">{obj.status}</td>
-                                                    <Link to={`/admin/group/viewreport/postmanagment/${obj._id}`} ><td className="text-center">view</td></Link>
+                                                    <td className="text-center"><Link to={`/admin/group/viewreport/postmanagment/${obj._id}`} >view</Link></td>
 
 
                                                     <td className="text-center p-4 ">

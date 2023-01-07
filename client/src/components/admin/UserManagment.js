@@ -10,20 +10,48 @@ import moment from 'moment'
 
 function UserManagment() {
 
+    const Navigate = useNavigate()
 
     const [userDetails, SetUserDetails] = useState([])
     // const [reducerValue, forceUpdate] = useReducer(x => x + 1, 0);
     const [status, SetStatus] = useState(true)
 
     useEffect(() => {
+       
 
-        Axios.get('http://localhost:4000/admin/usermanagment', { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response) => {
+    
 
+        
+        const call=async()=>{
+
+        
+        await  Axios.get('http://localhost:4000/admin/usermanagment', { headers: { "x-access-token": localStorage.getItem("Admintoken") } }).then((response)=>{
             console.log(response)
             SetUserDetails(response.data)
-        })
+        }).catch((error)=>{
 
+            console.log("hiiiiiii")
+            if (error?.response?.status === 403) {
+              localStorage.removeItem('Admintoken')
+             
+              Navigate("/admin/login")
+           }else{
+             Navigate('/admin/errorPage')
+           }
+          }
+
+        )
+
+        } 
+      
+
+        
+        call()
         return () => { SetStatus(false) }
+ 
+         
+       
+
     }, [status])
 
     // useEffect (()=>{

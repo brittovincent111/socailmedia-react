@@ -28,6 +28,7 @@ import UserReportDetailView from './components/admin/DetailsUserReport';
 import { socket, SocketContext } from './UpdationContext/Socket';
 import ForgetPasswordPage from './pages/userPages/ForgetPasswordPage';
 import Error from './components/user/Error';
+import ErrorPage from './components/ErrorPage';
 
 
 
@@ -53,13 +54,7 @@ function App() {
                 <Route path='/errorPage' element={<Error />}></Route>
 
                 
-              </Routes>
-            </Updation>
-          </Provider>
-        </SocketContext.Provider>
-
-
-        <Routes>
+              
           <Route path='/admin/login' element={<AdminLoginPage />}></Route>
           <Route path='/admin' element={<Structure />}>
             <Route path='/admin/dashboard' element={<AdminDashboard />}></Route>
@@ -69,11 +64,15 @@ function App() {
             <Route path='/admin/viewreport/postmanagment/:postId' element={<ReportDetailView />}></Route>
             <Route path='/admin/group/report/postmanagment' element={<GroupPostReport />}></Route>
             <Route path='/admin/group/viewreport/postmanagment/:postId' element={<GroupPostDetail />}></Route>
-
-
-
           </Route>
+           
+           <Route path='*' element={<ErrorPage/>} />
+
+
         </Routes>
+        </Updation>
+          </Provider>
+        </SocketContext.Provider>
 
       </Router>
     </div>

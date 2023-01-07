@@ -122,7 +122,7 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
 
     return (
 
-        <div className="hidden lg:col-span-2 lg:block">
+        <div className=" lg:col-span-2 lg:block">
             {chat ?
                 <div className="w-full">
                     <div className="relative flex items-center p-3 border-b border-gray-300">
@@ -171,7 +171,7 @@ function ChatBox({ chat, currentUser, setSendMessage, reciveMessage }) {
                                                         </div>
                                                         {
                                                                 userDetails?.profilePicture ?
-                                                                    <img className="object-cover w-10 h-10 rounded-full" src={PF + userData?.profilePicture} />
+                                                                    <img className="object-cover w-10 h-10 rounded-full" src={PF + userDetails?.profilePicture} />
                                                                     : <img className="object-cover w-10 h-10 rounded-full" src={avatar} />
 
                                                             }

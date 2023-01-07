@@ -5,12 +5,14 @@ const verifyJWT = (req,res,next)=>{
     const token = req.headers["x-access-token"];
     console.log(token,'its token');
     if(!token){
+        console.log("failed")
+
         res.status(403).json("Account verification failed")
     }else {
         jwt.verify(token, process.env.JWT_KEY , (err, decoded) =>{
 
             if(err){
-                console.log(err);
+                console.log(err ,"err");
                 res.status(403).json({ message:"Authentication Failed!"})
             }else{
                 req.userId = decoded.id;

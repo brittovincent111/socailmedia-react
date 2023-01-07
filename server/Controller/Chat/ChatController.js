@@ -11,10 +11,13 @@ const controller = {
 
         })
 
+        console.log( req.body.users ,"users")
+
         try {
             const chat = await ChatModel.findOne({
                 members: { $all: [senderId, receivedId] }
             })
+            console.log(chat , "chat")
 
 
             if (!chat) {
@@ -22,6 +25,7 @@ const controller = {
                 res.status(200).json(result)
 
             } else {
+                console.log(chat , "chatssss")
                 res.status(200).json(chat)
             }
 

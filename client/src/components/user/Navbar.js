@@ -19,6 +19,7 @@ import { io } from 'socket.io-client'
 import { useRef } from 'react'
 import { AiOutlineHeart, AiOutlinePlus, AiOutlineClose, AiOutlineLogout } from 'react-icons/ai'
 import { SocketContext } from '../../UpdationContext/Socket'
+import { addMessage } from '../../redux/StoreAnother'
 
 
 
@@ -237,6 +238,11 @@ export default function Navbar() {
 
     console.log(liked, "likedddd")
 
+    const messageUser =()=>{
+        dispatch(addMessage(null))
+        Navigate('/message')
+    }
+
     return (
 
         <>
@@ -278,9 +284,9 @@ export default function Navbar() {
                         <Link to='/' className='flex items-center bg-white p-3 md:ml-2  rounded-full md:hover:bg-gray-100 cursor-pointer'>
                             <FaHome className='md:text-2xl text-xl ' />
                         </Link>
-                        <Link to='/message' className='flex items-center bg-white p-3 rounded-full md:hover:bg-gray-100 cursor-pointer '>
+                        <div onClick={messageUser} className='flex items-center bg-white p-3 rounded-full md:hover:bg-gray-100 cursor-pointer '>
                             <SiMessenger className='md:text-2xl text-xl ' />
-                        </Link>
+                        </div>
                         <div className=''>
                             <div onClick={(e) => { notificationHandle(e) }} className='relative flex items-center bg-white p-3  rounded-full md:hover:bg-gray-100 cursor-pointer '>
                                 <IoMdNotifications className='md:text-2xl text-xl ' />

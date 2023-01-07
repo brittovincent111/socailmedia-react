@@ -7,7 +7,7 @@ const verifyJWT = require('../../MiddleWare/Verify')
 
 router.post('/login' , AdminLogin )
 router.get('/dashboard', verifyJWT ,dashboard )
-router.get('/usermanagment' ,userManagment )
+router.get('/usermanagment' , verifyJWT,userManagment )
 router.get('/usermanagment/:userId' , viewUserSingleReport  )
 router.put('/block/:id' , BlockUser)
 router.put('/unblock/:id' , UnBlockUser)
